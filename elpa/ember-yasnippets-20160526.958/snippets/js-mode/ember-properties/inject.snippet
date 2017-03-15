@@ -1,0 +1,6 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Ember Injected Property
+# key: inject
+# binding: direct-keybinding
+# --
+${1:fooService}: Ember.inject.${2:$$(yas-choose-value '("service" "controller"))}('${3:name}'),

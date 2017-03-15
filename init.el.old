@@ -1,0 +1,178 @@
+;; Added by Package.el.  This must come before configurations of
+;; installed packages.  Don't delete this line.  If you don't want it,
+;; just comment it out by adding a semicolon to the start of the line.
+;; You may delete these explanatory comments.
+(package-initialize)
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(ansi-color-faces-vector
+   [default default default italic underline success warning error])
+ '(ansi-color-names-vector
+   ["#073642" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#657b83"])
+ '(bmkp-last-as-first-bookmark-file "~/.emacs.d/bookmarks")
+ '(compilation-message-face (quote default))
+ '(cua-global-mark-cursor-color "#2aa198")
+ '(cua-normal-cursor-color "#657b83")
+ '(cua-overwrite-cursor-color "#b58900")
+ '(cua-read-only-cursor-color "#859900")
+ '(custom-enabled-themes (quote (tango)))
+ '(custom-safe-themes
+   (quote
+    ("7dbb593ad0fb90230b196ffbd6a503c3e9086925cc68f212e625a017b8c824a7" "bb749a38c5cb7d13b60fa7fc40db7eced3d00aa93654d150b9627cabd2d9b361" "afc220610bee26945b7c750b0cca03775a8b73c27fdca81a586a0a62d45bbce2" "a2e7b508533d46b701ad3b055e7c708323fb110b6676a8be458a758dd8f24e27" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "a8245b7cc985a0610d71f9852e9f2767ad1b852c2bdea6f4aadc12cce9c4d6d0" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" default)))
+ '(fci-rule-color "#eee8d5")
+ '(highlight-changes-colors (quote ("#d33682" "#6c71c4")))
+ '(highlight-symbol-colors
+   (--map
+    (solarized-color-blend it "#fdf6e3" 0.25)
+    (quote
+     ("#b58900" "#2aa198" "#dc322f" "#6c71c4" "#859900" "#cb4b16" "#268bd2"))))
+ '(highlight-symbol-foreground-color "#586e75")
+ '(highlight-tail-colors
+   (quote
+    (("#eee8d5" . 0)
+     ("#B4C342" . 20)
+     ("#69CABF" . 30)
+     ("#69B7F0" . 50)
+     ("#DEB542" . 60)
+     ("#F2804F" . 70)
+     ("#F771AC" . 85)
+     ("#eee8d5" . 100))))
+ '(hl-bg-colors
+   (quote
+    ("#DEB542" "#F2804F" "#FF6E64" "#F771AC" "#9EA0E5" "#69B7F0" "#69CABF" "#B4C342")))
+ '(hl-fg-colors
+   (quote
+    ("#fdf6e3" "#fdf6e3" "#fdf6e3" "#fdf6e3" "#fdf6e3" "#fdf6e3" "#fdf6e3" "#fdf6e3")))
+ '(inhibit-startup-screen t)
+ '(magit-diff-use-overlays nil)
+ '(nrepl-message-colors
+   (quote
+    ("#dc322f" "#cb4b16" "#b58900" "#546E00" "#B4C342" "#00629D" "#2aa198" "#d33682" "#6c71c4")))
+ '(org-agenda-files
+   (quote
+    ("~/workspace/learning/svg_animation/todo.org" "~/daily_list.org" "~/Documents/FEE:Engineering/Sem2/school_work.org")))
+ '(org-default-notes-file "~/.notes.org")
+ '(org-trello-current-prefix-keybinding "C-c o")
+ '(package-archives
+   (quote
+    (("gnu" . "http://elpa.gnu.org/packages/")
+     ("melpa" . "http://melpa.org/packages/"))))
+ '(package-selected-packages
+   (quote
+    (bookmark+ flymake-cppcheck flymake-css flymake-elixir flymake-go flymake-haskell-multi flymake-json flymake-less flymake-php flymake-phpcs flymake-python-pyflakes flymake-ruby flymake-rust flymake-sass flymake-shell flymake-yaml flyparens emmet-mode auto-yasnippet buster-snippets datomic-snippets php-auto-yasnippets ember-yasnippets angular-snippets clojure-snippets common-lisp-snippets django-snippets elixir-yasnippets go-snippets haskell-snippets java-snippets react-snippets yatemplate yatex svg company-go go go-autocomplete go-complete go-mode go-playground go-playground-cli ppd-sr-speedbar sr-speedbar phpunit benchmark-init muttrc-mode auto-complete android-mode angry-police-captain ein ein-mumamo eink-theme ob-ipython org-ac org-agenda-property org-alert org-attach-screenshot org-autolist org-babel-eval-in-repl org-beautify-theme org-board org-bookmark-heading org-bullets org-caldav org-capture-pop-frame org-chinese-utils org-cliplink org-clock-convenience org-clock-csv org-clock-today org-commentary org-context org-cua-dwim org-dashboard org-doing org-dotemacs org-download org-dp org-dropbox org-easy-img-insert org-ehtml org-elisp-help org-evil org-fstree org-gcal org-gnome org-grep org-if org-iv org-jekyll org-jira org-journal org-link-travis org-linkany org-mac-iCal org-mac-link org-mobile-sync org-multiple-keymap org-octopress org-outlook org-page org-password-manager org-pdfview org-pomodoro org-present org-preview-html org-projectile org-protocol-jekyll org-random-todo org-readme org-redmine org-ref org-repo-todo org-review org-rtm org-sync org-table-comment org-tfl org-themis org-time-budgets org-toodledo org-webpage org-wunderlist org2blog org2elcomment org2issue org2jekyll organic-green-theme orgbox orgit orglink orglue orgtbl-aggregate orgtbl-ascii-plot orgtbl-join orgtbl-show-header magit magit-gitflow pastelmac-theme pastels-on-dark-theme pandoc-mode web-mode solarized-theme slime-volleyball slime-theme slime-ritz slime-docker slime-company slime-annot slim-mode scss-mode processing-snippets processing-mode php+-mode multi-web-mode lorem-ipsum latex-unicode-math-mode latex-preview-pane latex-pretty-symbols latex-math-preview latex-extra ham-mode git-command git geiser flymd flatland-theme evil-mu4e dirtree-prosjekt direx-grep diredful dired-toggle-sudo dired-toggle dired-subtree dired-sort-menu+ dired-sort dired-single dired-ranger dired-rainbow dired-quick-sort dired-open dired-narrow dired-k dired-imenu dired-filter dired-filetype-face dired-fdclone dired-efap dired-dups dired-details+ dired-avfs dired-atool dired+ company-web company-php company-math cdlatex browse-at-remote bf-mode basic-c-compile bash-completion auto-complete-auctex auctex-lua anything-git-grep anything-git-files ac-slime ac-php ac-math ac-html-csswatcher ac-html-bootstrap ac-html-angular ac-html)))
+ '(pos-tip-background-color "#eee8d5")
+ '(pos-tip-foreground-color "#586e75")
+ '(smartrep-mode-line-active-bg (solarized-color-blend "#859900" "#eee8d5" 0.2))
+ '(term-default-bg-color "#fdf6e3")
+ '(term-default-fg-color "#657b83")
+ '(vc-annotate-background nil)
+ '(vc-annotate-color-map
+   (quote
+    ((20 . "#dc322f")
+     (40 . "#c85d17")
+     (60 . "#be730b")
+     (80 . "#b58900")
+     (100 . "#a58e00")
+     (120 . "#9d9100")
+     (140 . "#959300")
+     (160 . "#8d9600")
+     (180 . "#859900")
+     (200 . "#669b32")
+     (220 . "#579d4c")
+     (240 . "#489e65")
+     (260 . "#399f7e")
+     (280 . "#2aa198")
+     (300 . "#2898af")
+     (320 . "#2793ba")
+     (340 . "#268fc6")
+     (360 . "#268bd2"))))
+ '(vc-annotate-very-old-color nil)
+ '(weechat-color-list
+   (quote
+    (unspecified "#fdf6e3" "#eee8d5" "#990A1B" "#dc322f" "#546E00" "#859900" "#7B6000" "#b58900" "#00629D" "#268bd2" "#93115C" "#d33682" "#00736F" "#2aa198" "#657b83" "#839496")))
+ '(xterm-color-names
+   ["#eee8d5" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#073642"])
+ '(xterm-color-names-bright
+   ["#fdf6e3" "#cb4b16" "#93a1a1" "#839496" "#657b83" "#6c71c4" "#586e75" "#002b36"]))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+
+
+(put 'upcase-region 'disabled nil)
+(put 'downcase-region 'disabled nil)
+
+;; The following lines are always needed.
+;; Added on November 25 2016
+(global-set-key "\C-cl" 'org-store-link)
+(global-set-key "\C-ca" 'org-agenda)
+(global-set-key "\C-cc" 'org-capture)
+(global-set-key "\C-cb" 'org-iswitchb)
+
+;; -*- mode: elisp -*-
+;; Added on November 25 2016
+;; Disable the splash screen (to enable it agin, replace the t with 0)
+(setq inhibit-splash-screen t)
+
+;; Enable transient mark mode
+(transient-mark-mode 1)
+
+;; org-mode configuration
+;; Enable org-mode
+(require 'org)
+;; Make org-mode work with files ending in .org
+;; (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+;; The above is the default in recent emacsen
+
+;; Then each time you turn an entry from a TODO (not-done) state
+;; into any of the DONE states, a line ‘CLOSED: [timestamp]’ will
+;; be inserted just after the headline. If you want to record a
+;; note along with the timestamp, this is used
+(setq org-log-done 'note)
+
+
+;; Enabling linum mode
+(global-linum-mode 1)
+(global-visual-line-mode 1)
+
+;; Replacing newline with ""
+(defun remove-newlines-in-region ()
+  "Removes all newlines in the region."
+  (interactive)
+  (save-restriction
+    (narrow-to-region (point) (mark))
+    (goto-char (point-min))
+    (while (search-forward "\n" nil t) (replace-match " " nil t))))
+
+(global-set-key [f8] 'remove-newlines-in-region)
+(global-set-key (kbd "C-x g") 'magit-status)
+
+;; Helm
+;(require 'helm-config)
+;(helm-mode 1)
+;; Setting up the mit-scheme
+(setq scheme-program-name "/usr/bin/mit-scheme")
+(show-paren-mode 1)
+(electric-pair-mode 1)
+
+(setq yas-snippet-dirs
+      '("~/.emacs.d/snippets"                 ;; personal snippets
+        ))
+
+(yas-global-mode 1) ;; or M-x yas-reload-all if you've started YASnippet already.
+
+(global-set-key (kbd "C-?") 'help-command)
+(global-set-key (kbd "M-?") 'mark-paragraph)
+(global-set-key (kbd "C-h") 'delete-backward-char)
+(global-set-key (kbd "M-h") 'backward-kill-word)
+(defalias 'qrr 'query-replace-regexp)
+
+(add-to-list 'load-path "~/.emacs.d/packages/tiny-tools/lisp/tiny")
+(add-to-list 'load-path "~/.emacs.d/packages/tiny-tools/lisp/other")

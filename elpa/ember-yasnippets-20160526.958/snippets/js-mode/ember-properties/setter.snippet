@@ -1,0 +1,12 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Ember Computed Property With Setter
+# key: setprop
+# binding: direct-keybinding
+# --
+${1:fooProp}: Ember.computed('${2:dependencies}', {
+get() {
+$3
+},
+set(key, value) {
+$4
+}),

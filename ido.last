@@ -1,0 +1,38 @@
+;;; -*- coding: utf-8 -*-
+
+;; ----- ido-last-directory-list -----
+(
+ ("/home/bonface/" . ".emacs.d/")
+)
+
+;; ----- ido-work-directory-list -----
+(
+ "/home/bonface/.emacs.d/"
+)
+
+;; ----- ido-work-file-list -----
+(
+ "init.el"
+)
+
+;; ----- ido-dir-file-cache -----
+(
+ ("/home/bonface/.emacs.d/" (22726 58422 695140 121000) "bookmarks" "projectile-bookmarks.eld" "site-lisp/" "custom.el" "recentf" "url/" "network-security.data" "init.el" "ac-comphist.dat" "deeper-blue-theme.el" "request/" "org-clock-save.el" "history" ".session" "var/" ".emacs.desktop.lock" "tutorial/" "lisp/" "packages/" "auto-save-list/" "snippets/" ".emacs.desktop" "init.el.old" "./" ".smex-items" "../" "elpa/" "emacs.d/")
+
+ ("/home/" (22347 9797 675390 662000) "bonface/" "./" "../")
+
+ ("/home/bonface/" (22726 46538 648661 979000) ".gnupg/" ".notes.org" ".emacs-bmk-bmenu-state.el" ".todo/" ".fretsonfire/" ".emacs~" ".matlab/" ".mysql_history" ".bash_profile~" "sketchbook/" "Mail/" ".audacity-data/" ".fltk/" ".ipython/" ".gnus" ".macromedia/" "Music/" "Arduino/" ".kchmviewer/" ".stack/" ".mozilla/" ".thumbnails/" ".node_repl_history" ".processing/" "Downloads/" ".wget-hsts" ".wine/" ".pki/" ".profile" ".adobe/" "fonts/" "workspace/" ".gdbinit" ".esd_auth" ".npmrc" ".kde4/" "Calibre Library/" ".python_history" ".bashrc" "misc/" ".gem/" ".pyenv/" ".tldrc/" ".minecraft/" "Recordings/" ".Xauthority" ".xinitrc" ".xchat2/" ".arduino15/" "gPodder/" ".mutt/" ".geiser_history.guile" ".texlive/" ".bash_logout" ".notes.org~" ".fonts.conf" ".tor-browser-en/" ".gphoto/" ".npm-global/" ".babel.json" ".eteks/" ".bash_history" ".oracle_jre_usage/" ".dvdcss/" ".gradle/" ".v8flags.5.0.71.47.bonface.json" ".bash_profile" "todo/" ".cache/" ".npm/" ".irssi/" ".gitconfig" ".ICEauthority" ".weechat/" ".wine-circuitmaker/" ".local/" ".zenmap/" ".vue-templates/" ".AndroidStudio2.1/" ".wayland-errors" "public_html/" ".rnd" ".ssh/" ".vidalia/" "temp/" ".gnome/" ".mplayer/" "public/" ".atom/" ".bashrc~" "./" ".config/" ".xfce4-session.verbose-log" "../" ".pencil/" "Documents/" "Desktop/" ".tor/" ".v8flags.5.0.71.52.bonface.json" ".tmux.conf" ".lesshst" ".android/" "AndroidStudioProjects/" ".octave_hist" ".profile~" ".muttrc~" ".w3m/" ".gstreamer-0.10/" "Pictures/" ".v8flags.5.1.281.84.bonface.json" ".bundle/" ".swt/" ".viminfo" ".emacs.d/" ".mutt_certificates" "templates/" ".cargo/" "Videos/" "Webcam/" ".gimp-2.8/" ".java/" ".xsession-errors" "win32/" ".xfce4-session.verbose-log.last" ".scribus/" ".gtkrc-2.0" ".vnc/")
+
+ ("/home/bonface/workspace/" (22726 27671 539218 457000) "cheatsheets/" "life/" "misc/" "reading_list.org" "learning/" "school/" "./" "../" "work/" "goals.org" "fablab_work/")
+
+ ("/home/bonface/workspace/work/" (22716 57093 740281 59000) "test/" "blog_articles/" "texTemplate/" "taisere_designs/" "upbookclub.github.io/" "angstrom_prototype/" "ogeleaAfrica/" "amp-by-example/" "WebTech/" "angstrom_website/" "nairobilug.or.ke/" "letter_theme/" "jobseeker/" "node_modules/" "./" "ARC/" "../" "PMK/" "kensville/" "parish_loans_savings_system/" "ARM/")
+
+ ("/home/bonface/workspace/work/blog_articles/" (22709 61150 995795 439000) "pdf/" "Makefile" ".gitignore" "README.md" "resources/" "src/" "./" "../" ".git/")
+
+ ("/home/bonface/workspace/work/blog_articles/src/" (22709 49477 695504 389000) "life/" "book_reviews/" "coding/" "music/" "./" "sicp/" "../" "projects/")
+
+ ("/home/bonface/workspace/work/blog_articles/src/coding/" (22726 58830 191489 644000) "git.md" "feb-27-2017-laws-of-software-dev.md" "#emacs_tips.md#" "#emacs.md#" "mar-2-2017-emacs-tips.md" "basic_emacs.org" "mar-2-2017-emacs-tips.md~" ".#emacs.md" "git.org" "gulp.md" "./" "feb-27-2017-linux-from-scratch-frustrations.md" "../" "softwaredev_rules.org")
+)
+
+;; ----- ido-unc-hosts-cache -----
+t

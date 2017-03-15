@@ -1,0 +1,13 @@
+2016-02-28  Vitalie Spinu  <spinuvit@gmail.com>
+
+	Merge company-math
+
+2015-08-31  Stefan Monnier  <monnier@iro.umontreal.ca>
+
+	* company-math: Provide email address
+
+2015-08-31  Vitalie Spinu  <spinuvit@gmail.com>
+
+	Merge commit 'fe9ec0c54c5c0224bdce6b557fe1f4bf2acbc972' as
+	'packages/company-math'
+
