@@ -5,7 +5,7 @@
 ;; Changed to "C-c h". Note: We must set "C-c h" globally, because we
 ;; cannot change `helm-command-prefix-key' once `helm-config' is loaded.
 (global-set-key (kbd "C-c h") 'helm-mini)
-(global-unset-key (kbd "C-x c"))	
+(global-unset-key (kbd "C-x c"))
 
 (when (executable-find "curl")
   (setq helm-google-suggest-use-curl-p t))
@@ -19,7 +19,7 @@
 
 (setq helm-autoresize-max-height 0)
 (setq helm-autoresize-min-height 20)
-(helm-autoresize-mode 1)	
+(helm-autoresize-mode 1)
 
 (global-set-key (kbd "M-x") #'helm-M-x)
 (global-set-key (kbd "C-x r b") #'helm-filtered-bookmarks)
