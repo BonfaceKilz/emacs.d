@@ -1,0 +1,7 @@
+(load "package")
+(package-initialize)
+(add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
+(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/") t)
+
+(setq package-archive-enable-alist '(("melpa" magit f)))
+(provide 'setup-package)

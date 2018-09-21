@@ -1,0 +1,88 @@
+;; Added by Package.el.  This must come before configurations of
+;; installed packages.  Don't delete this line.  If you don't want it,
+;; just comment it out by adding a semicolon to the start of the line.
+;; You may delete these explanatory comments.
+(package-initialize)
+
+(setq debug-on-error t)
+
+(setq user-full-name "Bonface M. K.")
+(setq user-mail-address "bonfacemunyoki@gmail.com")
+
+;; Set up a settings dir
+(setq settings-dir
+      (expand-file-name "settings" user-emacs-directory))
+
+;; Set path to dependencies
+(setq site-lisp-dir
+      (expand-file-name "site-lisp" user-emacs-directory))
+
+;; Set up vendor dir
+(defvar bonface/vendor-dir (expand-file-name "vendor" user-emacs-directory))
+(add-to-list 'load-path bonface/vendor-dir)
+
+(dolist (project (directory-files bonface/vendor-dir t "\\w+"))
+  (when (file-directory-p project)
+    (add-to-list 'load-path project)))
+
+(add-to-list 'load-path settings-dir)
+(add-to-list 'load-path site-lisp-dir)
+(add-to-list 'load-path "~/.emacs.d/elpa/xelb-0.15")
+(add-to-list 'load-path "~/.emacs.d/elpa/exwm-0.19")
+
+(require 'setup-init)
+(require 'setup-envs)
+(require 'setup-package)
+(require 'setup-default-packages)
+(require 'sane-defaults)
+(require 'setup-eshell)
+(require 'my-misc)
+(require 'appearance)
+(require 'setup-exwm)
+
+;; TODO add deft
+
+;; smex
+(setq smex-save-file (expand-file-name ".smex-items" user-emacs-directory))
+(smex-initialize)
+(global-set-key (kbd "M-x") 'smex)
+(global-set-key (kbd "M-X") 'smex-major-mode-commands)
+
+;; ido
+(ido-mode t)
+(setq ido-enable-flex-matching t
+      ido-use-virtual-buffers t)
+
+;; autocomplete
+(require 'auto-complete-config)
+(ac-config-default)
+
+;; Flyspell
+(setq flyspell-issue-welcome-flag nil)
+(if (eq system-type 'darwin)
+    (setq-default ispell-program-name "/usr/local/bin/aspell")
+  (setq-default ispell-program-name "/usr/bin/aspell"))
+(setq-default ispell-list-command "list")
+
+;; Powerline
+(require 'powerline)
+(powerline-default-theme)
+
+(eval-after-load 'org '(require 'setup-org))
+
+;; Map files to modes
+(require 'mode-mappings)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   (quote
+    ("c03d60937e814932cd707a487676875457e0b564a615c1edfd453f23b06fe879" default))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

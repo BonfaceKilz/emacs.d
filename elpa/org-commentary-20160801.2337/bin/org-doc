@@ -1,3 +1,0 @@
-#!/bin/sh
-
-exec cask emacs --batch -l org-commentary-cli -f org-commentary -- "$@"
