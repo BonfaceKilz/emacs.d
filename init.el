@@ -9,6 +9,11 @@
 (setq user-full-name "Bonface M. K.")
 (setq user-mail-address "bonfacemunyoki@gmail.com")
 
+;; Emacs server
+(require 'server)
+(unless (server-running-p)
+  (server-start))
+
 ;; Set up a settings dir
 (setq settings-dir
       (expand-file-name "settings" user-emacs-directory))
