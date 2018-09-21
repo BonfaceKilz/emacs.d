@@ -11,6 +11,7 @@
                            go-eldoc
                            go-mode
                            golden-ratio
+			   guide-key
                            graphviz-dot-mode
                            haml-mode
                            htmlize
