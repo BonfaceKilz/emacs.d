@@ -29,7 +29,8 @@
                            undo-tree
                            ;;winner-mode
                            writegood-mode
-                           yaml-mode)
+                           yaml-mode
+			   yasnippet)
   "Default packages")
 
 (defun bonface/packages-installed-p ()
