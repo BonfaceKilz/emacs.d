@@ -47,6 +47,7 @@
 (require 'setup-eshell)
 (require 'my-misc)
 (require 'appearance)
+(require 'setup-avy)
 ;;(require 'setup-exwm)
 
 ;; TODO add deft
