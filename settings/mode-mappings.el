@@ -30,4 +30,7 @@
 (setq markdown-command "pandoc --smart -f markdown -t html")
 (setq markdown-css-paths `(,(expand-file-name "markdown.css" bonface/vendor-dir)))
 
+;; PHP
+(add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
+
 (provide 'mode-mappings)

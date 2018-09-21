@@ -19,6 +19,7 @@
                            marmalade
                            org
                            paredit
+			   php-mode
                            php-refactor-mode
                            powerline
                            rvm

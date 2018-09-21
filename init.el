@@ -77,7 +77,8 @@
 (setq-default ispell-list-command "list")
 
 (eval-after-load 'org '(require 'setup-org))
- 
+(eval-after-load 'php-mode '(require 'php-ext))
+
 ;; Map files to modes
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
 

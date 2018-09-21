@@ -10,3 +10,4 @@ ido.last
 *.data*
 *.eld
 recentf
+custom.el
