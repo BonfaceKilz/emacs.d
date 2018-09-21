@@ -59,8 +59,9 @@
       (symbol-value 'helm-alive-p)))
 (add-to-list 'golden-ratio-inhibit-functions 'pl/helm-alive-p)
 
-;; setup helm
+;; initial setups for specific modes
 (require 'setup-helm)
+(require 'setup-yasnippet)
 
 (require 'zoom-window)
 (global-set-key (kbd "C-x C-z") 'zoom-window-zoom)
