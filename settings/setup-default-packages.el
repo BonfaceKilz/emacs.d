@@ -1,33 +1,34 @@
 ;; Setup default packages
 
 (defvar bonface/packages '(ac-slime
-                          auto-complete
-                          ess
-                          f
-                          feature-mode
-                          flycheck
-                          go-autocomplete
-                          go-eldoc
-                          go-mode
-			  golden-ratio
-                          graphviz-dot-mode
-                          haml-mode
-                          htmlize
-                          magit
-                          markdown-mode
-                          marmalade
-                          org
-                          paredit
-                          php-refactor-mode
-                          powerline
-                          rvm
-                          smartparens
-                          smex
-                          web-mode
-			  undo-tree
-                          ;;winner-mode
-                          writegood-mode
-                          yaml-mode)
+                           auto-complete
+                           avy
+                           ess
+                           f
+                           feature-mode
+                           flycheck
+                           go-autocomplete
+                           go-eldoc
+                           go-mode
+                           golden-ratio
+                           graphviz-dot-mode
+                           haml-mode
+                           htmlize
+                           magit
+                           markdown-mode
+                           marmalade
+                           org
+                           paredit
+                           php-refactor-mode
+                           powerline
+                           rvm
+                           smartparens
+                           smex
+                           web-mode
+                           undo-tree
+                           ;;winner-mode
+                           writegood-mode
+                           yaml-mode)
   "Default packages")
 
 (defun bonface/packages-installed-p ()
