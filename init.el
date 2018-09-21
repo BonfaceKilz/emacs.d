@@ -70,10 +70,6 @@
   (setq-default ispell-program-name "/usr/bin/aspell"))
 (setq-default ispell-list-command "list")
 
-;; Powerline
-;;(require 'powerline)
-;;(powerline-default-theme)
-
 (eval-after-load 'org '(require 'setup-org))
  
 ;; Map files to modes
