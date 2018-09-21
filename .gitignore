@@ -1,0 +1,12 @@
+auto-save-list
+backups
+elpa
+*~
+.smex-items
+abbrev_defs
+ac-comphist.dat
+history
+ido.last
+*.data*
+*.eld
+recentf
