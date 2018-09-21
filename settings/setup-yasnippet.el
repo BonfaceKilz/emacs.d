@@ -1,4 +1,5 @@
 (require 'yasnippet)
+(require 'yasnippet-snippets )
 
 ;; Use only own snippets, do not use bundled ones
 (setq yas-snippet-dirs '("~/.emacs.d/snippets"))
@@ -11,7 +12,7 @@
 (defun yas/goto-end-of-active-field ()
   (interactive)
   (let* ((snippet (car (yas--snippets-at-point)))
-        (position (yas--field-end (yas--snippet-active-field snippet))))
+         (position (yas--field-end (yas--snippet-active-field snippet))))
     (if (= (point) position)
         (move-end-of-line 1)
       (goto-char position))))
@@ -19,7 +20,7 @@
 (defun yas/goto-start-of-active-field ()
   (interactive)
   (let* ((snippet (car (yas--snippets-at-point)))
-        (position (yas--field-start (yas--snippet-active-field snippet))))
+         (position (yas--field-start (yas--snippet-active-field snippet))))
     (if (= (point) position)
         (move-beginning-of-line 1)
       (goto-char position))))
