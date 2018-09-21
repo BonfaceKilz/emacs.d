@@ -30,7 +30,8 @@
                            ;;winner-mode
                            writegood-mode
                            yaml-mode
-			   yasnippet)
+			   yasnippet
+			   yasnippet-snippets)
   "Default packages")
 
 (defun bonface/packages-installed-p ()
