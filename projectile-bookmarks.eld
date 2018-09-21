@@ -1,1 +1,0 @@
-("~/.emacs.d.old/" "~/.emacs.d/")
