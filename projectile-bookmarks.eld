@@ -1,1 +1,0 @@
-("~/workspace/learning/SICP/" "~/workspace/work/blog_articles/" "~/workspace/work/kensville/" "~/workspace/learning/google-interview-university/")
