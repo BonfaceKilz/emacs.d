@@ -32,5 +32,6 @@
 
 ;; PHP
 (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
+(add-hook 'php-mode-hook 'php-enable-psr2-coding-style)
 
 (provide 'mode-mappings)
