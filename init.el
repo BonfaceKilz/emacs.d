@@ -64,6 +64,23 @@
 (eval-after-load 'magit '(require 
                           'setup-magit))
 
+;; Default setup of smartparens
+(require 'smartparens-config)
+(setq sp-autoescape-string-quote nil)
+(--each '(css-mode-hook
+          restclient-mode-hook
+          js-mode-hook
+          java-mode
+          ruby-mode
+          markdown-mode
+          groovy-mode
+          scala-mode)
+(add-hook it 'turn-on-smartparens-mode))
+
+;; Language specific setup files
+(eval-after-load 'js2-mode '(require 'setup-js2-mode))
+(eval-after-load 'markdown-mode '(require 'setup-markdown-mode))
+
 ;; TODO add deft
 ;; Golden ratio
 (golden-ratio-mode 1)
