@@ -78,8 +78,17 @@
 (add-hook it 'turn-on-smartparens-mode))
 
 ;; Language specific setup files
+;; initial setups for specific modes
+(require 'setup-helm)
+(require 'setup-yasnippet)
+
 (eval-after-load 'js2-mode '(require 'setup-js2-mode))
 (eval-after-load 'markdown-mode '(require 'setup-markdown-mode))
+
+;; Highlight escape sequences
+(require 'highlight-escape-sequences)
+(hes-mode)
+(put 'font-lock-regexp-grouping-backslash 'face-alias 'font-lock-builtin-face)
 
 ;; TODO add deft
 ;; Golden ratio
@@ -90,12 +99,12 @@
       (symbol-value 'helm-alive-p)))
 (add-to-list 'golden-ratio-inhibit-functions 'pl/helm-alive-p)
 
-;; initial setups for specific modes
-(require 'setup-helm)
-(require 'setup-yasnippet)
 
 (require 'zoom-window)
 (global-set-key (kbd "C-x C-z") 'zoom-window-zoom)
+
+(require 'expand-region)
+(global-set-key (kbd "C-=") 'er/expand-region)
 
 ;; autocomplete
 (require 'auto-complete-config)
