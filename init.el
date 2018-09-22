@@ -149,4 +149,13 @@
 ;; Map files to modes
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
 
+;; Fill column indicator
+(require 'fill-column-indicator)
+(setq fci-rule-color "#111122")
 
+;; ibuffer
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+
+;; Turn on `display-time-mode' if you don't use an external bar.
+(setq display-time-default-load-average nil)
+(display-time-mode t)
