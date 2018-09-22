@@ -46,11 +46,6 @@
 (setq-default save-place t)
 (setq save-place-file (expand-file-name ".places" user-emacs-directory))
 
-(eval-after-load 'org '(require 'setup-org))
-(eval-after-load 'php-mode '(require 'php-ext))
-(eval-after-load 'magit '(require 
-                          'setup-magit))
-
 (require 'setup-init)
 (require 'setup-envs)
 (require 'setup-package)
@@ -61,6 +56,11 @@
 (require 'appearance)
 (require 'setup-avy)
 ;;(require 'setup-exwm)
+
+(eval-after-load 'org '(require 'setup-org))
+(eval-after-load 'php-mode '(require 'php-ext))
+(eval-after-load 'magit '(require 
+                          'setup-magit))
 
 ;; TODO add deft
 ;; Golden ratio
