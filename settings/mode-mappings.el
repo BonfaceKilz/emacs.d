@@ -34,4 +34,11 @@
 (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
 (add-hook 'php-mode-hook 'php-enable-psr2-coding-style)
 
+;; Javascript
+(require 'js2-refactor)
+(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+(add-hook 'js2-mode-hook 'js2-refactor-mode)
+(setq js2-skip-preprocessor-directives t)
+(js2r-add-keybindings-with-prefix "C-c C-m")
+
 (provide 'mode-mappings)

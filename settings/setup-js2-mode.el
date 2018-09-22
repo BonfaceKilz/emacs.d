@@ -30,12 +30,12 @@
 ;; Set up wrapping of pairs, with the possiblity of semicolons thrown into the mix
 
 (defun js2r--setup-wrapping-pair (open close)
-  (define-key js2-mode-map (read-kbd-macro open) (λ (js2r--self-insert-wrapping open close)))
+  (define-key js2-mode-map (read-kbd-macro open) (lambda (js2r--self-insert-wrapping open close)))
   (unless (s-equals? open close)
-    (define-key js2-mode-map (read-kbd-macro close) (λ (js2r--self-insert-closing open close)))))
+    (define-key js2-mode-map (read-kbd-macro close) (lambda (js2r--self-insert-closing open close)))))
 
 (define-key js2-mode-map (kbd ";")
-  (λ (if (looking-at ";")
+  (lambda (if (looking-at ";")
          (forward-char)
        (funcall 'self-insert-command 1))))
 
@@ -154,7 +154,7 @@
 
 (define-key js2-mode-map (kbd "C-k") 'js2r-kill)
 
-(define-key js2-mode-map (kbd "M-j") (λ (join-line -1)))
+(define-key js2-mode-map (kbd "M-j") (lambda (join-line -1)))
 
 (comment ;; avoid confusing shorthands
  ;; Use lambda for anonymous functions
