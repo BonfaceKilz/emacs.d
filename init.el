@@ -114,6 +114,19 @@
 (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
 (global-set-key (kbd "C-S-<mouse-1>") 'mc/add-cursor-on-click)
 
+(require 'eproject)
+
+;; setting up smart-forward
+(require 'smart-forward)
+(global-set-key (kbd "M-<up>") 'smart-up)
+(global-set-key (kbd "M-<down>") 'smart-down)
+(global-set-key (kbd "M-<left>") 'smart-backward)
+(global-set-key (kbd "M-<right>") 'smart-forward)
+
+(require 'change-inner)
+(global-set-key (kbd "M-S-i") 'change-inner)
+(global-set-key (kbd "M-S-o") 'change-outer)
+
 ;; autocomplete
 (require 'auto-complete-config)
 (ac-config-default)
