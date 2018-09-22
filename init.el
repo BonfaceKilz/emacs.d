@@ -52,6 +52,7 @@
 (require 'setup-default-packages)
 (require 'sane-defaults)
 (require 'setup-eshell)
+(require 'setup-perspective)
 (require 'my-misc)
 (require 'appearance)
 (require 'setup-avy)
