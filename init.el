@@ -53,6 +53,7 @@
 (require 'sane-defaults)
 (require 'setup-eshell)
 (require 'setup-perspective)
+(require 'setup-paredit)
 (require 'my-misc)
 (require 'appearance)
 (require 'setup-avy)
