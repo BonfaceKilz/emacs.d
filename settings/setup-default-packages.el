@@ -5,6 +5,7 @@
                            avy
                            ess
                            f
+			   fill-column-indicator
                            feature-mode
                            flycheck
                            go-autocomplete
@@ -14,21 +15,27 @@
 			   guide-key
                            graphviz-dot-mode
                            haml-mode
+			   highlight-escape-sequences
                            htmlize
                            magit
                            markdown-mode
                            marmalade
+			   move-text
+			   nodejs-repl
                            org
                            paredit
 			   php-mode
                            php-refactor-mode
                            powerline
+			   prodigy
+			   projectile
                            rvm
                            smartparens
                            smex
+			   string-edit
                            web-mode
                            undo-tree
-                           ;;winner-mode
+			   visual-regexp
                            writegood-mode
                            yaml-mode
 			   yasnippet
