@@ -28,6 +28,12 @@
       (expand-file-name "site-lisp" user-emacs-directory))
 (add-to-list 'load-path site-lisp-dir)
 
+;; Functions (load all files in defuns-dir)
+(setq defuns-dir (expand-file-name "defuns" user-emacs-directory))
+ (dolist (file (directory-files defuns-dir t "\\w+"))
+   (when (file-regular-p file)
+ (load file)))
+
 ;; Set up vendor dir
 (defvar bonface/vendor-dir (expand-file-name "vendor" user-emacs-directory))
 (add-to-list 'load-path bonface/vendor-dir)
