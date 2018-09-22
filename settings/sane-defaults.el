@@ -58,16 +58,16 @@
 (setq history-length 1000)
 
 ;; Undo/redo window configuration with C-c <left>/<right>
-;; (winner-mode 1)
+(winner-mode 1)
 
-;; No tabs
-(setq tab-width 2
-      indent-tabs-mode nil)
+;; Never insert tabs
+(set-default 'indent-tabs-mode nil)
 
 ;; Show me empty lines after buffer end
 (set-default 'indicate-empty-lines t)
-(when (not indicate-empty-lines)
-  (toggle-indicate-empty-lines))
+
+;; Show me empty lines after buffer end
+(set-default 'indicate-empty-lines t)
 
 ;; Easily navigate sillycased words
 (global-subword-mode 1)
@@ -109,6 +109,23 @@
 (setq ediff-diff-options "-w")
 (setq ediff-split-window-function 'split-window-horizontally)
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
+
+;; Nic says eval-expression-print-level needs to be set to nil (turned off) so
+;; that you can always see what's happening.
+(setq eval-expression-print-level nil)
+
+;; When popping the mark, continue popping until the cursor actually moves
+;; Also, if the last command was a copy - skip past all the expand-region cruft.
+(defadvice pop-to-mark-command (around ensure-new-position activate)
+  (let ((p (point)))
+    (when (eq last-command 'save-region-or-current-line)
+      ad-do-it
+      ad-do-it
+      ad-do-it)
+    (dotimes (i 10)
+      (when (= p (point)) ad-do-it))))
+
+(setq set-mark-command-repeat-pop t)
 
 ;; Offer to create parent directories if they do not exist
 ;; http://iqbalansari.github.io/blog/2014/12/07/automatically-create-parent-directories-on-visiting-a-new-file-in-emacs/
