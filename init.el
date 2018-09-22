@@ -34,6 +34,11 @@
   (when (file-directory-p project)
     (add-to-list 'load-path project)))
 
+;; Write backup files to own directory
+(setq backup-directory-alist
+      `(("." . ,(expand-file-name
+		 (concat user-emacs-directory "backups")))))
+
 (add-to-list 'load-path settings-dir)
 (add-to-list 'load-path site-lisp-dir)
 (add-to-list 'load-path "~/.emacs.d/elpa/xelb-0.15")
