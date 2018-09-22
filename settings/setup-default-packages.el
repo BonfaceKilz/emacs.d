@@ -3,6 +3,7 @@
 (defvar bonface/packages '(ac-slime
                            auto-complete
                            avy
+			   diff-hl
                            ess
                            f
 			   fill-column-indicator
