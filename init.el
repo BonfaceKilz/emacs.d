@@ -124,14 +124,17 @@
 
 ;; setting up smart-forward
 (require 'smart-forward)
-(global-set-key (kbd "M-<up>") 'smart-up)
-(global-set-key (kbd "M-<down>") 'smart-down)
-(global-set-key (kbd "M-<left>") 'smart-backward)
-(global-set-key (kbd "M-<right>") 'smart-forward)
+(global-set-key (kbd "M-S-<up>") 'smart-up)
+(global-set-key (kbd "M-S-<down>") 'smart-down)
+(global-set-key (kbd "M-S-<left>") 'smart-backward)
+(global-set-key (kbd "M-S-<right>") 'smart-forward)
 
 (require 'change-inner)
 (global-set-key (kbd "M-S-i") 'change-inner)
 (global-set-key (kbd "M-S-o") 'change-outer)
+
+;; Bind Imenu M-i
+(global-set-key (kbd "M-i") 'imenu)
 
 ;; autocomplete
 (require 'auto-complete-config)
@@ -161,6 +164,10 @@
 
 ;; ibuffer
 (global-set-key (kbd "C-x C-b") 'ibuffer)
+
+;; move text
+(move-text-default-bindings)
+(require 'move-text)
 
 ;; Turn on `display-time-mode' if you don't use an external bar.
 (setq display-time-default-load-average nil)
