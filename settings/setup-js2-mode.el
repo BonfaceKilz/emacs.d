@@ -22,6 +22,11 @@
 (add-hook 'js2-mode-hook (lambda () (flycheck-mode 1)))
 
 (require 'js2-refactor)
+(js2r-add-keybindings-with-prefix "C-c C-r")
+
+(add-hook 'js2-mode-hook (lambda ()
+                           (add-hook 'xref-backend-functions #'xref-js2-xref-backend nil t)))
+(setq js2-skip-preprocessor-directives t)
 (js2r-add-keybindings-with-prefix "C-c C-m")
 
 (require 'js2-imenu-extras)
@@ -152,7 +157,7 @@
 (define-key js2-mode-map (kbd "C-x C-r") 'js2r-rename-current-buffer-file)
 (define-key js2-mode-map (kbd "C-x C-k") 'js2r-delete-current-buffer-file)
 
-(define-key js2-mode-map (kbd "C-k") 'js2r-kill)
+(define-key js2-mode-map (kbd "C-k") #'js2r-kill)
 
 (define-key js2-mode-map (kbd "M-j") (lambda (join-line -1)))
 
@@ -266,5 +271,9 @@
                     (:else 0)))))
     (unless first-line
       (indent-line-to offset))))
+
+;; js-mode (which js2 is based on) binds "M-." which conflicts with xref, so
+;; unbind it.
+(define-key js-mode-map (kbd "M-.") nil)
 
 (provide 'setup-js2-mode)
