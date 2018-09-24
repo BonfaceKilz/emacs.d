@@ -77,6 +77,7 @@
           restclient-mode-hook
           js-mode-hook
           java-mode
+          php-mode
           ruby-mode
           markdown-mode
           groovy-mode
