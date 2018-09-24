@@ -1,6 +1,11 @@
 ;; Allow pasting selection outside of Emacs
 (setq x-select-enable-clipboard t)
 
+;; Set some defaults
+(smartparens-global-mode 1)
+(global-visual-line-mode 1)
+(global-linum-mode 1)
+
 ;; Auto refresh buffers
 (global-auto-revert-mode 1)
 

@@ -39,10 +39,10 @@
   (unless (s-equals? open close)
     (define-key js2-mode-map (read-kbd-macro close) (lambda (js2r--self-insert-closing open close)))))
 
-(define-key js2-mode-map (kbd ";")
-  (lambda (if (looking-at ";")
-         (forward-char)
-       (funcall 'self-insert-command 1))))
+;; (define-key js2-mode-map (kbd ";")
+;;   (lambda (if (looking-at ";")
+;;          (forward-char)
+;;        (funcall 'self-insert-command 1))))
 
 (defun js2r--self-insert-wrapping (open close)
   (cond

@@ -97,13 +97,7 @@
 (put 'font-lock-regexp-grouping-backslash 'face-alias 'font-lock-builtin-face)
 
 ;; TODO add deft
-;; Golden ratio
-(golden-ratio-mode 1)
-;; disable interference from golden ratio
-(defun pl/helm-alive-p ()
-  (if (boundp 'helm-alive-p)
-      (symbol-value 'helm-alive-p)))
-(add-to-list 'golden-ratio-inhibit-functions 'pl/helm-alive-p)
+
 
 
 (require 'zoom-window)
@@ -154,7 +148,6 @@
   (setq-default ispell-program-name "/usr/bin/aspell"))
 (setq-default ispell-list-command "list")
 
-
 ;; Map files to modes
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
 
@@ -166,9 +159,18 @@
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 
 ;; move text
-(move-text-default-bindings)
 (require 'move-text)
+(move-text-default-bindings)
 
 ;; Turn on `display-time-mode' if you don't use an external bar.
 (setq display-time-default-load-average nil)
 (display-time-mode t)
+
+;; Golden ratio
+(require 'golden-ratio)
+(golden-ratio-mode 1)
+;; disable interference from golden ratio
+(defun pl/helm-alive-p ()
+  (if (boundp 'helm-alive-p)
+      (symbol-value 'helm-alive-p)))
+(add-to-list 'golden-ratio-inhibit-functions 'pl/helm-alive-p)
