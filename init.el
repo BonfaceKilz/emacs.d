@@ -98,8 +98,6 @@
 
 ;; TODO add deft
 
-
-
 (require 'zoom-window)
 (global-set-key (kbd "C-x C-z") 'zoom-window-zoom)
 
@@ -147,6 +145,7 @@
     (setq-default ispell-program-name "/usr/local/bin/aspell")
   (setq-default ispell-program-name "/usr/bin/aspell"))
 (setq-default ispell-list-command "list")
+
 
 ;; Map files to modes
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
