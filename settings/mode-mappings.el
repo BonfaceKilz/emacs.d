@@ -33,6 +33,7 @@
 ;; PHP
 (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
 (add-hook 'php-mode-hook 'php-enable-psr2-coding-style)
+(add-hook 'php-mode-hook 'php-refactor-mode)
 
 ;; Javascript
 (require 'js2-mode)
