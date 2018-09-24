@@ -9,6 +9,7 @@
 			   fill-column-indicator
                            feature-mode
                            flycheck
+                           gist
                            go-autocomplete
                            go-eldoc
                            go-mode

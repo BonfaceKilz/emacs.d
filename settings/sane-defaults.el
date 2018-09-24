@@ -71,9 +71,6 @@
 ;; Show me empty lines after buffer end
 (set-default 'indicate-empty-lines t)
 
-;; Show me empty lines after buffer end
-(set-default 'indicate-empty-lines t)
-
 ;; Easily navigate sillycased words
 (global-subword-mode 1)
 

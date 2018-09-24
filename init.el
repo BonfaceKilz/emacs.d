@@ -83,6 +83,9 @@
           scala-mode)
 (add-hook it 'turn-on-smartparens-mode))
 
+;; Font lock dash.el
+(eval-after-load "dash" '(dash-enable-font-lock))
+
 ;; Language specific setup files
 ;; initial setups for specific modes
 (require 'setup-helm)
@@ -173,3 +176,10 @@
   (if (boundp 'helm-alive-p)
       (symbol-value 'helm-alive-p)))
 (add-to-list 'golden-ratio-inhibit-functions 'pl/helm-alive-p)
+
+;; buffer-move
+(require 'buffer-move)
+
+;; autopair
+(require 'autopair)
+(autopair-global-mode)
