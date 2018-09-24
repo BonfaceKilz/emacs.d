@@ -4,6 +4,7 @@
                            auto-complete
                            avy
 			   diff-hl
+                           elpy
                            ess
                            f
 			   fill-column-indicator

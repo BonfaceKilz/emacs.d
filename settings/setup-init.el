@@ -12,4 +12,6 @@
 (setq inhibit-splash-screen t
       inhibit-scratch-message nil
       initial-major-mode 'org-mode)
+
+(elpy-enable)
 (provide 'setup-init)
