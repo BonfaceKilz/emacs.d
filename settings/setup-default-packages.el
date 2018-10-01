@@ -39,7 +39,6 @@
                            py-autopep8
                            rvm
                            smartparens
-                           smex
 			   string-edit
 			   switch-window
                            web-mode

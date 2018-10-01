@@ -154,6 +154,8 @@
 ;; Map files to modes
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
 
+(global-set-key (kbd "C-x b") 'switch-to-buffer)
+
 ;; Fill column indicator
 (require 'fill-column-indicator)
 (setq fci-rule-color "#111122")
