@@ -29,8 +29,6 @@
 (setq helm-buffers-fuzzy-matching t
       helm-recentf-fuzzy-match    t)
 
-(add-to-list 'golden-ratio-inhibit-functions 'pl/helm-alive-p)
-
 (helm-mode 1)
 
 (define-key global-map [remap find-file] 'helm-find-files)
