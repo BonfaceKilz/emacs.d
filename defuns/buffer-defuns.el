@@ -8,17 +8,6 @@
 (defun mode-keymap (mode-sym)
   (symbol-value (intern (concat (symbol-name mode-sym) "-map"))))
 
-;; (defun* buffer-local-set-key (key action)
-;;   (when buffer-local-mode
-;;     (define-key (mode-keymap buffer-local-mode)
-;;       key action)
-;;     (return-from set-key-buffer-local))
-;;   (let* ((mode-name-loc (gensym "-blm")))
-;;     (eval `(define-minor-mode ,mode-name-loc nil nil nil (make-sparse-keymap)))
-;;     (setq buffer-local-mode mode-name-loc)
-;;     (funcall mode-name-loc 1)
-;;     (define-key (mode-keymap mode-name-loc) key action)))
-
 (defun create-scratch-buffer nil
   "create a new scratch buffer to work in. (could be *scratch* - *scratchX*)"
   (interactive)
@@ -173,3 +162,7 @@ Including indent-buffer, which should not be called automatically on save."
          (files (mapcar 'car recent-files))
          (file (completing-read "Choose recent file: " files)))
     (find-file (cdr (assoc file recent-files)))))
+
+(defun pl/helm-alive-p ()
+  (if (boundp 'helm-alive-p)
+      (symbol-value 'helm-alive-p)))
