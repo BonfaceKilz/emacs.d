@@ -11,6 +11,7 @@
 			   fill-column-indicator
                            feature-mode
                            flycheck
+			   focus
                            gist
                            go-autocomplete
                            go-eldoc
