@@ -3,6 +3,7 @@
 (defvar bonface/packages '(ac-slime
                            auto-complete
                            avy
+                           better-defaults
 			   diff-hl
                            elpy
                            ess
@@ -32,6 +33,7 @@
                            powerline
 			   prodigy
 			   projectile
+                           py-autopep8
                            rvm
                            smartparens
                            smex
