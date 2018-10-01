@@ -56,14 +56,13 @@
 (require 'setup-envs)
 (require 'setup-package)
 (require 'setup-default-packages)
-(require 'sane-defaults)
 (require 'setup-eshell)
 (require 'setup-perspective)
 (require 'setup-paredit)
 (require 'my-misc)
 (require 'appearance)
 (require 'setup-avy)
-;;(require 'setup-exwm)
+(require 'setup-exwm)
 
 (eval-after-load 'org '(require 'setup-org))
 (eval-after-load 'php-mode '(require 'php-ext))
@@ -171,12 +170,9 @@
 
 ;; Golden ratio
 (require 'golden-ratio)
-(golden-ratio-mode 1)
 ;; disable interference from golden ratio
-(defun pl/helm-alive-p ()
-  (if (boundp 'helm-alive-p)
-      (symbol-value 'helm-alive-p)))
 (add-to-list 'golden-ratio-inhibit-functions 'pl/helm-alive-p)
+(golden-ratio-mode 1)
 
 ;; buffer-move
 (require 'buffer-move)
@@ -184,3 +180,6 @@
 ;; autopair
 (require 'autopair)
 (autopair-global-mode)
+
+;; ac mode
+(define-key ac-mode-map (kbd "M-TAB") 'auto-complete)
