@@ -63,6 +63,7 @@
 (require 'appearance)
 (require 'setup-avy)
 (require 'setup-exwm)
+(require 'setup-switch-window)
 
 (eval-after-load 'org '(require 'setup-org))
 (eval-after-load 'php-mode '(require 'php-ext))
