@@ -19,7 +19,9 @@
 			   guide-key
                            graphviz-dot-mode
                            haml-mode
+			   helm-exwm
 			   highlight-escape-sequences
+			   highlight-symbol
                            htmlize
                            magit
                            markdown-mode
@@ -38,6 +40,7 @@
                            smartparens
                            smex
 			   string-edit
+			   switch-window
                            web-mode
                            undo-tree
 			   visual-regexp
