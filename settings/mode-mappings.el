@@ -34,7 +34,8 @@
 (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
 (add-hook 'php-mode-hook 'php-enable-psr2-coding-style)
 (add-hook 'php-mode-hook 'php-refactor-mode)
-
+(require 'php-auto-yasnippets)
+(define-key php-mode-map (kbd "C-c C-y") 'yas/create-php-snippet)
 ;; Javascript
 (require 'js2-mode)
 (require 'xref-js2)
