@@ -1,7 +1,7 @@
 ;; Initial setup
 
 ;; Shrinking fringes to 1 pixel
-;; (fringe-mode 1)
+(fringe-mode 1)
 
 ;; Remove security vulnerability
 (eval-after-load "enriched"
