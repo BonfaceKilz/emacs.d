@@ -2,11 +2,11 @@
 (setq x-select-enable-clipboard t)
 
 ;; Set some defaults
-(global-visual-line-mode 1)
-(global-linum-mode 1)
+(global-visual-line-mode)
+(global-linum-mode)
 
 ;; Auto refresh buffers
-(global-auto-revert-mode 1)
+(global-auto-revert-mode)
 
 ;; Also auto refresh dired, but be quiet about it
 (setq global-auto-revert-non-file-buffers t)
