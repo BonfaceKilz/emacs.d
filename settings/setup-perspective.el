@@ -4,6 +4,8 @@
 ;; Enable perspective mode
 (persp-mode t)
 
+(require 'persp-projectile)
+
 ;; TODO: implement persp-last as before-advice on persp-switch (?)
 
 (defmacro custom-persp (name &rest body)
