@@ -50,9 +50,9 @@
 (setq-default save-place t)
 (setq save-place-file (expand-file-name ".places" user-emacs-directory))
 
-(require 'setup-exwm)
-(require 'setup-init)
+
 (require 'setup-envs)
+(require 'setup-init)
 (require 'setup-package)
 (require 'setup-default-packages)
 (require 'setup-eshell)
@@ -62,6 +62,8 @@
 (require 'appearance)
 (require 'setup-avy)
 (require 'setup-switch-window)
+(require 'setup-exwm)
+(require 'sane-defaults)
 
 (eval-after-load 'org '(require 'setup-org))
 (eval-after-load 'php-mode '(require 'php-ext))
