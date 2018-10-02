@@ -1,7 +1,41 @@
 ;; Load exwm
 (require 'exwm)
-(require 'exwm-config)
-(exwm-config-default)
+
+;; Set the initial workspace number.
+(setq exwm-workspace-number 4)
+;; Make class name the buffer name
+(add-hook 'exwm-update-class-hook
+          (lambda ()
+            (exwm-workspace-rename-buffer exwm-class-name)))
+;; 's-r': Reset
+(exwm-input-set-key (kbd "s-r") #'exwm-reset)
+;; 's-w': Switch workspace
+(exwm-input-set-key (kbd "s-w") #'exwm-workspace-switch)
+;; 's-N': Switch to certain workspace
+(dotimes (i 10)
+  (exwm-input-set-key (kbd (format "s-%d" i))
+                      `(lambda ()
+                         (interactive)
+                         (exwm-workspace-switch-create ,i))))
+;; 's-&': Launch application
+(exwm-input-set-key (kbd "s-&")
+                    (lambda (command)
+                      (interactive (list (read-shell-command "$ ")))
+                      (start-process-shell-command command nil command)))
+;; Line-editing shortcuts
+(setq exwm-input-simulation-keys
+      '(([?\C-b] . [left])
+        ([?\C-f] . [right])
+        ([?\C-p] . [up])
+        ([?\C-n] . [down])
+        ([?\C-a] . [home])
+        ([?\C-e] . [end])
+        ([?\M-v] . [prior])
+        ([?\C-v] . [next])
+        ([?\C-d] . [delete])
+        ([?\C-k] . [S-end delete])))
+;; Enable EXWM
+(exwm-enable)
 
 (require 'exwm-systemtray)
 (setq exwm-systemtray-height 16)
@@ -9,9 +43,9 @@
 
 (require 'exwm-randr)
 (setq exwm-randr-workspace-output-plist '(0 "eDP-1"
-					    1 "eDP-1"
-					    2 "HDMI-1"
-					    3 "HDMI-1")
+                                            1 "eDP-1"
+                                            2 "HDMI-1"
+                                            3 "HDMI-1")
       )
 (add-hook 'exwm-randr-screen-change-hook
           (lambda ()
