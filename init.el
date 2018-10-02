@@ -1,10 +1,8 @@
-;; Added by Package.el.  This must come before configurations of
+23;; Added by Package.el.  This must come before configurations of
 ;; installed packages.  Don't delete this line.  If you don't want it,
 ;; just comment it out by adding a semicolon to the start of the line.
 ;; You may delete these explanatory comments.
 (package-initialize)
-(setq xcb:debug-on t)
-;;(setq debug-on-error t)
 
 (setq user-full-name "Bonface M. K.")
 (setq user-mail-address "bonfacemunyoki@gmail.com")
@@ -52,6 +50,7 @@
 (setq-default save-place t)
 (setq save-place-file (expand-file-name ".places" user-emacs-directory))
 
+(require 'setup-exwm)
 (require 'setup-init)
 (require 'setup-envs)
 (require 'setup-package)
@@ -62,7 +61,6 @@
 (require 'my-misc)
 (require 'appearance)
 (require 'setup-avy)
-(require 'setup-exwm)
 (require 'setup-switch-window)
 
 (eval-after-load 'org '(require 'setup-org))
