@@ -4,6 +4,7 @@
 (exwm-config-default)
 
 (require 'exwm-systemtray)
+(setq exwm-systemtray-height 16)
 (exwm-systemtray-enable)
 
 (require 'exwm-randr)
@@ -16,7 +17,6 @@
           (lambda ()
             (start-process-shell-command
              "xrandr" nil "xrandr --output eDP-1 --right-of HDMI-1 --auto")))
-(exwm-randr-enable)
 
 (exwm-randr-enable)
 
