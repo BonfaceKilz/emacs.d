@@ -1,7 +1,9 @@
 ;; Initial setup
-
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
 ;; Shrinking fringes to 1 pixel
-(fringe-mode 1)
+(fringe-mode 7)
 
 ;; Remove security vulnerability
 (eval-after-load "enriched"
