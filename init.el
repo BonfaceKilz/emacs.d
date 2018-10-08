@@ -135,6 +135,7 @@
 ;; autocomplete
 (require 'auto-complete-config)
 (ac-config-default)
+(setq ac-show-menu-immediately-on-auto-complete t)
 
 ;; guide-key
 (require 'guide-key)
@@ -186,3 +187,7 @@
 
 ;; ac mode
 (define-key ac-mode-map (kbd "M-TAB") 'auto-complete)
+
+;; desktop modes
+(require desktop-environment-mode)
+(desktop-environment-mode)
