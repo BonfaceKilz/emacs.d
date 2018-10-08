@@ -4,6 +4,7 @@
                            auto-complete
                            avy
                            better-defaults
+                           desktop-environment-mode
 			   diff-hl
                            elpy
                            ess
