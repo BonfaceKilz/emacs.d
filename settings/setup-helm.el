@@ -50,4 +50,6 @@
 
 (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
 
+(require 'helm-exwm)
+(global-set-key (kbd "C-c b") 'helm-exwm)
 (provide 'setup-helm)
