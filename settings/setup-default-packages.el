@@ -4,10 +4,10 @@
                            auto-complete
                            avy
                            better-defaults
-                           desktop-environment-mode
 			   diff-hl
                            elpy
                            ess
+                           eshell-autojump
                            f
 			   fill-column-indicator
                            feature-mode

@@ -30,6 +30,9 @@
        (with-face "$" :foreground "#2345ba"))
      " ")))
 
+(eval-after-load 'eshell
+  '(require 'eshell-autojump nil t))
+
 (setq eshell-prompt-function 'eshell/my-prompt)
 (setq eshell-highlight-prompt nil)
 (setq eshell-prompt-regexp "^[^#$\n]+[#$] ")
