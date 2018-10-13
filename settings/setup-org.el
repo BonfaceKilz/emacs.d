@@ -11,8 +11,10 @@
 
 ;; Org-agenda
 
-
+(global-set-key (kbd "C-c l") 'org-link)
 (global-set-key (kbd "C-c a") 'org-agenda)
+(global-set-key (kbd "C-c b") 'org-switchb)
+(global-set-key (kbd "C-c c") 'org-capture)
 (setq org-agenda-show-log t
       org-agenda-todo-ignore-scheduled t
       org-agenda-todo-ignore-deadlines t)
@@ -21,13 +23,13 @@
 ;; Org habit
 (require 'org)
 (require 'org-install)
-;; (require 'org-habit)
-;; (add-to-list 'org-modules "org-habit")
-;; (setq org-habit-preceding-days 7
-;;       org-habit-following-days 1
-;;       org-habit-graph-column 80
-;;       org-habit-show-habits-only-for-today t
-;;       org-habit-show-all-today t)
+(require 'org-habit)
+(add-to-list 'org-modules "org-habit")
+(setq org-habit-preceding-days 7
+      org-habit-following-days 1
+      org-habit-graph-column 80
+      org-habit-show-habits-only-for-today t
+      org-habit-show-all-today t)
 
 (require 'ob)
 
