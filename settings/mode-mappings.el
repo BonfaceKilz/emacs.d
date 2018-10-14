@@ -19,6 +19,9 @@
 (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
 (add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))
 
+;; haskell
+(add-to-list 'auto-mode-alist '("\\.hs$" . haskell-mode))
+
 ;; markdown
 (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.mdown$" . markdown-mode))
@@ -47,4 +50,6 @@
   (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
   (add-hook 'elpy-mode-hook 'flycheck-mode))
 
+;; Info mode
+(add-to-list 'auto-mode-alist '("\\info.gz$" . info-mode))
 (provide 'mode-mappings)
