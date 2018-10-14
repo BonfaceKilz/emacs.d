@@ -79,6 +79,11 @@
   (save-some-buffers)
   (start-process-shell-command "logout" nil "lxsession-logout"))
 
+;; Enable this when using exwm outside lxde
+;; (global-set-key (kbd "C-x C-c") 'save-buffers-kill-terminal)
+
+;; comment out this when using exwm outside lxde
+(global-set-key (kbd "C-x C-c") 'exwm-logout)
 (exwm-randr-enable)
 
 (provide 'setup-exwm)
