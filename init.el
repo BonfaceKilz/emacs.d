@@ -63,6 +63,7 @@
 (require 'setup-avy)
 (require 'setup-switch-window)
 (require 'setup-exwm)
+(require 'setup-haskell)
 (require 'sane-defaults)
 
 (eval-after-load 'org '(require 'setup-org))
