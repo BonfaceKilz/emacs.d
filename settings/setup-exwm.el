@@ -7,6 +7,7 @@
 (add-hook 'exwm-update-class-hook
           (lambda ()
             (exwm-workspace-rename-buffer exwm-class-name)))
+
 ;; 's-r': Reset
 (exwm-input-set-key (kbd "s-r") #'exwm-reset)
 ;; 's-w': Switch workspace
@@ -37,9 +38,10 @@
 ;; Enable EXWM
 (exwm-enable)
 
-(require 'exwm-systemtray)
-(setq exwm-systemtray-height 16)
-(exwm-systemtray-enable)
+;; Uncomment this when using exwm outside lxde
+;; (require 'exwm-systemtray)
+;; (setq exwm-systemtray-height 16)
+;; (exwm-systemtray-enable)
 
 (require 'exwm-randr)
 (setq exwm-randr-workspace-output-plist '(0 "eDP-1"
@@ -70,6 +72,12 @@
          "--output" default-output "--off")
         (setq exwm-randr-workspace-output-plist (list 0 (match-string 1)))))))
 
+(defun exwm-logout ()
+  (interactive)
+  (bookmark-save)
+  (recentf-save-list)
+  (save-some-buffers)
+  (start-process-shell-command "logout" nil "lxsession-logout"))
 
 (exwm-randr-enable)
 
