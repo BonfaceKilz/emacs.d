@@ -31,6 +31,7 @@
 			   move-text
 			   nodejs-repl
                            org
+                           org-present
                            paredit
 			   php-mode
                            php-refactor-mode
