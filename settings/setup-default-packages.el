@@ -1,11 +1,13 @@
 ;; Setup default packages
 
 (defvar bonface/packages '(ac-slime
+                           all-the-icons
                            auto-complete
                            avy
                            better-defaults
 			   diff-hl
                            elpy
+                           epresent
                            ess
                            eshell-autojump
                            f
@@ -29,9 +31,9 @@
                            markdown-mode
                            marmalade
 			   move-text
+                           neotree
 			   nodejs-repl
                            org
-                           org-present
                            paredit
 			   php-mode
                            php-refactor-mode

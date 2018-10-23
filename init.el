@@ -65,6 +65,8 @@
 (require 'setup-exwm)
 (require 'setup-haskell)
 (require 'sane-defaults)
+(require 'setup-neotree)
+(require 'all-the-icons)
 
 (eval-after-load 'org '(require 'setup-org))
 (eval-after-load 'php-mode '(require 'php-ext))
@@ -195,3 +197,10 @@
 
 ;; display battery
 (display-battery-mode)
+
+;; Emacs Application Framework
+;; (add-to-list 'load-path (expand-file-name "packages/emacs-application-framework"))
+;; (require 'eaf)
+;; (use-package eaf
+;;   :load-path "packages/emacs-application-framework"
+;;   )
