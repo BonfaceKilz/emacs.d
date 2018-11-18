@@ -198,6 +198,11 @@
 ;; display battery
 (display-battery-mode)
 
+;; Enable viewing recent files
+(recentf-mode 1)
+(setq recentf-max-menu-items 25)
+(global-set-key (kbd "C-c C-r") 'helm-recentf)
+
 ;; Emacs Application Framework
 ;; (add-to-list 'load-path (expand-file-name "packages/emacs-application-framework"))
 ;; (require 'eaf)
