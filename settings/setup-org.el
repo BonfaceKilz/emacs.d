@@ -18,7 +18,8 @@
 (setq org-agenda-show-log t
       org-agenda-todo-ignore-scheduled t
       org-agenda-todo-ignore-deadlines t)
-(setq org-agenda-files (list "~/Dropbox/org/personal.org"))
+(setq org-agenda-files (list "~/self/org"))
+(setq org-default-notes-file "~/self/org/notes.md")
 
 ;; Org habit
 (require 'org)
@@ -85,6 +86,13 @@
                  (org-remove-inline-images)
                  (org-present-show-cursor)
                  (org-present-read-write)))))
+
+;; org templates
+(setq org-capture-templates
+      '(("t" "Todo" entry (file+headline "~/self/org/gtd.org" "Tasks")
+         "* TODO %?\n  %i\n  %a")
+        ("j" "Journal" entry (file+olp+datetree "~/self/org/journal.org")
+         "* %?\nEntered on %U\n  %i\n  %a")))
 
 (use-package magit-org-todos
   :config
