@@ -32,20 +32,34 @@
             (flyspell-mode t)))
 (setq markdown-command "pandoc --smart -f markdown -t html")
 (setq markdown-css-paths `(,(expand-file-name "markdown.css" bonface/vendor-dir)))
- 
+
 ;; PHP
 (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
 (add-hook 'php-mode-hook 'php-enable-psr2-coding-style)
 (add-hook 'php-mode-hook 'php-refactor-mode)
-(add-hook 'php-mode-hook 'fly-check-mode)
+(defun my-php-mode-hook ()
+  "My PHP-mode hook."
+  (require 'flycheck-phpstan)
+  (flycheck-mode t)
+  (flycheck-select-checker 'phpstan))
+(add-hook 'php-mode-hook 'my-php-mode-hook)
 (require 'php-auto-yasnippets)
 (define-key php-mode-map (kbd "C-c C-y") 'yas/create-php-snippet)
 
 ;; Javascript
 (require 'js2-mode)
 (require 'xref-js2)
-(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
-(add-hook 'js2-mode-hook #'js2-refactor-mode)
+(require 'tern)
+(add-to-list 'auto-mode-alist '("\\.js\\'" . js-mode))
+(add-hook 'js-mode-hook 'js2-minor-mode)
+(add-hook 'js-mode-hook
+          (lambda ()
+            (tern-mode t)
+            (js2-refactor-mode t)))
+(eval-after-load 'tern
+  '(progn
+     (require 'tern-auto-complete)
+     (tern-ac-setup)))
 
 ;; Python
 (elpy-enable)
@@ -53,6 +67,8 @@
 (require 'py-autopep8)
 (add-hook 'elpy-mode-hook 'py-autopep8-enable-on-save)
 (add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
+(setq pythoh-shell-interpreter "python"
+      python-shell-interpreter-args "-i")
 
 (when (require 'flycheck nil t)
   (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
