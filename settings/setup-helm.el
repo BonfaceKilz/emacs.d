@@ -30,14 +30,13 @@
 (global-set-key (kbd "C-x r b") #'helm-filtered-bookmarks)
 (global-set-key (kbd "C-x C-f") #'helm-find-files)
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
-
+(global-set-key (kbd "C-c h o") 'helm-occur)
+(global-set-key (kbd "M-s o") 'occur)
 (setq helm-buffers-fuzzy-matching t
       helm-recentf-fuzzy-match    t)
 
 (helm-mode 1)
-
 (define-key global-map [remap find-file] 'helm-find-files)
-(define-key global-map [remap occur] 'helm-occur)
 (define-key global-map [remap list-buffers] 'helm-buffers-list)
 (define-key global-map [remap dabbrev-expand] 'helm-dabbrev)
 (define-key global-map [remap execute-extended-command] 'helm-M-x)
@@ -57,4 +56,4 @@
 
 (require 'helm-exwm)
 (global-set-key (kbd "C-c b") 'helm-exwm)
-(provide 'setup-helm) 
+(provide 'setup-helm)
