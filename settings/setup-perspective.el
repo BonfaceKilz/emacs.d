@@ -21,5 +21,5 @@
   (persp-switch (persp-name persp-last)))
 
 (define-key persp-mode-map (kbd "C-x p -") 'custom-persp-last)
-
+(define-key projectile-mode-map (kbd "s-w") 'projectile-persp-switch-project)
 (provide 'setup-perspective)
