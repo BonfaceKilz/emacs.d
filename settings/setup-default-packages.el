@@ -3,13 +3,21 @@
 (defvar bonface/packages '(ac-slime
                            all-the-icons
                            auto-complete
+                           autopair
                            avy
                            better-defaults
+                           buffer-move
+                           change-inner
+                           dash
+                           desktop-environment
+			   diminish
 			   diff-hl
                            elpy
                            epresent
+                           eproject
                            ess
                            eshell-autojump
+                           expand-region
                            f
 			   fill-column-indicator
                            feature-mode
@@ -23,14 +31,18 @@
 			   guide-key
                            graphviz-dot-mode
                            haml-mode
+			   haskell-mode
 			   helm-exwm
+                           helm-projectile
 			   highlight-escape-sequences
 			   highlight-symbol
                            htmlize
                            magit
+                           magit-org-todos
                            markdown-mode
                            marmalade
 			   move-text
+                           multiple-cursors
                            neotree
 			   nodejs-repl
                            org
@@ -39,19 +51,24 @@
                            php-refactor-mode
                            powerline
 			   prodigy
+			   persp-projectile
 			   projectile
                            py-autopep8
                            rvm
+			   s
+                           smart-forward
                            smartparens
 			   string-edit
 			   switch-window
-                           web-mode
+                           use-package
                            undo-tree
 			   visual-regexp
+                           web-mode
                            writegood-mode
                            yaml-mode
 			   yasnippet
-			   yasnippet-snippets)
+			   yasnippet-snippets
+                           zoom-window)
   "Default packages")
 
 (defun bonface/packages-installed-p ()
