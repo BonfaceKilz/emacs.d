@@ -63,6 +63,7 @@
 
 ;; Python
 (elpy-enable)
+(setq shell-file-name "/bin/bash")
 
 (require 'py-autopep8)
 (add-hook 'elpy-mode-hook 'py-autopep8-enable-on-save)
