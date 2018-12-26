@@ -58,13 +58,9 @@
             (js2-refactor-mode t)))
 (eval-after-load 'tern
   '(progn
-     (require 'tern-auto-complete)
-     (tern-ac-setup)))
+     (require 'tern-auto-complete)     (tern-ac-setup)))
 
 ;; Python
-(elpy-enable)
-(setq shell-file-name "/bin/bash")
-
 (require 'py-autopep8)
 (add-hook 'elpy-mode-hook 'py-autopep8-enable-on-save)
 (add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
@@ -74,16 +70,21 @@
 (when (require 'flycheck nil t)
   (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
   (add-hook 'elpy-mode-hook 'flycheck-mode))
+(setq shell-file-name "/bin/bash")
+(elpy-enable)
 
 ;; Django
-(require 'django-html-mode)
+;; (require 'django-html-mode)
 (require 'django-mode)
-(add-to-list 'auto-mode-alist '("\\.djhtml$" . django-html-mode))
+;; (add-to-list 'auto-mode-alist '("\\.djhtml$" . django-html-mode))
 
 ;; Info mode
 (add-to-list 'auto-mode-alist '("\\info.gz$" . info-mode))
 
 (require 'hledger-mode)
 (add-to-list 'auto-mode-alist '("\\.journal$" . hledger-mode))
+(setq hledger-jfile "/home/bonface/self/finances/hledger.journal")
 
+;; Enabling reading epub files
+(add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
 (provide 'mode-mappings)

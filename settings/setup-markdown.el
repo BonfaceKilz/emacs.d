@@ -14,4 +14,5 @@
           (lambda ()
             (setq imenu-generic-expression markdown-imenu-generic-expression)))
 
-(provide 'setup-markdown-mode)
+(setq markdown-command "/usr/bin/pandoc")
+(provide 'setup-markdown)

@@ -6,7 +6,7 @@
 (global-linum-mode)
 
 ;; Auto refresh buffers
-(global-auto-revert-mode)
+(global-auto-revert-mode t)
 
 ;; Also auto refresh dired, but be quiet about it
 (setq global-auto-revert-non-file-buffers t)
@@ -55,7 +55,9 @@
 
 ;; Save a list of recent files visited. (open recent file with C-x f)
 (recentf-mode 1)
+(setq recentf-max-menu-items 25)
 (setq recentf-max-saved-items 100) ;; just 20 is too recent
+(global-set-key (kbd "C-x f") 'recentf-open-files)
 
 ;; Save minibuffer history
 (savehist-mode 1)
@@ -103,8 +105,15 @@
 (set-default 'fill-column 80)
 
 ;; Add parts of each file's directory to the buffer name if not unique
+(require-package 'uniquify)
 (require 'uniquify)
-(setq uniquify-buffer-name-style 'forward)
+(setq uniquify-buffer-name-style 'forward
+      uniquify-separator ":")
+
+;; Diminish some common modes:
+(require-package 'diminish)
+(diminish 'visual-line-mode "")
+(diminish 'isearch-mode "?")
 
 ;; A saner ediff
 (setq ediff-diff-options "-w")
@@ -172,5 +181,10 @@
 (global-set-key (kbd "C-c n") 'cleanup-buffer)
 
 (setq-default show-trailing-whitespace t)
+
+;; make the text-width in epub mode 80 chars long
+(setq nov-text-width 80)
+
+(setq tramp-default-method "ssh")
 
 (provide 'sane-defaults)

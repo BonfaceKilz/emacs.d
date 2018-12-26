@@ -1,6 +1,6 @@
-;; Enable loggin when tasks are complete
+;; Enable logging when tasks are complete
 (setq org-log-done t
-      org-todo-keywords '((sequence "TODO" "INPROGRESS" "DONE"))
+      org-todo-keywords '((sequence "TODO" "INPROGRESS" "|" "DONE(d!)" "CANCELLED(c@)" "DELAGATED"))
       org-todo-keyword-faces '(("INPROGRESS" . (:foreground "blue" :weight bold))))
 (add-hook 'org-mode-hook
           (lambda ()
@@ -9,6 +9,8 @@
           (lambda ()
             (writegood-mode)))
 
+(require 'org-bullets)
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 ;; Org-agenda
 
 (global-set-key (kbd "C-c l") 'org-link)
@@ -24,15 +26,19 @@
 ;; Org habit
 (require 'org)
 (require 'org-install)
-(require 'org-habit)
-(add-to-list 'org-modules "org-habit")
-(setq org-habit-preceding-days 7
-      org-habit-following-days 1
-      org-habit-graph-column 80
-      org-habit-show-habits-only-for-today t
-      org-habit-show-all-today t)
+;; (require 'org-habit)
+;; (add-to-list 'org-modules "org-habit")
+;; (setq org-habit-preceding-days 7
+;;       org-habit-following-days 1
+;;       org-habit-graph-column 80
+;;       org-habit-show-habits-only-for-today t
+;;       org-habit-show-all-today t)
 
 (require 'ob)
+(require 'ox-hugo-auto-export)
+
+(with-eval-after-load 'ox
+  (require 'ox-hugo))
 
 (org-babel-do-load-languages
  'org-babel-load-languages
@@ -40,6 +46,7 @@
    (ditaa . t)
    (plantuml . t)
    (dot . t)
+   (haskell . t)
    (ruby . t)
    (js . t)
    (C . t)))
@@ -89,10 +96,22 @@
 
 ;; org templates
 (setq org-capture-templates
-      '(("t" "Todo" entry (file+headline "~/self/org/gtd.org" "Tasks")
-         "* TODO %?\n  %i\n  %a")
+      '(("t" "Todo" entry (file "~/self/org/journal.org")
+         "* Entry-TODO: %?\n" :empty-lines 1)
+        ("T" "Todo with Clipboard" entry (file "~/self/org/journal.org")
+         "* Entry-TODO: %?\n%U\n   %c" :empty-lines 1)
+        ("n" "Note" entry (file "~/self/org/notes.org")
+         "* NOTE %?\n%U" :empty-lines 1)
+        ("b" "Blog Entry" entry (file "~/self/org/blog.org")
+         "* Blog Entry: %?\n%U" :empty-lines 1)
+        ("N" "Note with Clipboard" entry (file "~/self/orotesro.org")
+         "* NOTE %?\n%U\n   %c" :empty-lines 1)
+        ("e" "Event" entry (file+headline "~/self/org/events.org" "Transient")
+         "* EVENT %?\n%U" :empty-lines 1)
+        ("E" "Event With Clipboard" entry (file+headline "~/self/org/events.org" "Transient")
+         "* EVENT %?\n%U\n   %c" :empty-lines 1)
         ("j" "Journal" entry (file+olp+datetree "~/self/org/journal.org")
-         "* %?\nEntered on %U\n  %i\n  %a")))
+         "* %?\nEntered on %U\n  %i\n  %a")))
 
 (use-package magit-org-todos
   :config

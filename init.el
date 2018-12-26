@@ -66,11 +66,13 @@
 (require 'setup-haskell)
 (require 'sane-defaults)
 (require 'setup-neotree)
+(require 'setup-hledger)
 (require 'all-the-icons)
-
+(require 'mode-mappings)
+(require 'setup-hugo)
 (eval-after-load 'org '(require 'setup-org))
 (eval-after-load 'php-mode '(require 'php-ext))
-(eval-after-load 'magit '(require 
+(eval-after-load 'magit '(require
                           'setup-magit))
 
 ;; Default setup of smartparens
@@ -96,7 +98,7 @@
 (require 'setup-yasnippet)
 
 (eval-after-load 'js2-mode '(require 'setup-js2-mode))
-(eval-after-load 'markdown-mode '(require 'setup-markdown-mode))
+(eval-after-load 'markdown-mode '(require 'setup-markdown))
 
 ;; Highlight escape sequences
 (require 'highlight-escape-sequences)
@@ -171,7 +173,7 @@
 (require 'move-text)
 (move-text-default-bindings)
 
-;; Turn on `display-time-mode' if you don't use an external bar.
+;; Turn on `display-time-mode' if you don't usoe an external bar.
 (setq display-time-default-load-average nil)
 (display-time-mode t)
 

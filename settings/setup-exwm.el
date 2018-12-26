@@ -44,7 +44,7 @@
 ;; (exwm-systemtray-enable)
 
 (require 'exwm-randr)
-(setq exwm-randr-workspace-output-plist '(0 "eDP-1"
+(setq exwm-randr-workspace-output-plist '(0 "DP-1"
                                             1 "eDP-1"
                                             2 "HDMI-1"
                                             3 "HDMI-1")
@@ -53,7 +53,7 @@
 (add-hook 'exwm-randr-screen-change-hook
           (lambda ()
             (start-process-shell-command
-             "xrandr" nil "xrandr --output eDP-1 --right-of HDMI-1 --auto")))
+             "xrandr" nil "xrandr --output eDP-1 --right-of DP-1 --auto")))
 
 (defun exwm-change-screen-hook ()
   (let ((xrandr-output-regexp "\n\\([^ ]+\\) connected ")
@@ -77,7 +77,7 @@
   (bookmark-save)
   (recentf-save-list)
   (save-some-buffers)
-  (start-process-shell-command "logout" nil "lxsession-logout"))
+  (start-process-shell-command "logout" nil "gnome-session-quit --logout"))
 
 ;; Enable this when using exwm outside lxde
 ;; (global-set-key (kbd "C-x C-c") 'save-buffers-kill-terminal)

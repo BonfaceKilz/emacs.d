@@ -202,3 +202,7 @@ Both PATTERN and CONTENTS are matched as regular expressions."
   (back-to-indentation)
   (re-search-backward (s-concat "^" (s-repeat (current-column) " ") "[^ \t\r\n\v\f]"))
   (back-to-indentation))
+
+(defun switch-to-scratch ()
+  (interactive)
+  (switch-to-buffer "*scratch*"))
