@@ -1,4 +1,10 @@
 ;; Initial setup
+
+;; Emacs server
+(require 'server)
+(unless (server-running-p)
+  (server-start))
+
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
@@ -15,5 +21,4 @@
       inhibit-scratch-message nil
       initial-major-mode 'org-mode)
 
-(elpy-enable)
 (provide 'setup-init)

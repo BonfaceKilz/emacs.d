@@ -24,14 +24,14 @@
 (defun new-line-dwim ()
   (interactive)
   (let ((break-open-pair (or (and (looking-back "{" 1) (looking-at "}"))
-                             (and (looking-back ">" 1) (looking-at "<"))
-                             (and (looking-back "(" 1) (looking-at ")"))
-                             (and (looking-back "\\[" 1) (looking-at "\\]")))))
+			     (and (looking-back ">" 1) (looking-at "<"))
+			     (and (looking-back "(" 1) (looking-at ")"))
+			     (and (looking-back "\\[" 1) (looking-at "\\]")))))
     (newline)
     (when break-open-pair
       (save-excursion
-        (newline)
-        (indent-for-tab-command)))
+	(newline)
+	(indent-for-tab-command)))
     (indent-for-tab-command)))
 
 (defun duplicate-current-line-or-region (arg)
@@ -40,9 +40,9 @@ If there's no region, the current line will be duplicated."
   (interactive "p")
   (if (region-active-p)
       (let ((beg (region-beginning))
-            (end (region-end)))
-        (duplicate-region arg beg end)
-        (one-shot-keybinding "d" (λ (duplicate-region 1 beg end))))
+	    (end (region-end)))
+	(duplicate-region arg beg end)
+	(one-shot-keybinding "d" (λ (duplicate-region 1 beg end))))
     (duplicate-current-line arg)
     (one-shot-keybinding "d" 'duplicate-current-line)))
 
@@ -54,8 +54,8 @@ If there's no region, the current line will be duplicated."
 
 (defun replace-region-by (fn)
   (let* ((beg (region-beginning))
-         (end (region-end))
-         (contents (buffer-substring beg end)))
+	 (end (region-end))
+	 (contents (buffer-substring beg end)))
     (delete-region beg end)
     (insert (funcall fn contents))))
 
@@ -66,11 +66,11 @@ region-end is used."
   (interactive "p")
   (save-excursion
     (let* ((start (or start (region-beginning)))
-           (end (or end (region-end)))
-           (region (buffer-substring start end)))
+	   (end (or end (region-end)))
+	   (region (buffer-substring start end)))
       (goto-char end)
       (dotimes (i num)
-        (insert region)))))
+	(insert region)))))
 
 (defun paredit-duplicate-current-line ()
   (back-to-indentation)
@@ -87,9 +87,9 @@ region-end is used."
       (paredit-duplicate-current-line)
     (save-excursion
       (when (eq (point-at-eol) (point-max))
-        (goto-char (point-max))
-        (newline)
-        (forward-char -1))
+	(goto-char (point-max))
+	(newline)
+	(forward-char -1))
       (duplicate-region num (point-at-bol) (1+ (point-at-eol))))))
 
 ;; automatically indenting yanked text if in programming-modes
@@ -97,8 +97,8 @@ region-end is used."
 (require 'dash)
 
 (defvar yank-indent-modes '(prog-mode
-                            sgml-mode
-                            js2-mode)
+			    sgml-mode
+			    js2-mode)
   "Modes in which to indent regions that are yanked (or yank-popped)")
 
 (defvar yank-advised-indent-threshold 1000
@@ -112,16 +112,16 @@ region-end is used."
 (defadvice yank (after yank-indent activate)
   "If current mode is one of 'yank-indent-modes, indent yanked text (with prefix arg don't indent)."
   (if (and (not (ad-get-arg 0))
-           (--any? (derived-mode-p it) yank-indent-modes))
+	   (--any? (derived-mode-p it) yank-indent-modes))
       (let ((transient-mark-mode nil))
-        (yank-advised-indent-function (region-beginning) (region-end)))))
+	(yank-advised-indent-function (region-beginning) (region-end)))))
 
 (defadvice yank-pop (after yank-pop-indent activate)
   "If current mode is one of 'yank-indent-modes, indent yanked text (with prefix arg don't indent)."
   (if (and (not (ad-get-arg 0))
-           (member major-mode yank-indent-modes))
+	   (member major-mode yank-indent-modes))
       (let ((transient-mark-mode nil))
-        (yank-advised-indent-function (region-beginning) (region-end)))))
+	(yank-advised-indent-function (region-beginning) (region-end)))))
 
 (defun yank-unindented ()
   (interactive)
@@ -147,20 +147,20 @@ region-end is used."
   (interactive)
   (if (point-is-in-string-p)
       (let ((old-quotes (char-to-string (current-quotes-char)))
-            (new-quotes (char-to-string (alternate-quotes-char)))
-            (start (make-marker))
-            (end (make-marker)))
-        (save-excursion
-          (move-point-forward-out-of-string)
-          (backward-delete-char 1)
-          (set-marker end (point))
-          (insert new-quotes)
-          (move-point-backward-out-of-string)
-          (delete-char 1)
-          (insert new-quotes)
-          (set-marker start (point))
-          (replace-string new-quotes (concat "\\" new-quotes) nil start end)
-          (replace-string (concat "\\" old-quotes) old-quotes nil start end)))
+	    (new-quotes (char-to-string (alternate-quotes-char)))
+	    (start (make-marker))
+	    (end (make-marker)))
+	(save-excursion
+	  (move-point-forward-out-of-string)
+	  (backward-delete-char 1)
+	  (set-marker end (point))
+	  (insert new-quotes)
+	  (move-point-backward-out-of-string)
+	  (delete-char 1)
+	  (insert new-quotes)
+	  (set-marker start (point))
+	  (replace-string new-quotes (concat "\\" new-quotes) nil start end)
+	  (replace-string (concat "\\" old-quotes) old-quotes nil start end)))
     (error "Point isn't in a string")))
 
 ;; kill region if active, otherwise kill backward word
@@ -174,7 +174,7 @@ region-end is used."
 (defun kill-to-beginning-of-line ()
   (interactive)
   (kill-region (save-excursion (beginning-of-line) (point))
-               (point)))
+	       (point)))
 
 ;; copy region if active
 ;; otherwise copy to end of current line
@@ -183,14 +183,14 @@ region-end is used."
 (defun copy-to-end-of-line ()
   (interactive)
   (kill-ring-save (point)
-                  (line-end-position))
+		  (line-end-position))
   (message "Copied to end of line"))
 
 (defun copy-whole-lines (arg)
   "Copy lines (as many as prefix argument) in the kill ring"
   (interactive "p")
   (kill-ring-save (line-beginning-position)
-                  (line-beginning-position (+ 1 arg)))
+		  (line-beginning-position (+ 1 arg)))
   (message "%d line%s copied" arg (if (= 1 arg) "" "s")))
 
 (defun copy-line (arg)
@@ -225,23 +225,23 @@ region-end is used."
   (save-excursion
     (goto-char (point-min))
     (comment-kill (save-excursion
-                    (goto-char (point-max))
-                    (line-number-at-pos)))))
+		    (goto-char (point-max))
+		    (line-number-at-pos)))))
 
 (require 's)
 
 (defun incs (s &optional num)
   (let* ((inc (or num 1))
-         (new-number (number-to-string (+ inc (string-to-number s))))
-         (zero-padded? (s-starts-with? "0" s)))
+	 (new-number (number-to-string (+ inc (string-to-number s))))
+	 (zero-padded? (s-starts-with? "0" s)))
     (if zero-padded?
-        (s-pad-left (length s) "0" new-number)
+	(s-pad-left (length s) "0" new-number)
       new-number)))
 
 (defun goto-closest-number ()
   (interactive)
   (let ((closest-behind (save-excursion (search-backward-regexp "[0-9]" nil t)))
-        (closest-ahead (save-excursion (search-forward-regexp "[0-9]" nil t))))
+	(closest-ahead (save-excursion (search-forward-regexp "[0-9]" nil t))))
     (push-mark)
     (goto-char
      (cond
@@ -255,7 +255,7 @@ region-end is used."
 (defun change-number-at-point (arg)
   (interactive "p")
   (unless (or (looking-at "[0-9]")
-              (looking-back "[0-9]"))
+	      (looking-back "[0-9]"))
     (goto-closest-number))
   (save-excursion
     (while (looking-back "[0-9]")
@@ -283,37 +283,37 @@ region-end is used."
   (interactive)
   (er/mark-word)
   (let* ((beg (region-beginning))
-         (end (region-end))
-         (current-word (buffer-substring-no-properties beg end))
-         (snakified (snake-case current-word)))
+	 (end (region-end))
+	 (current-word (buffer-substring-no-properties beg end))
+	 (snakified (snake-case current-word)))
     (replace-string current-word snakified nil beg end)))
 
 (defun kebab-current-word ()
   (interactive)
   (er/mark-word)
   (let* ((beg (region-beginning))
-         (end (region-end))
-         (current-word (buffer-substring-no-properties beg end))
-         (kebabed (s-dashed-words current-word)))
+	 (end (region-end))
+	 (current-word (buffer-substring-no-properties beg end))
+	 (kebabed (s-dashed-words current-word)))
     (replace-string current-word kebabed nil beg end)))
 
 (defun transpose-params ()
   "Presumes that params are in the form (p, p, p) or {p, p, p} or [p, p, p]"
   (interactive)
   (let* ((end-of-first (cond
-                        ((looking-at ", ") (point))
-                        ((and (looking-back ",") (looking-at " ")) (- (point) 1))
-                        ((looking-back ", ") (- (point) 2))
-                        (t (error "Place point between params to transpose."))))
-         (start-of-first (save-excursion
-                           (goto-char end-of-first)
-                           (move-backward-out-of-param)
-                           (point)))
-         (start-of-last (+ end-of-first 2))
-         (end-of-last (save-excursion
-                        (goto-char start-of-last)
-                        (move-forward-out-of-param)
-                        (point))))
+			((looking-at ", ") (point))
+			((and (looking-back ",") (looking-at " ")) (- (point) 1))
+			((looking-back ", ") (- (point) 2))
+			(t (error "Place point between params to transpose."))))
+	 (start-of-first (save-excursion
+			   (goto-char end-of-first)
+			   (move-backward-out-of-param)
+			   (point)))
+	 (start-of-last (+ end-of-first 2))
+	 (end-of-last (save-excursion
+			(goto-char start-of-last)
+			(move-forward-out-of-param)
+			(point))))
     (transpose-regions start-of-first end-of-first start-of-last end-of-last)))
 
 (defun move-forward-out-of-param ()

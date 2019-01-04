@@ -11,9 +11,20 @@
 (setq web-mode-css-indent-offset 2)
 (setq web-mode-code-indent-offset 2)
 
+
 (add-to-list 'auto-mode-alist '("\\.hbs$" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.erb$" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.html$" . web-mode))
+
+
+;; Turn off linum mode in org mode and web mode
+;; linum-mode slows down Emacs when there is a large number
+;; of lines.
+(defun nolinum ()
+  (global-linum-mode 0))
+
+(add-hook 'org-mode-hook 'nolinum)
+(add-hook 'web-mode-hook 'nolinum)
 
 ;; yaml
 (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
@@ -39,17 +50,16 @@
 (add-hook 'php-mode-hook 'php-refactor-mode)
 (defun my-php-mode-hook ()
   "My PHP-mode hook."
-  (require 'flycheck-phpstan)
+  (require-package 'flycheck-phpstan)
   (flycheck-mode t)
   (flycheck-select-checker 'phpstan))
 (add-hook 'php-mode-hook 'my-php-mode-hook)
-(require 'php-auto-yasnippets)
-(define-key php-mode-map (kbd "C-c C-y") 'yas/create-php-snippet)
+(require-package 'php-auto-yasnippets)
 
 ;; Javascript
-(require 'js2-mode)
-(require 'xref-js2)
-(require 'tern)
+(require-package 'js2-mode)
+(require-package 'xref-js2)
+(require-package 'tern)
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js-mode))
 (add-hook 'js-mode-hook 'js2-minor-mode)
 (add-hook 'js-mode-hook
@@ -61,7 +71,7 @@
      (require 'tern-auto-complete)     (tern-ac-setup)))
 
 ;; Python
-(require 'py-autopep8)
+(require-package 'py-autopep8)
 (add-hook 'elpy-mode-hook 'py-autopep8-enable-on-save)
 (add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
 (setq pythoh-shell-interpreter "python"
@@ -75,16 +85,23 @@
 
 ;; Django
 ;; (require 'django-html-mode)
-(require 'django-mode)
+(require-package 'django-mode)
 ;; (add-to-list 'auto-mode-alist '("\\.djhtml$" . django-html-mode))
 
 ;; Info mode
 (add-to-list 'auto-mode-alist '("\\info.gz$" . info-mode))
 
-(require 'hledger-mode)
+(require-package 'hledger-mode)
 (add-to-list 'auto-mode-alist '("\\.journal$" . hledger-mode))
 (setq hledger-jfile "/home/bonface/self/finances/hledger.journal")
 
 ;; Enabling reading epub files
 (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
 (provide 'mode-mappings)
+
+;; Org-mode
+(require-package 'org-plus-contrib)
+(if (require 'toc-org nil t)
+    (add-hook 'org-mode-hook 'toc-org-mode)
+  (warn "toc-org not found"))
+(add-to-list 'auto-mode-alist '("\\.\\(org\\|org_archive\\)$" . org-mode))

@@ -13,3 +13,10 @@ recentf
 custom.el
 snippets
 session.*
+tramp
+url/
+xclip
+.mc-lists.el
+.org-id-locations
+bookmarks
+nov-places

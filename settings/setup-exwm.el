@@ -86,4 +86,70 @@
 (global-set-key (kbd "C-x C-c") 'exwm-logout)
 (exwm-randr-enable)
 
+;; Make gimp floating
+(add-hook 'exwm-update-class-hook
+          (lambda ()
+            (unless (or (string-prefix-p "sun-awt-X11-" exwm-instance-name)
+                        (string= "gimp" exwm-instance-name))
+              (rename-buffer exwm-class-name t))))
+(add-hook 'exwm-update-title-hook
+          (lambda ()
+            (when (or (string-prefix-p "sun-awt-X11-" exwm-instance-name)
+                      (string= "gimp" exwm-instance-name))
+              (rename-buffer exwm-title t))))
+
+;; Rename buffers to match the x11 window class or title:
+(defun exwm-rename-buffer ()
+  (interactive)
+  (exwm-workspace-rename-buffer
+   (concat exwm-class-name ":"
+           (if (<= (length exwm-title) 50) exwm-title
+             (concat (substring exwm-title 0 49) "...")))))
+
+;; Add these hooks in a suitable place (e.g., as done in exwm-config-default)
+(add-hook 'exwm-update-class-hook 'exwm-rename-buffer)
+(add-hook 'exwm-update-title-hook 'exwm-rename-buffer)
+
+(exwm-input-set-key (kbd "s-r") 'exwm-reset)
+(exwm-input-set-key (kbd "s-w") 'exwm-workspace-switch)
+
+(defun exwm-workspace-next ()
+  (interactive)
+  (let ((next-numb (mod (+ 1 exwm-workspace-current-index) exwm-workspace-number)))
+    (exwm-workspace-switch next-numb)))
+(exwm-input-set-key (kbd "s-s") 'exwm-workspace-next)
+(exwm-input-set-key (kbd "s-j") 'exwm-workspace-next)
+(push ?\s-j exwm-input-prefix-keys)
+
+(exwm-input-set-key (kbd "s-o") 'other-window)
+(exwm-input-set-key (kbd "s-k") 'other-window)
+(push ?\s-o exwm-input-prefix-keys)
+(push ?\s-k exwm-input-prefix-keys)
+
+(defmacro exwm-switch-to-workspace-key (ws-num)
+  `(progn (exwm-input-set-key (kbd (concat "s-" ,(number-to-string ws-num)))
+                              (lambda ()
+                                (interactive)
+                                (exwm-workspace-switch ,ws-num)))
+          (let ((key-num (if (eq 0 ,ws-num)
+                             10
+                           ,ws-num)))
+            (exwm-input-set-key (kbd (concat "s-<f" (number-to-string key-num) ">"))
+                                (lambda ()
+                                  (interactive)
+                                  (exwm-workspace-switch ,ws-num))))))
+(exwm-switch-to-workspace-key 1)
+(exwm-switch-to-workspace-key 0)
+
+(add-to-list 'display-buffer-alist
+             `(,(rx bos " *async command*")
+               (display-buffer-no-window)))
+
+(defun background-shell-command (command)
+  (interactive (list (read-shell-command "$ ")))
+  (async-shell-command command (generate-new-buffer " *async command*")))
+
+(exwm-input-set-key (kbd "s-p")
+                    #'background-shell-command)
+
 (provide 'setup-exwm)

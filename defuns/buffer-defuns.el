@@ -1,5 +1,4 @@
 ;; Buffer-related defuns
-
 (require 'imenu)
 
 (defvar buffer-local-mode nil)
@@ -12,13 +11,13 @@
   "create a new scratch buffer to work in. (could be *scratch* - *scratchX*)"
   (interactive)
   (let ((n 0)
-        bufname)
+	bufname)
     (while (progn
-             (setq bufname (concat "*scratch"
-                                   (if (= n 0) "" (int-to-string n))
-                                   "*"))
-             (setq n (1+ n))
-             (get-buffer bufname)))
+	     (setq bufname (concat "*scratch"
+				   (if (= n 0) "" (int-to-string n))
+				   "*"))
+	     (setq n (1+ n))
+	     (get-buffer bufname)))
     (switch-to-buffer (get-buffer-create bufname))
     (emacs-lisp-mode)
     ))
@@ -32,26 +31,26 @@
   (interactive)
   (if (= (count-windows) 2)
       (let* ((this-win-buffer (window-buffer))
-             (next-win-buffer (window-buffer (next-window)))
-             (this-win-edges (window-edges (selected-window)))
-             (next-win-edges (window-edges (next-window)))
-             (this-win-2nd (not (and (<= (car this-win-edges)
-                                         (car next-win-edges))
-                                     (<= (cadr this-win-edges)
-                                         (cadr next-win-edges)))))
-             (splitter
-              (if (= (car this-win-edges)
-                     (car (window-edges (next-window))))
-                  'split-window-horizontally
-                'split-window-vertically)))
-        (delete-other-windows)
-        (let ((first-win (selected-window)))
-          (funcall splitter)
-          (if this-win-2nd (other-window 1))
-          (set-window-buffer (selected-window) this-win-buffer)
-          (set-window-buffer (next-window) next-win-buffer)
-          (select-window first-win)
-          (if this-win-2nd (other-window 1))))))
+	     (next-win-buffer (window-buffer (next-window)))
+	     (this-win-edges (window-edges (selected-window)))
+	     (next-win-edges (window-edges (next-window)))
+	     (this-win-2nd (not (and (<= (car this-win-edges)
+					 (car next-win-edges))
+				     (<= (cadr this-win-edges)
+					 (cadr next-win-edges)))))
+	     (splitter
+	      (if (= (car this-win-edges)
+		     (car (window-edges (next-window))))
+		  'split-window-horizontally
+		'split-window-vertically)))
+	(delete-other-windows)
+	(let ((first-win (selected-window)))
+	  (funcall splitter)
+	  (if this-win-2nd (other-window 1))
+	  (set-window-buffer (selected-window) this-win-buffer)
+	  (set-window-buffer (next-window) next-win-buffer)
+	  (select-window first-win)
+	  (if this-win-2nd (other-window 1))))))
 
 (defun rotate-windows (count)
   "Rotate your windows.
@@ -59,28 +58,28 @@ Dedicated windows are left untouched. Giving a negative prefix
 argument makes the windows rotate backwards."
   (interactive "p")
   (let* ((non-dedicated-windows (remove-if 'window-dedicated-p (window-list)))
-         (num-windows (length non-dedicated-windows))
-         (i 0)
-         (step (+ num-windows count)))
+	 (num-windows (length non-dedicated-windows))
+	 (i 0)
+	 (step (+ num-windows count)))
     (cond ((not (> num-windows 1))
-           (message "You can't rotate a single window!"))
-          (t
-           (dotimes (counter (- num-windows 1))
-             (let* ((next-i (% (+ step i) num-windows))
+	   (message "You can't rotate a single window!"))
+	  (t
+	   (dotimes (counter (- num-windows 1))
+	     (let* ((next-i (% (+ step i) num-windows))
 
-                    (w1 (elt non-dedicated-windows i))
-                    (w2 (elt non-dedicated-windows next-i))
+		    (w1 (elt non-dedicated-windows i))
+		    (w2 (elt non-dedicated-windows next-i))
 
-                    (b1 (window-buffer w1))
-                    (b2 (window-buffer w2))
+		    (b1 (window-buffer w1))
+		    (b2 (window-buffer w2))
 
-                    (s1 (window-start w1))
-                    (s2 (window-start w2)))
-               (set-window-buffer w1 b2)
-               (set-window-buffer w2 b1)
-               (set-window-start w1 s2)
-               (set-window-start w2 s1)
-               (setq i next-i)))))))
+		    (s1 (window-start w1))
+		    (s2 (window-start w2)))
+	       (set-window-buffer w1 b2)
+	       (set-window-buffer w2 b1)
+	       (set-window-start w1 s2)
+	       (set-window-start w2 s1)
+	       (setq i next-i)))))))
 
 (defun ido-imenu ()
 ;;   "Update the imenu index and then use ido to select a symbol to navigate to.
@@ -88,40 +87,40 @@ argument makes the windows rotate backwards."
   (interactive)
   (imenu--make-index-alist)
   (let ((name-and-pos '())
-        (symbol-names '()))
+	(symbol-names '()))
     (cl-flet ((addsymbols (symbol-list)
-                       (when (listp symbol-list)
-                         (dolist (symbol symbol-list)
-                           (let ((name nil) (position nil))
-                             (cond
-                              ((and (listp symbol) (imenu--subalist-p symbol))
-                               (addsymbols symbol))
+		       (when (listp symbol-list)
+			 (dolist (symbol symbol-list)
+			   (let ((name nil) (position nil))
+			     (cond
+			      ((and (listp symbol) (imenu--subalist-p symbol))
+			       (addsymbols symbol))
 
-                              ((listp symbol)
-                               (setq name (car symbol))
-                               (setq position (cdr symbol)))
+			      ((listp symbol)
+			       (setq name (car symbol))
+			       (setq position (cdr symbol)))
 
-                              ((stringp symbol)
-                               (setq name symbol)
-                               (setq position (get-text-property 1 'org-imenu-marker symbol))))
+			      ((stringp symbol)
+			       (setq name symbol)
+			       (setq position (get-text-property 1 'org-imenu-marker symbol))))
 
-                             (unless (or (null position) (null name))
-                               (add-to-list 'symbol-names name)
-                               (add-to-list 'name-and-pos (cons name position))))))))
+			     (unless (or (null position) (null name))
+			       (add-to-list 'symbol-names name)
+			       (add-to-list 'name-and-pos (cons name position))))))))
       (addsymbols imenu--index-alist))
     ;; If there are matching symbols at point, put them at the beginning of `symbol-names'.
     (let ((symbol-at-point (thing-at-point 'symbol)))
       (when symbol-at-point
-        (let* ((regexp (concat (regexp-quote symbol-at-point) "$"))
-               (matching-symbols (delq nil (mapcar (lambda (symbol)
-                                                     (if (string-match regexp symbol) symbol))
-                                                   symbol-names))))
-          (when matching-symbols
-            (sort matching-symbols (lambda (a b) (> (length a) (length b))))
-            (mapc (lambda (symbol) (setq symbol-names (cons symbol (delete symbol symbol-names))))
-                  matching-symbols)))))
+	(let* ((regexp (concat (regexp-quote symbol-at-point) "$"))
+	       (matching-symbols (delq nil (mapcar (lambda (symbol)
+						     (if (string-match regexp symbol) symbol))
+						   symbol-names))))
+	  (when matching-symbols
+	    (sort matching-symbols (lambda (a b) (> (length a) (length b))))
+	    (mapc (lambda (symbol) (setq symbol-names (cons symbol (delete symbol symbol-names))))
+		  matching-symbols)))))
     (let* ((selected-symbol (ido-completing-read "Symbol? " symbol-names))
-           (position (cdr (assoc selected-symbol name-and-pos))))
+	   (position (cdr (assoc selected-symbol name-and-pos))))
       (push-mark (point))
       (goto-char position))))
 
@@ -143,11 +142,9 @@ Including indent-buffer, which should not be called automatically on save."
 
 (defun file-name-with-one-directory (file-name)
   (concat (cadr (reverse (split-string file-name "/"))) "/"
-          (file-name-nondirectory file-name)))
+	  (file-name-nondirectory file-name)))
 
 (require 's)
-
-(defvar user-home-directory (concat (expand-file-name "~") "/"))
 
 (defun shorter-file-name (file-name)
   (s-chop-prefix user-home-directory file-name))
@@ -159,8 +156,8 @@ Including indent-buffer, which should not be called automatically on save."
   "Find a recent file using ido."
   (interactive)
   (let* ((recent-files (mapcar 'recentf--file-cons recentf-list))
-         (files (mapcar 'car recent-files))
-         (file (completing-read "Choose recent file: " files)))
+	 (files (mapcar 'car recent-files))
+	 (file (completing-read "Choose recent file: " files)))
     (find-file (cdr (assoc file recent-files)))))
 
 (defun pl/helm-alive-p ()
