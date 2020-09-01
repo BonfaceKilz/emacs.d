@@ -1,0 +1,4 @@
+* Literate emacs.d file
+
+All the configs are contained in one place. To set up things, just tangle
+everything or an individual block.
