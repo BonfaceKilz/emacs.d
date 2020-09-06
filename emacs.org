@@ -9,7 +9,6 @@
   - [[sane-defaults.el][sane-defaults.el]]
   - [[setup-avy.el][setup-avy.el]]
   - [[setup-bbdb.el][setup-bbdb.el]]
-  - [[setup-envs.el][setup-envs.el]]
   - [[setup-eshell.el][setup-eshell.el]]
   - [[setup-exwm.el][setup-exwm.el]]
   - [[setup-haskell.el][setup-haskell.el]]
@@ -91,15 +90,12 @@
                  (concat user-emacs-directory "backups")))))
 
 (require 'setup-package)
-(require 'setup-envs)
 
 (use-package dash)
 (setq defuns-dir (expand-file-name "defuns" user-emacs-directory))
 (dolist (file (directory-files defuns-dir t "\\w+"))
   (when (file-regular-p file)
     (load file)))
-
-(setq gc-cons-threshold 3500000)
 (require 'sane-defaults)
 (require 'setup-init)
 (require 'mode-mappings)
@@ -2437,24 +2433,6 @@ abort completely with `C-g'."
   (setq gmail2bbdb-exclude-people-without-name t))
 
 (provide 'setup-bbdb)
-#+END_SRC
-** setup-envs.el
-#+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-envs.el
-;;; setup-envs.el
-
-;; Set up the env
-(setenv "PATH" (concat "/usr/local/bin:/opt/local/bin:/usr/bin:/bin:" (getenv "PATH")))
-(setenv "GOPATH" (concat (getenv "HOME") "/go"))
-(setq exec-path (append exec-path '("/usr/local/bin")))
-(add-to-list 'exec-path (concat (getenv "GOPATH") "/bin"))
-(prefer-coding-system 'utf-8)
-(setenv "PYTHONIOENCODING" "utf-8")
-(setenv "LANG" "en_US.UTF-8")
-(setenv "LC_ALL" "en_US.UTF-8")
-(setenv "LC_CTYPE" "en_US.UTF-8")
-(provide 'setup-envs)
-
-;;; end setup-envs.el
 #+END_SRC
 ** setup-eshell.el
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-eshell.el
