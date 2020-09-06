@@ -4519,6 +4519,2062 @@ This is an `:around' advice for `yas--make-control-overlay'."
 
   ;;; end setup-elfeed.el
 #+END_SRC
+
+** setup-eshell.el
+#+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-eshell.el
+;;; setup-eshell.el
+(use-package f)
+
+(setq eshell-visual-commands
+      '("less" "tmux" "htop" "top" "bash" "zsh" "fish"))
+
+(setq eshell-visual-subcommands
+      '(("git" "log" "l" "diff" "show")))
+
+;; Prompt with a bit of help from http://www.emacswiki.org/emacs/EshellPrompt
+(defmacro with-face (str &rest properties)
+  `(propertize ,str 'face (list ,@properties)))
+
+(defun eshell/abbr-pwd ()
+  (let ((home (getenv "HOME"))
+	(path (eshell/pwd)))
+    (cond
+     ((string-equal home path) "~")
+     ((f-ancestor-of? home path) (concat "~/" (f-relative path home)))
+     (path))))
+
+(defun eshell/my-prompt ()
+  (let ((header-bg "#161616"))
+    (concat
+     (with-face (eshell/abbr-pwd) :foreground "#008700")
+     (if (= (user-uid) 0)
+	 (with-face "#" :foreground "red")
+       (with-face "$" :foreground "#2345ba"))
+     " ")))
+
+(eval-after-load 'eshell
+  '(require 'eshell-autojump nil t))
+
+(setq eshell-prompt-function 'eshell/my-prompt)
+(setq eshell-highlight-prompt nil)
+(setq eshell-prompt-regexp "^[^#$\n]+[#$] ")
+
+(setq eshell-cmpl-cycle-completions nil)
+
+;; ref: http://pragmaticemacs.com/emacs/pop-up-a-quick-shell-with-shell-pop/
+(use-package shell-pop
+  :config
+  (defun shell-pop-zsh ()
+    (interactive)
+    (setq shell-pop-shell-type (quote ("ansi-term" "*ansi-term*" (lambda nil (ansi-term shell-pop-term-shell)))))
+    (setq shell-pop-term-shell "/bin/zsh")
+    ;; need to do this manually or not picked up by `shell-pop'
+    (shell-pop--set-shell-type 'shell-pop-shell-type shell-pop-shell-type)
+    (call-interactively 'shell-pop))
+  (defun shell-pop-eshell ()
+    (interactive)
+    (let ((shell-pop-shell-type '("eshell" "*eshell*" (lambda () (eshell))))
+          (shell-pop-term-shell "eshell"))
+      (shell-pop--set-shell-type 'shell-pop-shell-type shell-pop-shell-type)
+      (call-interactively 'shell-pop)))
+  ;; :bind (("C-c z" . shell-pop-zsh)
+  ;;        ("C-c t" . shell-pop-eshell))
+  )
+
+(provide 'setup-eshell)
+;;; setup-eshell.el ends here
+#+END_SRC
+** setup-exwm.el
+#+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-exwm.el
+;;; setup-exwm.el
+;; Load exwm
+(use-package exwm
+  :config
+  (require 'exwm-randr)
+  (setq exwm-randr-workspace-output-plist '(0 "eDP1"
+        				      1 "eDP1"
+        				      2 "HDMI1"
+        				      3 "HDMI1"))
+  (setq exwm-layout-show-all-buffers 't)
+  (setq exwm-workspace-show-all-buffers 't)
+  ;; Set the initial workspace number.
+  (setq exwm-workspace-number 4)
+  ;; Line-editing shortcuts
+  (setq exwm-input-simulation-keys
+	'(([?\C-b] . [left])
+	  ([?\C-f] . [right])
+	  ([?\C-p] . [up])
+	  ([?\C-n] . [down])
+	  ([?\C-a] . [home])
+	  ([?\C-e] . [end])
+	  ([?\M-v] . [prior])
+	  ([?\C-v] . [next])
+	  ([?\C-d] . [delete])
+	  ([?\C-k] . [S-end delete])))
+  ;; Make class name the buffer name
+  (add-hook 'exwm-update-class-hook
+            (lambda ()
+              (exwm-workspace-rename-buffer exwm-class-name)))
+  ;; Add these hooks in a suitable place (e.g., as done in exwm-config-default)
+  (add-hook 'exwm-update-class-hook 'exwm-rename-buffer)
+  (add-hook 'exwm-update-title-hook 'exwm-rename-buffer)
+  ;; Make gimp floating
+  (add-hook 'exwm-update-class-hook
+            (lambda ()
+              (unless (or (string-prefix-p "sun-awt-X11-" exwm-instance-name)
+        		  (string= "gimp" exwm-instance-name))
+        	(rename-buffer exwm-class-name t))))
+  ;; ;; Add these hooks in a suitable place (e.g., as done in exwm-config-default)
+  (add-hook 'exwm-update-class-hook 'exwm-rename-buffer)
+  (add-hook 'exwm-update-title-hook 'exwm-rename-buffer)
+  (exwm-input-set-key (kbd "s-r") #'exwm-reset)
+  ;; 's-w': Switch workspace
+  (exwm-input-set-key (kbd "s-w") #'exwm-workspace-switch)
+
+  (dotimes (i 10)
+    (exwm-input-set-key (kbd (format "s-%d" i))
+			`(lambda ()
+			   (interactive)
+			   (exwm-workspace-switch-create ,i))))
+  ;; 's-&': Launch application
+  (exwm-input-set-key (kbd "s-&")
+		      (lambda (command)
+			(interactive (list (read-shell-command "$ ")))
+			(start-process-shell-command command nil command)))
+  (exwm-input-set-key (kbd "s-s") 'exwm-workspace-next)
+  (exwm-input-set-key (kbd "s-j") 'exwm-workspace-next)
+  (push ?\s-j exwm-input-prefix-keys)
+
+  (exwm-input-set-key (kbd "s-o") 'other-window)
+  (exwm-input-set-key (kbd "s-k") 'other-window)
+
+  (push ?\s-o exwm-input-prefix-keys)
+  (push ?\s-k exwm-input-prefix-keys)
+
+  (exwm-input-set-key (kbd "s-p")
+		      #'background-shell-command)
+
+  ;; Enable EXWM
+  (exwm-enable)
+  (exwm-randr-enable)
+
+  
+  (add-hook 'exwm-update-title-hook
+	    (lambda ()
+	      (when (or (string-prefix-p "sun-awt-X11-" exwm-instance-name)
+			(string= "gimp" exwm-instance-name))
+		(rename-buffer exwm-title t))))
+  :bind (("C-x C-c" . exwm-logout)))
+
+(defun exwm-workspace-next ()
+  (interactive)
+  (let ((next-numb (mod (+ 1 exwm-workspace-current-index) exwm-workspace-number)))
+    (exwm-workspace-switch next-numb)))
+
+(defmacro exwm-switch-to-workspace-key (ws-num)
+  `(progn (exwm-input-set-key (kbd (concat "s-" ,(number-to-string ws-num)))
+			      (lambda ()
+				(interactive)
+				(exwm-workspace-switch ,ws-num)))
+	  (let ((key-num (if (eq 0 ,ws-num)
+			     10
+			   ,ws-num)))
+	    (exwm-input-set-key (kbd (concat "s-<f" (number-to-string key-num) ">"))
+				(lambda ()
+				  (interactive)
+				  (exwm-workspace-switch ,ws-num))))))
+
+(require 'exwm-systemtray)
+(setq exwm-systemtray-height 16)
+(exwm-systemtray-enable)
+
+(exwm-switch-to-workspace-key 1)
+
+(add-to-list 'display-buffer-alist
+	     `(,(rx bos " *async command*")
+	       (display-buffer-no-window)))
+
+(defun background-shell-command (command)
+  (interactive (list (read-shell-command "$ ")))
+  (async-shell-command command (generate-new-buffer " *async command*")))
+
+(defun exwm-rename-buffer ()
+  (interactive)
+  (exwm-workspace-rename-buffer
+   (concat exwm-class-name ":"
+           (if (<= (length exwm-title) 7) exwm-title
+             (concat (substring exwm-title 0 6) "...")))))
+
+(provide 'setup-exwm)
+
+;;; setup-exwm.el ends here
+#+END_SRC
+** setup-haskell.el
+#+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-haskell.el
+;;; setup-haskell.el
+
+(use-package haskell-mode
+  :mode ( "\\.hs$" . haskell-mode)
+  :bind (:map haskell-mode-map
+              ("C-c C-c" . haskell-compile)
+              ("C-c i" . haskell-navigate-import)
+              ("C-`" . haskell-interactive-bring)
+              ("C-c C-t" . haskell-process-do-type)
+              ("C-c C-i" . haskell-process-do-info)
+              ("C-c C-k" . haskell-interactive-mode-clear)
+              :map haskell-cabal-mode-map
+              ("C-c C-c" . haskell-compile)))
+
+(eval-after-load "which-function-mode"
+  '(add-to-list 'which-func-modes 'haskell-mode))
+
+(require 'haskell-interactive-mode)
+(require 'haskell-process)
+(add-hook 'haskell-mode-hook 'interactive-haskell-mode)
+(add-hook 'haskell-mode-hook 'haskell-decl-scan-mode)
+
+(custom-set-variables
+ '(haskell-stylish-on-save t))
+
+(custom-set-variables
+ '(haskell-process-suggest-remove-import-lines t)
+ '(haskell-process-auto-import-loaded-modules t)
+ '(haskell-process-log t)
+ '(haskell-process-type 'ghci))
+
+(provide 'setup-haskell)
+
+;;; setup-haskell.el ends here
+#+END_SRC
+** setup-helm.el
+#+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-helm.el
+;;; setup-helm.el
+(use-package helm-ag)
+(use-package helm
+  :config
+  (setq helm-split-window-in-side-P           t ; open helm buffer inside current window, not occupy whole other window
+	helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
+	helm-ff-search-library-in-sexp        t ; search for library in `require' and `declare-function' sexp.
+	helm-scroll-amount                    8 ; scroll 8 lines other window using M-<next>/M-<prior>
+	helm-ff-file-name-history-use-recentf t
+	helm-echo-input-in-header-line t)
+
+  (setq helm-autoresize-max-height 0)
+  (setq helm-autoresize-min-height 20)
+  (setq helm-buffers-fuzzy-matching t
+	helm-recentf-fuzzy-match    t)
+  (helm-autoresize-mode 1)
+  (helm-mode 1)
+  :bind (("C-x b" . helm-mini)
+	 ("C-c h" . helm-command-prefix)
+	 ("C-c M-x" . helm-M-x)
+	 ("C-x r b" . helm-filtered-bookmarks)
+	 ("C-x C-f" . helm-find-files)
+	 ("M-y" . helm-show-kill-ring)
+	 ("M-s o" . occur)
+	 :map helm-map
+	 ("<tab>" . helm-execute-persistent-action)
+	 ("C-i" . helm-execute-persistent-action)
+	 ("C-z" . helm-select-action)))
+
+(use-package ivy
+  :ensure swiper
+  :ensure counsel
+  :config
+  (ivy-mode 1)
+  (setq ivy-use-virtual-buffers t)
+  (setq enable-recursive-minibuffers t)
+  ;; enable this if you want `swiper' to use it
+  (setq search-default-mode #'char-fold-to-regexp))
+
+(setq ivy-display-style 'fancy)
+;;advise swiper to recenter on exit
+(defun bjm-swiper-recenter (&rest args)
+  "recenter display after swiper"
+  (recenter))
+(advice-add 'swiper :after #'bjm-swiper-recenter)
+
+(require 'helm)
+(require 'helm-config)
+(when (executable-find "curl")
+  (setq helm-google-suggest-use-curl-p t))
+
+;; set up helm projectile
+(use-package helm-projectile)
+(projectile-global-mode)
+(setq projectile-completion-system 'helm)
+(helm-projectile-on)
+(setq projectile-switch-project-action 'helm-projectile)
+(define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+(use-package helm-exwm)
+(provide 'setup-helm)
+
+;;; setup-helm.el ends here
+#+END_SRC
+** setup-hledger.el
+#+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-hledger.el
+;;; setup-hledger.el
+
+;; I've used `use-package` declarations
+
+(use-package hledger-mode :ensure t
+  :after htmlize
+  :mode ("\\.journal\\'" "\\.hledger\\'")
+  :commands hledger-enable-reporting
+  :preface
+  (defun hledger/next-entry ()
+    "Move to next entry and pulse."
+    (interactive)
+    (hledger-next-or-new-entry)
+    (hledger-pulse-momentary-current-entry))
+
+  (defface hledger-warning-face
+    '((((background dark))
+       :background "Red" :foreground "White")
+      (((background light))
+       :background "Red" :foreground "White")
+      (t :inverse-video t))
+    "Face for warning"
+    :group 'hledger)
+
+  (defun hledger/prev-entry ()
+    "Move to last entry and pulse."
+    (interactive)
+    (hledger-backward-entry)
+    (hledger-pulse-momentary-current-entry))
+
+  :bind (("C-c j" . hledger-run-command)
+	 :map hledger-mode-map
+	 ("C-c e" . hledger-jentry)
+	 ("M-p" . hledger/prev-entry)
+	 ("M-n" . hledger/next-entry))
+  :init
+
+  (setq hledger-jfile "~/Self/finances/hledger.journal"
+	tab-width 4)
+  ;; Expanded account balances in the overall monthly report are
+  ;; mostly noise for me and do not convey any meaningful information.
+  (setq hledger-show-expanded-report nil)
+  (when (boundp 'my-hledger-service-fetch-url)
+    (setq hledger-service-fetch-url
+	  my-hledger-service-fetch-url))
+
+  :config
+  (setq company-mode t)
+  (add-to-list 'auto-mode-alist '("\\.journal\\'" . hledger-mode))
+  ;;(add-to-list 'company-backends 'hledger-company)
+  (add-hook 'hledger-view-mode-hook #'hl-line-mode)
+  (add-hook 'hledger-view-mode-hook #'center-text-for-reading)
+  (add-hook 'hledger-view-mode-hook
+	    (lambda ()
+	      (run-with-timer 1
+			      nil
+			      (lambda ()
+				(when (equal hledger-last-run-command
+					     "balancesheet")
+				  ;; highlight frequently changing accounts
+				  (highlight-regexp "^.*\\(Ksh\\|Expense\\).*$")
+				  (highlight-regexp "^.*Liability*$"
+						    'hledger-warning-face))))))
+  )
+
+(use-package hledger-input
+  :pin manual
+  :load-path "packages/rest/hledger-mode/"
+  :bind (("C-c e" . hledger-capture)
+	 :map hledger-input-mode-map
+	 ("C-c C-b" . popup-balance-at-point))
+  :preface
+  (defun popup-balance-at-point ()
+    "Show balance for account at point in a popup."
+    (interactive)
+    (if-let ((account (thing-at-point 'hledger-account)))
+	(message (hledger-shell-command-to-string (format " balance -N %s "
+							  account)))
+      (message "No account at point")))
+
+  :config
+  (setq hledger-input-buffer-height 20)
+  (add-hook 'hledger-input-post-commit-hook #'hledger-show-new-balances)
+  (add-hook 'hledger-input-mode-hook #'auto-fill-mode)
+  (add-hook 'hledger-input-mode-hook
+	    (lambda ()
+	      (make-local-variable 'company-idle-delay)
+	      (setq-local company-idle-delay 0.1))))
+
+(provide 'setup-hledger)
+
+;;; setup-hledger.el ends here
+#+END_SRC
+** setup-hugo.el
+#+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-hugo.el
+;;; setup-hugo.el
+(use-package ox-hugo
+  :after ox)
+(use-package easy-hugo
+  :init
+  (setq easy-hugo-basedir "~/Public/BonfaceKilz/")
+  (setq easy-hugo-url "https://bonfacemunyoki.com")
+  (setq easy-hugo-sshdomain "myserver")
+  (setq easy-hugo-root "/home/bonface/bonfacemunyoki.com/")
+  (setq easy-hugo-previewtime "300"))
+
+(provide 'setup-hugo)
+;;; setup-hugo.el ends here
+#+END_SRC
+
+** setup-hydra.el
+#+begin_src emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-hydra.el
+(use-package hydra)
+
+(defhydra hydra-org-template (:color blue :hint nil)
+  "
+ _c_enter    _q_uote     _e_macs-lisp    _L_aTeX:
+ _l_atex     _E_xample   _p_ython        _i_ndex:
+ _a_scii     _v_erse     _I_NCLUDE:      _H_TML:
+ _s_rc       _n_ote      plant_u_ml      _A_SCII:
+ _H_askell   ^ ^         ^ ^             _S_cheme:
+"
+  ("s" (hot-expand "<s"))
+  ("S" (hot-expand "<s" "scheme"))
+  ("E" (hot-expand "<e"))
+  ("q" (hot-expand "<q"))
+  ("v" (hot-expand "<v"))
+  ("n" (hot-expand "<not"))
+  ("c" (hot-expand "<c"))
+  ("l" (hot-expand "<l"))
+  ("H" (hot-expand "<s" "haskell"))
+  ("a" (hot-expand "<a"))
+  ("L" (hot-expand "<L"))
+  ("i" (hot-expand "<i"))
+  ("e" (hot-expand "<s" "emacs-lisp"))
+  ("p" (hot-expand "<s" "python"))
+  ("u" (hot-expand "<s" "plantuml :file CHANGE.png"))
+  ("I" (hot-expand "<I"))
+  ("A" (hot-expand "<A"))
+  ("<" self-insert-command "ins")
+  ("o" nil "quit"))
+
+(defun hot-expand (str &optional mod header)
+  "Expand org template.
+
+STR is a structure template string recognised by org like <s. MOD is a
+string with additional parameters to add the begin line of the
+structure element. HEADER string includes more parameters that are
+prepended to the element after the #+HEADER: tag."
+  (let (text)
+    (when (region-active-p)
+      (setq text (buffer-substring (region-beginning) (region-end)))
+      (delete-region (region-beginning) (region-end))
+      (deactivate-mark))
+    (when header (insert "#+HEADER: " header) (forward-line))
+    (insert str)
+    (org-tempo-complete-tag)
+    (when mod (insert mod) (forward-line))
+    (when text (insert text))))
+
+(define-key org-mode-map "<"
+  (lambda () (interactive)
+    (if (or (region-active-p) (looking-back "^"))
+        (hydra-org-template/body)
+      (self-insert-command 1))))
+
+(eval-after-load "org"
+  '(cl-pushnew
+    '("not" . "note")
+    org-structure-template-alist))
+
+(defhydra hydra-dired (:hint nil :color pink)
+  "
+_+_ mkdir          _v_iew           _m_ark             _(_ details        _i_nsert-subdir    wdired
+_C_opy             _O_ view other   _U_nmark all       _)_ omit-mode      _$_ hide-subdir    C-x C-q : edit
+_D_elete           _o_pen other     _u_nmark           _l_ redisplay      _w_ kill-subdir    C-c C-c : commit
+_R_ename           _M_ chmod        _t_oggle           _g_ revert buf     _e_ ediff          C-c ESC : abort
+_Y_ rel symlink    _G_ chgrp        _E_xtension mark   _s_ort             _=_ pdiff
+_S_ymlink          ^ ^              _F_ind marked      _._ toggle hydra   \\ flyspell
+_r_sync            ^ ^              ^ ^                ^ ^                _?_ summary
+_z_ compress-file  _A_ find regexp
+_Z_ compress       _Q_ repl regexp
+
+T - tag prefix
+"
+  ("\\" dired-do-ispell)
+  ("(" dired-hide-details-mode)
+  (")" dired-omit-mode)
+  ("+" dired-create-directory)
+  ("=" diredp-ediff)         ;; smart diff
+  ("?" dired-summary)
+  ("$" diredp-hide-subdir-nomove)
+  ("A" dired-do-find-regexp)
+  ("C" dired-do-copy)        ;; Copy all marked files
+  ("D" dired-do-delete)
+  ("E" dired-mark-extension)
+  ("e" dired-ediff-files)
+  ("F" dired-do-find-marked-files)
+  ("G" dired-do-chgrp)
+  ("g" revert-buffer)        ;; read all directories again (refresh)
+  ("i" dired-maybe-insert-subdir)
+  ("l" dired-do-redisplay)   ;; relist the marked or singel directory
+  ("M" dired-do-chmod)
+  ("m" dired-mark)
+  ("O" dired-display-file)
+  ("o" dired-find-file-other-window)
+  ("Q" dired-do-find-regexp-and-replace)
+  ("R" dired-do-rename)
+  ("r" dired-do-rsynch)
+  ("S" dired-do-symlink)
+  ("s" dired-sort-toggle-or-edit)
+  ("t" dired-toggle-marks)
+  ("U" dired-unmark-all-marks)
+  ("u" dired-unmark)
+  ("v" dired-view-file)      ;; q to exit, s to search, = gets line #
+  ("w" dired-kill-subdir)
+  ("Y" dired-do-relsymlink)
+  ("z" diredp-compress-this-file)
+  ("Z" dired-do-compress)
+  ("q" nil)
+  ("." nil :color blue))
+
+(define-key dired-mode-map "." 'hydra-dired/body)
+
+
+(defhydra hydra-ibuffer-main (:color pink :hint nil)
+  "
+ ^Navigation^ | ^Mark^        | ^Actions^        | ^View^
+-^----------^-+-^----^--------+-^-------^--------+-^----^-------
+  _k_:    ʌ   | _m_: mark     | _D_: delete      | _g_: refresh
+ _RET_: visit | _u_: unmark   | _S_: save        | _s_: sort
+  _j_:    v   | _*_: specific | _a_: all actions | _/_: filter
+-^----------^-+-^----^--------+-^-------^--------+-^----^-------
+"
+  ("j" ibuffer-forward-line)
+  ("RET" ibuffer-visit-buffer :color blue)
+  ("k" ibuffer-backward-line)
+
+  ("m" ibuffer-mark-forward)
+  ("u" ibuffer-unmark-forward)
+  ("*" hydra-ibuffer-mark/body :color blue)
+
+  ("D" ibuffer-do-delete)
+  ("S" ibuffer-do-save)
+  ("a" hydra-ibuffer-action/body :color blue)
+
+  ("g" ibuffer-update)
+  ("s" hydra-ibuffer-sort/body :color blue)
+  ("/" hydra-ibuffer-filter/body :color blue)
+
+  ("o" ibuffer-visit-buffer-other-window "other window" :color blue)
+  ("q" quit-window "quit ibuffer" :color blue)
+  ("." nil "toggle hydra" :color blue))
+
+(defhydra hydra-ibuffer-mark (:color teal :columns 5
+                                     :after-exit (hydra-ibuffer-main/body))
+  "Mark"
+  ("*" ibuffer-unmark-all "unmark all")
+  ("M" ibuffer-mark-by-mode "mode")
+  ("m" ibuffer-mark-modified-buffers "modified")
+  ("u" ibuffer-mark-unsaved-buffers "unsaved")
+  ("s" ibuffer-mark-special-buffers "special")
+  ("r" ibuffer-mark-read-only-buffers "read-only")
+  ("/" ibuffer-mark-dired-buffers "dired")
+  ("e" ibuffer-mark-dissociated-buffers "dissociated")
+  ("h" ibuffer-mark-help-buffers "help")
+  ("z" ibuffer-mark-compressed-file-buffers "compressed")
+  ("b" hydra-ibuffer-main/body "back" :color blue))
+
+(defhydra hydra-ibuffer-action (:color teal :columns 4
+                                       :after-exit
+                                       (if (eq major-mode 'ibuffer-mode)
+                                           (hydra-ibuffer-main/body)))
+  "Action"
+  ("A" ibuffer-do-view "view")
+  ("E" ibuffer-do-eval "eval")
+  ("F" ibuffer-do-shell-command-file "shell-command-file")
+  ("I" ibuffer-do-query-replace-regexp "query-replace-regexp")
+  ("H" ibuffer-do-view-other-frame "view-other-frame")
+  ("N" ibuffer-do-shell-command-pipe-replace "shell-cmd-pipe-replace")
+  ("M" ibuffer-do-toggle-modified "toggle-modified")
+  ("O" ibuffer-do-occur "occur")
+  ("P" ibuffer-do-print "print")
+  ("Q" ibuffer-do-query-replace "query-replace")
+  ("R" ibuffer-do-rename-uniquely "rename-uniquely")
+  ("T" ibuffer-do-toggle-read-only "toggle-read-only")
+  ("U" ibuffer-do-replace-regexp "replace-regexp")
+  ("V" ibuffer-do-revert "revert")
+  ("W" ibuffer-do-view-and-eval "view-and-eval")
+  ("X" ibuffer-do-shell-command-pipe "shell-command-pipe")
+  ("b" nil "back"))
+
+(defhydra hydra-ibuffer-sort (:color amaranth :columns 3)
+  "Sort"
+  ("i" ibuffer-invert-sorting "invert")
+  ("a" ibuffer-do-sort-by-alphabetic "alphabetic")
+  ("v" ibuffer-do-sort-by-recency "recently used")
+  ("s" ibuffer-do-sort-by-size "size")
+  ("f" ibuffer-do-sort-by-filename/process "filename")
+  ("m" ibuffer-do-sort-by-major-mode "mode")
+  ("b" hydra-ibuffer-main/body "back" :color blue))
+
+(defhydra hydra-ibuffer-filter (:color amaranth :columns 4)
+  "Filter"
+  ("m" ibuffer-filter-by-used-mode "mode")
+  ("M" ibuffer-filter-by-derived-mode "derived mode")
+  ("n" ibuffer-filter-by-name "name")
+  ("c" ibuffer-filter-by-content "content")
+  ("e" ibuffer-filter-by-predicate "predicate")
+  ("f" ibuffer-filter-by-filename "filename")
+  (">" ibuffer-filter-by-size-gt "size")
+  ("<" ibuffer-filter-by-size-lt "size")
+  ("/" ibuffer-filter-disable "disable")
+  ("b" hydra-ibuffer-main/body "back" :color blue))
+
+(define-key ibuffer-mode-map "." 'hydra-ibuffer-main/body)
+
+
+(define-key Info-mode-map (kbd "?") #'hydra-info/body)
+(defhydra hydra-info (:color blue
+                             :hint nil)
+  "
+Info-mode:
+
+  ^^_]_ forward  (next logical node)       ^^_l_ast (←)        _u_p (↑)                             _f_ollow reference       _T_OC
+  ^^_[_ backward (prev logical node)       ^^_r_eturn (→)      _m_enu (↓) (C-u for new window)      _i_ndex                  _d_irectory
+  ^^_n_ext (same level only)               ^^_H_istory         _g_oto (C-u for new window)          _,_ next index item      _c_opy node name
+  ^^_p_rev (same level only)               _<_/_t_op           _b_eginning of buffer                virtual _I_ndex          _C_lone buffer
+  regex _s_earch (_S_ case sensitive)      ^^_>_ final         _e_nd of buffer                      ^^                       _a_propos
+
+  _1_ .. _9_ Pick first .. ninth item in the node's menu.
+
+"
+  ("]"   Info-forward-node)
+  ("["   Info-backward-node)
+  ("n"   Info-next)
+  ("p"   Info-prev)
+  ("s"   Info-search)
+  ("S"   Info-search-case-sensitively)
+
+  ("l"   Info-history-back)
+  ("r"   Info-history-forward)
+  ("H"   Info-history)
+  ("t"   Info-top-node)
+  ("<"   Info-top-node)
+  (">"   Info-final-node)
+
+  ("u"   Info-up)
+  ("^"   Info-up)
+  ("m"   Info-menu)
+  ("g"   Info-goto-node)
+  ("b"   beginning-of-buffer)
+  ("e"   end-of-buffer)
+
+  ("f"   Info-follow-reference)
+  ("i"   Info-index)
+  (","   Info-index-next)
+  ("I"   Info-virtual-index)
+
+  ("T"   Info-toc)
+  ("d"   Info-directory)
+  ("c"   Info-copy-current-node-name)
+  ("C"   clone-buffer)
+  ("a"   info-apropos)
+
+  ("1"   Info-nth-menu-item)
+  ("2"   Info-nth-menu-item)
+  ("3"   Info-nth-menu-item)
+  ("4"   Info-nth-menu-item)
+  ("5"   Info-nth-menu-item)
+  ("6"   Info-nth-menu-item)
+  ("7"   Info-nth-menu-item)
+  ("8"   Info-nth-menu-item)
+  ("9"   Info-nth-menu-item)
+
+  ("?"   Info-summary "Info summary")
+  ("h"   Info-help "Info help")
+  ("q"   Info-exit "Info exit")
+  ("C-g" nil "cancel" :color blue))
+
+(define-key org-agenda-mode-map
+  "v" 'hydra-org-agenda-view/body)
+
+(defun org-agenda-cts ()
+  (let ((args (get-text-property
+               (min (1- (point-max)) (point))
+               'org-last-args)))
+    (nth 2 args)))
+
+(defhydra hydra-org-agenda-view (:hint none)
+  "
+_d_: ?d? day        _g_: time grid=?g? _a_: arch-trees
+_w_: ?w? week       _[_: inactive      _A_: arch-files
+_t_: ?t? fortnight  _f_: follow=?f?    _r_: report=?r?
+_m_: ?m? month      _e_: entry =?e?    _D_: diary=?D?
+_y_: ?y? year       _q_: quit          _L__l__c_: ?l?"
+  ("SPC" org-agenda-reset-view)
+  ("d" org-agenda-day-view
+   (if (eq 'day (org-agenda-cts))
+       "[x]" "[ ]"))
+  ("w" org-agenda-week-view
+   (if (eq 'week (org-agenda-cts))
+       "[x]" "[ ]"))
+  ("t" org-agenda-fortnight-view
+   (if (eq 'fortnight (org-agenda-cts))
+       "[x]" "[ ]"))
+  ("m" org-agenda-month-view
+   (if (eq 'month (org-agenda-cts)) "[x]" "[ ]"))
+  ("y" org-agenda-year-view
+   (if (eq 'year (org-agenda-cts)) "[x]" "[ ]"))
+  ("l" org-agenda-log-mode
+   (format "% -3S" org-agenda-show-log))
+  ("L" (org-agenda-log-mode '(4)))
+  ("c" (org-agenda-log-mode 'clockcheck))
+  ("f" org-agenda-follow-mode
+   (format "% -3S" org-agenda-follow-mode))
+  ("a" org-agenda-archives-mode)
+  ("A" (org-agenda-archives-mode 'files))
+  ("r" org-agenda-clockreport-mode
+   (format "% -3S" org-agenda-clockreport-mode))
+  ("e" org-agenda-entry-text-mode
+   (format "% -3S" org-agenda-entry-text-mode))
+  ("g" org-agenda-toggle-time-grid
+   (format "% -3S" org-agenda-use-time-grid))
+  ("D" org-agenda-toggle-diary
+   (format "% -3S" org-agenda-include-diary))
+  ("!" org-agenda-toggle-deadlines)
+  ("["
+   (let ((org-agenda-include-inactive-timestamps t))
+     (org-agenda-check-type t 'timeline 'agenda)
+     (org-agenda-redo)))
+  ("q" (message "Abort") :exit t))
+
+(defhydra hydra-org-agenda (:pre (setq which-key-inhibit t)
+                                 :post (setq which-key-inhibit nil)
+                                 :hint none)
+  "
+Org agenda (_q_uit)
+
+^Clock^      ^Visit entry^              ^Date^             ^Other^
+^-----^----  ^-----------^------------  ^----^-----------  ^-----^---------
+_ci_ in      _SPC_ in other window      _ds_ schedule      _gr_ reload
+_co_ out     _TAB_ & go to location     _dd_ set deadline  _._  go to today
+_cq_ cancel  _RET_ & del other windows  _dt_ timestamp     _gd_ go to date
+_cj_ jump    _o_   link                 _+_  do later      ^^
+^^           ^^                         _-_  do earlier    ^^
+^^           ^^                         ^^                 ^^
+^View^          ^Filter^                 ^Headline^         ^Toggle mode^
+^----^--------  ^------^---------------  ^--------^-------  ^-----------^----
+_vd_ day        _ft_ by tag              _ht_ set status    _tf_ follow
+_vw_ week       _fr_ refine by tag       _hk_ kill          _tl_ log
+_vt_ fortnight  _fc_ by category         _hr_ refile        _ta_ archive trees
+_vm_ month      _fh_ by top headline     _hA_ archive       _tA_ archive files
+_vy_ year       _fx_ by regexp           _h:_ set tags      _tr_ clock report
+_vn_ next span  _fd_ delete all filters  _hp_ set priority  _td_ diaries
+_vp_ prev span  ^^                       ^^                 ^^
+_vr_ reset      ^^                       ^^                 ^^
+^^              ^^                       ^^                 ^^
+"
+  ;; Entry
+  ("hA" org-agenda-archive-default)
+  ("hk" org-agenda-kill)
+  ("hp" org-agenda-priority)
+  ("hr" org-agenda-refile)
+  ("h:" org-agenda-set-tags)
+  ("ht" org-agenda-todo)
+  ;; Visit entry
+  ("o"   link-hint-open-link :exit t)
+  ("<tab>" org-agenda-goto :exit t)
+  ("TAB" org-agenda-goto :exit t)
+  ("SPC" org-agenda-show-and-scroll-up)
+  ("RET" org-agenda-switch-to :exit t)
+  ;; Date
+  ("dt" org-agenda-date-prompt)
+  ("dd" org-agenda-deadline)
+  ("+" org-agenda-do-date-later)
+  ("-" org-agenda-do-date-earlier)
+  ("ds" org-agenda-schedule)
+  ;; View
+  ("vd" org-agenda-day-view)
+  ("vw" org-agenda-week-view)
+  ("vt" org-agenda-fortnight-view)
+  ("vm" org-agenda-month-view)
+  ("vy" org-agenda-year-view)
+  ("vn" org-agenda-later)
+  ("vp" org-agenda-earlier)
+  ("vr" org-agenda-reset-view)
+  ;; Toggle mode
+  ("ta" org-agenda-archives-mode)
+  ("tA" (org-agenda-archives-mode 'files))
+  ("tr" org-agenda-clockreport-mode)
+  ("tf" org-agenda-follow-mode)
+  ("tl" org-agenda-log-mode)
+  ("td" org-agenda-toggle-diary)
+  ;; Filter
+  ("fc" org-agenda-filter-by-category)
+  ("fx" org-agenda-filter-by-regexp)
+  ("ft" org-agenda-filter-by-tag)
+  ("fr" org-agenda-filter-by-tag-refine)
+  ("fh" org-agenda-filter-by-top-headline)
+  ("fd" org-agenda-filter-remove-all)
+  ;; Clock
+  ("cq" org-agenda-clock-cancel)
+  ("cj" org-agenda-clock-goto :exit t)
+  ("ci" org-agenda-clock-in :exit t)
+  ("co" org-agenda-clock-out)
+  ;; Other
+  ("q" nil :exit t)
+  ("gd" org-agenda-goto-date)
+  ("." org-agenda-goto-today)
+  ("gr" org-agenda-redo))
+
+(define-key org-agenda-mode-map
+  "e" 'hydra-org-agenda/body)
+
+
+(defhydra hydra-global-org (:color blue
+                                   :hint nil
+                                   :body-pre (setq exwm-input-line-mode-passthrough ''t)
+                                   :post (setq exwm-input-line-mode-passthrough nil))
+  "
+Timer^^           ^Clock^         ^Capture^         ^Other^            ^Hugo^
+--------------------------------------------------------------------------------
+[_C-t_]tart        _w_ clock in    _c_apture         _,_ Priority
+[_C-s_]top         _o_ clock out   _l_ast capture    _s_ rifle-current
+_r_eset            _j_ clock goto                  _\\_ pretty-entes
+_p_rint                                         _g_ view-markdown       _e_xport-dispatch
+                                              _G_ convert-markdown
+"
+                                        ;("t" org-timer-start)
+  ("C-t"  org-timer-start)
+  ("s" helm-org-rifle-current-buffer)
+  ("S" helm-org-rifle)
+  ("C-s"  org-timer-stop)
+  ("C-S"  org-timer-stop)
+  ;; Need to be at timer
+  ("r" org-timer-set-timer)
+  ("C-r"  org-timer-set-timer)
+  ;; Print timer value to buffer
+  ("p" org-timer)
+  ("C-p"  org-timer)
+  ("w" (org-clock-in '(4)))
+  ("C-w"  (org-clock-in '(4)))
+  ("o" org-clock-out)
+  ("C-o"  org-clock-out)
+  ;; Visit the clocked task from any buffer
+  ("j" org-clock-goto)
+  ("C-j"  org-clock-goto)
+  ("c" helm-org-capture-templates) ;org-capture
+  ("C-c"  helm-org-capture-templates) ;org-capture
+  ("l" org-capture-goto-last-stored)
+  ("C-l"  org-capture-goto-last-stored)
+  ("," org-priority)
+  ("C-,"  org-priority)
+  ("e" org-export-dispatch)
+  ("g" org-gfm-export-as-markdown)
+  ("G" org-gfm-convert-region-to-md)
+  ("\\" org-toggle-pretty-entities))
+
+(use-package avy)
+
+(defhydra hydra-avy-move-actions (:exit t
+                                        :columns 2
+                                        :after-exit (setq ot/avy-selected-pt nil)
+                                        :idle 1.0)
+  "Avy actions"
+  ("f" (ot/avy-action-move-sexp-forward-here ot/avy-selected-pt) "Forward until end of expression")
+  ("b" (ot/avy-action-move-sexp-backward-here ot/avy-selected-pt) "Backward until begin of expression")
+  ("e" (ot/avy-action-move-sexp-here ot/avy-selected-pt) "Sexp")
+  ("RET" (ot/avy-action-move-sexp-here ot/avy-selected-pt) "Sexp")
+  ("s" (ot/avy-action-move-symbol-here ot/avy-selected-pt) "Symbol")
+  ("(" (ot/avy-action-move-surrounding-sexp-here ot/avy-selected-pt) "Surrounding sexp"))
+
+(defhydra hydra-avy-copy-actions (:exit t
+                                        :columns 2
+                                        :after-exit (setq ot/avy-selected-pt nil)
+                                        :idle 1.0)
+  "Avy actions"
+  ("f" (ot/avy-action-copy-sexp-forward-here ot/avy-selected-pt) "Forward until end of expression")
+  ("b" (ot/avy-action-copy-sexp-backward-here ot/avy-selected-pt) "Backward until begin of expression")
+  ("e" (ot/avy-action-copy-sexp-here ot/avy-selected-pt) "Sexp")
+  ("RET" (ot/avy-action-copy-sexp-here ot/avy-selected-pt) "Sexp")
+  ("s" (ot/avy-action-copy-symbol-here ot/avy-selected-pt) "Symbol")
+  ("(" (ot/avy-action-copy-surrounding-sexp-here ot/avy-selected-pt) "Surrounding sexp"))
+
+(defhydra hydra-avy (:exit t :hint nil)
+  "
+ Line^^       Region^^        Goto                                 ^Actions^
+--------------------------------------------------------------------------------
+ [_y_] yank   [_Y_] yank      [_c_] timed char  [_C_] char         co_p_y-actions
+ [_m_] move   [_M_] move      [_w_] word        [_W_] any word     mo_v_e-actions
+ [_k_] kill   [_K_] kill      [_l_] line        [_L_] end of line"
+  ("c" avy-goto-char-timer)
+  ("C" avy-goto-char)
+  ("w" avy-goto-word-1)
+  ("W" avy-goto-word-0)
+  ("l" avy-goto-line)
+  ("L" avy-goto-end-of-line)
+  ("m" avy-move-line)
+  ("M" avy-move-region)
+  ("k" avy-kill-whole-line)
+  ("K" avy-kill-region)
+  ("y" avy-copy-line)
+  ("p" hydra-avy-copy-actions/body)
+  ("v" hydra-avy-move-actions/body)
+  ("Y" avy-copy-region))
+
+(use-package ace-jump-mode)
+(defhydra hydra-ace (:exit t :hint nil)
+  "
+ Move across windows^^
+-----------------------
+ [_m_] head character
+ [_c_] character
+ [_w_] word
+ [_l_] line"
+  ("m" ace-jump-mode)
+  ("c" ace-jump-char-mode)
+  ("w" ace-jump-word-mode)
+  ("l" ace-jump-line-mode))
+
+(require 'rect)
+(defhydra hydra-rectangle (:body-pre (rectangle-mark-mode 1)
+                                     :color pink
+                                     :post (deactivate-mark))
+  "
+  ^_k_^     _d_elete    _s_tring
+_h_   _l_   _o_k        _y_ank
+  ^_j_^     _n_ew-copy  _r_eset
+^^^^        _e_xchange  _u_ndo
+^^^^        ^ ^         _x_kill
+"
+  ("h" rectangle-backward-char nil)
+  ("l" rectangle-forward-char nil)
+  ("k" rectangle-previous-line nil)
+  ("j" rectangle-next-line nil)
+  ("e" hydra-ex-point-mark nil)
+  ("n" copy-rectangle-as-kill nil)
+  ("d" delete-rectangle nil)
+  ("r" (if (region-active-p)
+           (deactivate-mark)
+         (rectangle-mark-mode 1)) nil)
+  ("y" yank-rectangle nil)
+  ("u" undo nil)
+  ("s" string-rectangle nil)
+  ("x" kill-rectangle nil)
+  ("o" nil nil))
+
+
+;; Hydra - Marking
+(defhydra hydra-mark (:exit t
+                            :columns 3
+                            :idle 1.0)
+  "Mark"
+  ("d" er/mark-defun "Defun / Function")
+  ("f" er/mark-defun "Defun / Function")
+  ("F" er/mark-clj-function-literal "Clj anonymous fn")
+  ("w" er/mark-word "Word")
+  ("W" er/mark-clj-word "CLJ word")
+  ("u" er/mark-url "Url")
+  ("e" mark-sexp "S-Expression")
+  ("E" er/mark-email "Email")
+  ("b" hydra-mark-buffer/body "Buffer")
+  ("l" mark-line "Line")
+  ("p" er/mark-text-paragraph "Paragraph")
+  ("r" er/mark-clj-regexp-literal "Clj regexp")
+  ("s" er/mark-symbol "Symbol")
+  ("S" er/mark-symbol-with-prefix "Prefixed symbol")
+  ("q" er/mark-inside-quotes "Inside quotes")
+  ("Q" er/mark-outside-quotes "Outside quotes")
+  ("(" er/mark-inside-pairs "Inside pairs")
+  ("[" er/mark-inside-pairs "Inside pairs")
+  ("{" er/mark-inside-pairs "Inside pairs")
+  (")" er/mark-outside-pairs "Outside pairs")
+  ("]" er/mark-outside-pairs "Outside pairs")
+  ("}" er/mark-outside-pairs "Outside pairs")
+  ("t" er/mark-inner-tag "Inner tag")
+  ("T" er/mark-outer-tag "Outer tag")
+  ("c" er/mark-comment "Comment")
+  ("a" er/mark-html-attribute "HTML attribute")
+  ("." er/expand-region "Expand region" :exit nil)
+  ("," er/contract-region "Contract region" :exit nil)
+  ("#" er/mark-clj-set-literal "Clj set")
+  )
+
+(defhydra hydra-mark-buffer (:exit t
+                                   :idle 1.0)
+  "Mark buffer"
+  ("w" mark-whole-buffer "Whole buffer")
+  ("a" mark-buffer-after-point "Buffer after point")
+  ("b" mark-buffer-before-point "Buffer before point"))
+
+;; Hydra - Yank
+(defhydra hydra-yank-pop ()
+  "yank"
+  ("C-y" yank nil)
+  ("M-y" yank-pop nil)
+  ("y" (yank-pop 1) "next")
+  ("Y" (yank-pop -1) "prev")
+  ("l" helm-show-kill-ring "list" :exit t))   ; or browse-kill-ring
+
+(defhydra hydra-copy (:exit t
+                            :idle 1.0)
+  "Copy"
+  ("r" avy-copy-region "Region to point")
+  ("l" avy-copy-line "Line to point")
+  ("i" copy-inner "Inner")
+  ("o" copy-outer "Outer"))
+
+;; Hydra - Goto line
+(defhydra hydra-goto-line (goto-map ""
+                                    :pre (linum-mode 1)
+                                    :post (linum-mode -1))
+  "goto-line"
+  ("g" goto-line "go")
+  ("m" set-mark-command "mark" :bind nil)
+  ("q" nil "quit"))
+
+;; Hydra - Multiple cursors
+(defhydra multiple-cursors-hydra (:columns 3
+                                           :idle 1.0)
+  "Multiple cursors"
+  ("l" mc/edit-lines "Edit lines in region" :exit t)
+  ("b" mc/edit-beginnings-of-lines "Edit beginnings of lines in region" :exit t)
+  ("e" mc/edit-ends-of-lines "Edit ends of lines in region" :exit t)
+  ("a" mc/mark-all-dwim "Mark all dwim" :exit t)
+  ("S" mc/mark-all-symbols-like-this "Mark all symbols likes this" :exit t)
+  ("w" mc/mark-all-words-like-this "Mark all words like this" :exit t)
+  ("r" mc/mark-all-in-region "Mark all in region" :exit t)
+  ("R" mc/mark-all-in-region-regexp "Mark all in region (regexp)" :exit t)
+  ("d" mc/mark-all-like-this-in-defun "Mark all like this in defun" :exit t)
+  ("s" mc/mark-all-symbols-like-this-in-defun "Mark all symbols like this in defun" :exit t)
+  ("W" mc/mark-all-words-like-this-in-defun "Mark all words like this in defun" :exit t)
+  ("i" mc/insert-numbers "Insert numbers" :exit t)
+  ("n" mc/mark-next-like-this "Mark next like this")
+  ("N" mc/skip-to-next-like-this "Skip to next like this")
+  ("M-n" mc/unmark-next-like-this "Unmark next like this")
+  ("p" mc/mark-previous-like-this "Mark previous like this")
+  ("P" mc/skip-to-previous-like-this "Skip to previous like this")
+  ("M-p" mc/unmark-previous-like-this "Unmark previous like this")
+  ("q" nil "Quit" :exit t))
+
+(defhydra hydra-paredit (:color blue
+                                :columns 3
+                                :idle 1.0)
+  "Paredit"
+  ("(" paredit-wrap-round "Wrap round")
+  ("[" paredit-wrap-square "Wrap square")
+  ("]" paredit-wrap-square "Wrap square")
+  ("{" paredit-wrap-curly "Wrap curly")
+  ("s" paredit-splice-sexp "Splice")
+  ("bs" cljr-splice-sexp-killing-backward "Splice kill backward")
+  ("fs" cljr-splice-sexp-killing-forward "Splice kill forward")
+  ("S" paredit-split-sexp "Split")
+  ("j" paredit-join-sexps "Join")
+  ("J" paredit-join-with-next-list "Join next list")
+  ("M-J" paredit-join-with-previous-list "Join prev list")
+  ("C" paredit-convolute-sexp "Convolute")
+  ("M-c" paredit-copy-as-kill "Copy as kill")
+  ("r" paredit-raise-sexp "Raise s-expression")
+  ("R" cljr-raise-sexp "Raise s-expression (cljr)")
+  ("c" paxedit-copy "Copy explicit expression, implicit expression, or comment")
+  ("d" paxedit-delete "Delete expression")
+  ("tb" paxedit-transpose-backward "Transpose backward")
+  ("tf" paxedit-transpose-forward "Transpose forward")
+  ("k" paxedit-kill "Kill explicit expression, implicit expression, or comment")
+  (";" paxedit-wrap-comment "Wrap with comment"))
+
+(defhydra hydra-transpose (:exit t
+                                 :columns 3
+                                 :idle 1.0)
+  "Transpose"
+  ("w" transpose-words "Words")
+  ("W" ace-swap-window "Windows / Buffers")
+  ("b" ace-swap-window "Windows / Buffers")
+  ("l" transpose-lines "Lines")
+  ("e" transpose-sexps "S-expressions")
+  ("s" transpose-sexps "S-expressions")
+  ("p" transpose-paragraphs "Paragraphs"))
+
+
+(defhydra hydra-lisp-eval (:exit t
+                                 :columns 2
+                                 :idle 1.0)
+  "Lisp eval"
+  ("r" eval-region "Region")
+  ("b" eval-buffer "Buffer")
+  ("e" eval-expression "S-expression")
+  ("l" eval-last-sexp "Last s-expression")
+  ("L" eval-last-sexp-print-value "Last s-expression and print value")
+  ("d" eval-defun "Defun / Function")
+  ("f" eval-defun "Defun / Function"))
+
+(defhydra hydra-ag (:exit t
+                          :columns 2
+                          :idle 1.0)
+  "Ag Search"
+  ("c" helm-ag "Current directory")
+  ("d" (lambda ()
+         (interactive)
+         (let ((current-prefix-arg '(4)))
+           (call-interactively 'helm-ag))) "Select directory")
+  ("D" helm-do-ag "Select directory (interactive)")
+  ("f" helm-ag-this-file "Current file")
+  ("F" helm-do-ag-this-file "Current file (interactive)")
+  ("p" helm-ag-project-root "Project")
+  ("b" helm-ag-buffers "Buffers")
+  ("B" helm-do-ag-buffers "Buffers (interactive)"))
+
+(defhydra hydra-yasnippet (:color blue :hint nil)
+  "
+              ^YASnippets^
+--------------------------------------------
+  Modes:    Load/Visit:    Actions:
+
+ _g_lobal  _d_irectory    _i_nsert
+ _m_inor   _f_ile         _t_ryout
+ _e_xtra   _l_ist         _n_ew
+         _a_ll
+"
+  ("d" yas-load-directory)
+  ("e" yas-activate-extra-mode)
+  ("i" yas-insert-snippet)
+  ("f" yas-visit-snippet-file :color blue)
+  ("n" yas-new-snippet)
+  ("t" yas-tryout-snippet)
+  ("l" yas-describe-tables)
+  ("g" yas-global-mode)
+  ("m" yas-minor-mode)
+  ("a" yas-reload-all))
+
+;; @see https://github.com/redguardtoo/mastering-emacs-in-one-year-guide/blob/master/gnus-guide-en.org
+;; gnus-group-mode
+(eval-after-load 'gnus-group
+  '(progn
+     (defhydra hydra-gnus-group (:color blue)
+       "
+[_A_] Remote groups (A A) [_g_] Refresh
+[_L_] Local groups        [_\\^_] List servers
+[_c_] Mark all read       [_m_] Compose new mail
+[_G_] Search mails (G G) [_#_] Mark mail
+"
+       ("A" gnus-group-list-active)
+       ("L" gnus-group-list-all-groups)
+       ("c" gnus-topic-catchup-articles)
+       ("G" dianyou-group-make-nnir-group)
+       ("g" gnus-group-get-new-news)
+       ("^" gnus-group-enter-server-mode)
+       ("m" gnus-group-new-mail)
+       ("#" gnus-topic-mark-topic)
+       ("q" nil))
+     ;; y is not used by default
+     (define-key gnus-group-mode-map "y" 'hydra-gnus-group/body)))
+
+;; gnus-summary-mode
+(eval-after-load 'gnus-sum
+  '(progn
+     (defhydra hydra-gnus-summary (:color blue)
+       "
+[_s_] Show thread   [_F_] Forward (C-c C-f)
+[_h_] Hide thread   [_e_] Resend (S D e)
+[_n_] Refresh (/ N) [_r_] Reply
+[_!_] Mail -> disk  [_R_] Reply with original
+[_d_] Disk -> mail  [_w_] Reply all (S w)
+[_c_] Read all      [_W_] Reply all with original (S W)
+[_#_] Mark          [_G_] Search mails
+"
+       ("s" gnus-summary-show-thread)
+       ("h" gnus-summary-hide-thread)
+       ("n" gnus-summary-insert-new-articles)
+       ("F" gnus-summary-mail-forward)
+       ("!" gnus-summary-tick-article-forward)
+       ("d" gnus-summary-put-mark-as-read-next)
+       ("c" gnus-summary-catchup-and-exit)
+       ("e" gnus-summary-resend-message-edit)
+       ("R" gnus-summary-reply-with-original)
+       ("r" gnus-summary-reply)
+       ("W" gnus-summary-wide-reply-with-original)
+       ("w" gnus-summary-wide-reply)
+       ("#" gnus-topic-mark-topic)
+       ("G" dianyou-group-make-nnir-group)
+       ("q" nil))
+     ;; y is not used by default
+     (define-key gnus-summary-mode-map "y" 'hydra-gnus-summary/body)))
+
+;; gnus-article-mode
+(eval-after-load 'gnus-art
+  '(progn
+     (defhydra hydra-gnus-article (:color blue)
+       "
+[_o_] Save attachment        [_F_] Forward
+[_v_] Play video/audio       [_r_] Reply
+[_d_] CLI to download stream [_R_] Reply with original
+[_b_] Open external browser  [_w_] Reply all (S w)
+[_f_] Click link/button      [_W_] Reply all with original (S W)
+[_g_] Focus link/button
+"
+       ("F" gnus-summary-mail-forward)
+       ("r" gnus-article-reply)
+       ("R" gnus-article-reply-with-original)
+       ("w" gnus-article-wide-reply)
+       ("W" gnus-article-wide-reply-with-original)
+       ("o" gnus-mime-save-part)
+       ("v" w3mext-open-with-mplayer)
+       ("d" w3mext-download-rss-stream)
+       ("b" w3mext-open-link-or-image-or-url)
+       ("f" w3m-lnum-follow)
+       ("g" w3m-lnum-goto)
+       ("q" nil))
+     ;; y is not used by default
+     (define-key gnus-article-mode-map "y" 'hydra-gnus-article/body)))
+
+;; message-mode
+(eval-after-load 'message
+  '(progn
+     (defhydra hydra-message (:color blue)
+  "
+[_c_] Complete mail address
+[_a_] Attach file
+[_s_] Send mail (C-c C-c)
+"
+       ("c" counsel-bbdb-complete-mail)
+       ("a" mml-attach-file)
+       ("s" message-send-and-exit)
+       ("i" dianyou-insert-email-address-from-received-mails)
+       ("q" nil))))
+
+(defun message-mode-hook-hydra-setup ()
+  (local-set-key (kbd "C-c C-y") 'hydra-message/body))
+(add-hook 'message-mode-hook 'message-mode-hook-hydra-setup)
+
+(defhydra dumb-jump-hydra (:color blue :columns 3)
+    "Dumb Jump"
+    ("j" dumb-jump-go "Go")
+    ("o" dumb-jump-go-other-window "Other window")
+    ("e" dumb-jump-go-prefer-external "Go external")
+    ("x" dumb-jump-go-prefer-external-other-window "Go external other window")
+    ("i" dumb-jump-go-prompt "Prompt")
+    ("l" dumb-jump-quick-look "Quick look")
+    ("b" dumb-jump-back "Back"))
+
+(provide 'setup-hydra)
+;;; setup-hydra.el ends here
+#+end_src
+** setup-init.el
+#+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-init.el
+;;;; setup-init.el
+
+;; Initial setup
+
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
+;; Emacs server
+(use-package server)
+(unless (server-running-p)
+  (server-start))
+
+(use-package autopair
+  :config
+  (autopair-mode 1))
+
+;; Shrinking fringes to 1 pixel
+(fringe-mode 7)
+
+(use-package ace-window
+  :config
+  (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+  (setq aw-dispatch-always nil)
+  (global-set-key (kbd "C-x o") 'ace-window)
+  (custom-set-faces
+   '(aw-leading-char-face
+     ((t (:inherit ace-jump-face-foreground :height 1.0)))))
+  (ace-window-display-mode 1))
+
+(add-to-list 'aw-dispatch-alist '(?w hydra-window-size/body) t)
+(add-to-list 'aw-dispatch-alist '(?r hydra-window-scroll/body) t)
+(add-to-list 'aw-dispatch-alist '(?\; hydra-window-frame/body) t)
+
+;; Remove security vulnerabiliyt
+(eval-after-load "enriched"
+  '(defun enriched-decode-display-prop (start end &optional param)
+     (list start end)))
+
+
+;; No splash screen
+(setq inhibit-splash-screen t
+      initial-major-mode 'org-mode)
+
+(setq initial-scratch-message (concat
+                               "#+Title: Persistent Scratch Buffer"
+                               "\n#\n # Welcome! This’ a place for trying things out. \n"))
+;; A very simple function to recreate the scratch buffer:
+;; ( http://emacswiki.org/emacs/RecreateScratchBuffer )
+(defun scratch ()
+  "create a scratch buffer"
+  (interactive)
+  (switch-to-buffer-other-window (get-buffer-create "*scratch*"))
+  (insert initial-scratch-message)
+  (org-mode))
+
+;; This doubles as a quick way to avoid the common formula: C-x b RET *scratch*
+(use-package persistent-scratch
+  :config
+  (persistent-scratch-setup-default))
+
+;; This is the de-facto standard in-buffer completion package. In case
+;; you're wondering, Company stands for Complete Anything.
+(use-package company
+  :demand t
+  :bind (;; Replace `completion-at-point' and `complete-symbol' with
+         ;; `company-manual-begin'. You might think this could be put
+         ;; in the `:bind*' declaration below, but it seems that
+         ;; `bind-key*' does not work with remappings.
+         ([remap completion-at-point] . company-manual-begin)
+         ([remap complete-symbol] . company-manual-begin)
+
+         ;; The following are keybindings that take effect whenever
+         ;; the completions menu is visible, even if the user has not
+         ;; explicitly interacted with Company.
+
+         :map company-active-map
+
+         ;; Make TAB always complete the current selection. Note that
+         ;; <tab> is for windowed Emacs and TAB is for terminal Emacs.
+         ("<tab>" . company-complete-selection)
+         ("TAB" . company-complete-selection)
+
+         ;; Prevent SPC from ever triggering a completion.
+         ("SPC" . nil)
+
+         ;; The following are keybindings that only take effect if the
+         ;; user has explicitly interacted with Company.
+
+         :map company-active-map
+         :filter (company-explicit-action-p)
+
+         ;; Make RET trigger a completion if and only if the user has
+         ;; explicitly interacted with Company. Note that <return> is
+         ;; for windowed Emacs and RET is for terminal Emacs.
+         ("<return>" . company-complete-selection)
+         ("RET" . company-complete-selection)
+
+         ;; We then do the same for the up and down arrows. Note that
+         ;; we use `company-select-previous' instead of
+         ;; `company-select-previous-or-abort'. I think the former
+         ;; makes more sense since the general idea of this `company'
+         ;; configuration is to decide whether or not to steal
+         ;; keypresses based on whether the user has explicitly
+         ;; interacted with `company', not based on the number of
+         ;; candidates.
+
+         ("<up>" . company-select-previous)
+         ("<down>" . company-select-next))
+
+  :bind* (;; The default keybinding for `completion-at-point' and
+          ;; `complete-symbol' is M-TAB or equivalently C-M-i. Here we
+          ;; make sure that no minor modes override this keybinding.
+          ("M-TAB" . company-manual-begin))
+
+  :diminish company-mode
+  :config
+
+  ;; Turn on Company everywhere.
+  (global-company-mode 1)
+
+  ;; Show completions instantly, rather than after half a second.
+  (setq company-idle-delay 0)
+
+  ;; Show completions after typing a single character, rather than
+  ;; after typing three characters.
+  (setq company-minimum-prefix-length 1)
+
+  ;; Show a maximum of 10 suggestions. This is the default but I think
+  ;; it's best to be explicit.
+  (setq company-tooltip-limit 10)
+
+  ;; Always display the entire suggestion list onscreen, placing it
+  ;; above the cursor if necessary.
+  (setq company-tooltip-minimum company-tooltip-limit)
+
+  ;; Always display suggestions in the tooltip, even if there is only
+  ;; one. Also, don't display metadata in the echo area. (This
+  ;; conflicts with ElDoc.)
+  (setq company-frontends '(company-pseudo-tooltip-frontend))
+
+  ;; Show quick-reference numbers in the tooltip. (Select a completion
+  ;; with M-1 through M-0.)
+  (setq company-show-numbers t)
+
+  ;; Prevent non-matching input (which will dismiss the completions
+  ;; menu), but only if the user interacts explicitly with Company.
+  (setq company-require-match #'company-explicit-action-p)
+
+  ;; Company appears to override our settings in `company-active-map'
+  ;; based on `company-auto-complete-chars'. Turning it off ensures we
+  ;; have full control.
+  (setq company-auto-complete-chars nil)
+
+  ;; Prevent Company completions from being lowercased in the
+  ;; completion menu. This has only been observed to happen for
+  ;; comments and strings in Clojure.
+  (setq company-dabbrev-downcase nil)
+
+  ;; Only search the current buffer to get suggestions for
+  ;; company-dabbrev (a backend that creates suggestions from text
+  ;; found in your buffers). This prevents Company from causing lag
+  ;; once you have a lot of buffers open.
+  (setq company-dabbrev-other-buffers nil)
+
+  ;; Make company-dabbrev case-sensitive. Case insensitivity seems
+  ;; like a great idea, but it turns out to look really bad when you
+  ;; have domain-specific words that have particular casing.
+  (setq company-dabbrev-ignore-case nil)
+
+  ;; Make it so that Company's keymap overrides Yasnippet's keymap
+  ;; when a snippet is active. This way, you can TAB to complete a
+  ;; suggestion for the current field in a snippet, and then TAB to
+  ;; move to the next field. Plus, C-g will dismiss the Company
+  ;; completions menu rather than cancelling the snippet and moving
+  ;; the cursor while leaving the completions menu on-screen in the
+  ;; same location.
+
+  (with-eval-after-load 'yasnippet
+    ;; TODO: this is all a horrible hack, can it be done with
+    ;; `bind-key' instead?
+
+    ;; This function translates the "event types" I get from
+    ;; `map-keymap' into things that I can pass to `lookup-key'
+    ;; and `define-key'. It's a hack, and I'd like to find a
+    ;; built-in function that accomplishes the same thing while
+    ;; taking care of any edge cases I might have missed in this
+    ;; ad-hoc solution.
+    (defun radian--normalize-event (event)
+      (if (vectorp event)
+          event
+        (vector event)))
+
+    ;; Here we define a hybrid keymap that delegates first to
+    ;; `company-active-map' and then to `yas-keymap'.
+    (setq radian--yas-company-keymap
+          ;; It starts out as a copy of `yas-keymap', and then we
+          ;; merge in all of the bindings from
+          ;; `company-active-map'.
+          (let ((keymap (copy-keymap yas-keymap)))
+            (map-keymap
+             (lambda (event company-cmd)
+               (let* ((event (radian--normalize-event event))
+                      (yas-cmd (lookup-key yas-keymap event)))
+                 ;; Here we use an extended menu item with the
+                 ;; `:filter' option, which allows us to
+                 ;; dynamically decide which command we want to
+                 ;; run when a key is pressed.
+                 (define-key keymap event
+                   `(menu-item
+                     nil ,company-cmd :filter
+                     (lambda (cmd)
+                       ;; There doesn't seem to be any obvious
+                       ;; function from Company to tell whether or
+                       ;; not a completion is in progress (à la
+                       ;; `company-explicit-action-p'), so I just
+                       ;; check whether or not `company-my-keymap'
+                       ;; is defined, which seems to be good
+                       ;; enough.
+                       (if company-my-keymap
+                           ',company-cmd
+                         ',yas-cmd))))))
+             company-active-map)
+            keymap))
+
+    ;; The function `yas--make-control-overlay' uses the current
+    ;; value of `yas-keymap' to build the Yasnippet overlay, so to
+    ;; override the Yasnippet keymap we only need to dynamically
+    ;; rebind `yas-keymap' for the duration of that function.
+    (defun radian--advice-company-overrides-yasnippet
+        (yas--make-control-overlay &rest args)
+      "Allow `company' to override `yasnippet'.
+This is an `:around' advice for `yas--make-control-overlay'."
+      (let ((yas-keymap radian--yas-company-keymap))
+        (apply yas--make-control-overlay args)))
+
+    (advice-add #'yas--make-control-overlay :around
+                #'radian--advice-company-overrides-yasnippet)))
+
+;; (use-package company
+;;   :diminish
+;;   :config
+;;   (setq company-dabbrev-other-buffers t
+;;         company-dabbrev-code-other-buffers t
+
+;;         ;; Allow (lengthy) numbers to be eligible for completion.
+;;         company-complete-number t
+
+;;         ;; M-⟪num⟫ to select an option according to its number.
+;;         company-show-numbers t
+
+;;         ;; Only 2 letters required for completion to activate.
+;;         company-minimum-prefix-length 2
+
+;;         ;; Do not downcase completions by default.
+;;         company-dabbrev-downcase nil
+
+;;         ;; Even if I write something with the ‘wrong’ case,
+;;         ;; provide the ‘correct’ casing.
+;;         company-dabbrev-ignore-case t
+
+;;         ;; Immediately activate completion.
+;;         company-idle-delay 0
+;;         )
+
+;;   (global-company-mode 1)
+;;   :bind (("C-c /" . company-complete)))
+
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+
+(provide 'setup-init)
+
+;;;; setup-init.el ends here
+#+END_SRC
+** setup-keybindings.el
+#+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-keybindings.el
+;;; setup-keybindings.el
+(use-package key-seq) 
+
+(key-chord-mode 1)
+
+(key-seq-define-global ",g" 'counsel-git)
+
+(bind-keys* ("C-s" . helm-swoop)
+            ("C-c g" . counsel-git)
+            ("C-c j" . counsel-git-grep)
+            ("C-c k" . counsel-ag))
+
+(global-set-key (kbd "C-S") 'helm-swoop-back-to-last-point)
+(global-set-key (kbd "C-c C-s") 'helm-multi-swoop)
+
+
+(global-set-key (kbd "<s-mouse-3>") 'split-window-below)
+(global-set-key (kbd "<s-mouse-1>") 'split-window-right)
+(global-set-key [double-mouse-3] 'delete-window)
+(global-set-key [double-mouse-1] 'delete-other-windows)
+
+;;;;;;;;;;;;;;;;
+;; Appearance ;;
+;;;;;;;;;;;;;;;;
+(global-set-key (kbd "C-x t") 'my/toggle-theme)
+(global-set-key (kbd "C-+") 'text-scale-increase)
+(global-set-key (kbd "C--") 'text-scale-decrease)
+
+;; Unclutter the mode-line
+;; My misc key bindings
+(global-set-key (kbd "RET") 'newline-and-indent)
+(global-set-key (kbd "M-/") 'hippie-expand)
+(global-set-key (kbd "C-x g") 'magit-status)
+(global-set-key (kbd "C-x f") 'recentf-open-files)
+(global-set-key (kbd "C-x M-t") 'cleanup-region)
+(global-set-key (kbd "C-c n") 'cleanup-buffer)
+(use-package expand-region
+  :config (global-set-key (kbd "C-=") 'er/expand-region))
+(use-package zoom-window
+  :config (global-set-key (kbd "C-x C-z") 'zoom-window-zoom))
+;; setting up multiple cursors
+(use-package multiple-cursors
+  :config
+  (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
+  (global-set-key (kbd "C->") 'mc/mark-next-like-this)
+  (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+  (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+  (global-set-key (kbd "C-S-<mouse-1>") 'mc/add-cursor-on-click))
+;; setting up smart-forward
+(use-package smart-forward
+  :config
+  (global-set-key (kbd "M-S-<up>") 'smart-up)
+  (global-set-key (kbd "M-S-<down>") 'smart-down)
+  (global-set-key (kbd "M-S-<left>") 'smart-backward)
+  (global-set-key (kbd "M-S-<right>") 'smart-forward))
+(use-package change-inner)
+(require 'change-inner)
+(global-set-key (kbd "M-S-i") 'change-inner)
+(global-set-key (kbd "M-S-o") 'change-outer)
+
+;; Bind Imenu M-i
+(global-set-key (kbd "M-i") 'imenu)
+
+;; guide-key
+(use-package guide-key
+  :config
+  (setq guide-key/guide-key-sequence '("C-x r" "C-x 4" "C-x v" "C-x 8" "C-x +"))
+  (setq guide-key/recursive-key-sequence-flag t)
+  (setq guide-key/popup-window-position 'bottom)
+  (guide-key-mode 1))
+(global-set-key (kbd "M-#") 'synosaurus-choose-and-replace)
+(use-package wordnut
+  :ensure t
+  :bind ("C-c !" . wordnut-lookup-current-word))
+
+;; Map files to modes
+(global-set-key (kbd "M-y") 'helm-show-kill-ring)
+(global-set-key (kbd "C-x b") 'helm-buffers-list)
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+(global-set-key (kbd "C-c C-r") 'helm-recentf)
+
+
+;;;;;;;;;;
+;; helm ;;
+;;;;;;;;;;
+;; The default "C-x c" is quite close to "C-x C-c", which quits Emacs.
+;; Changed to "C-c h". Note: We must set "C-c h" globally, because we
+;; cannot change `helm-command-prefix-key' once `helm-config' is loaded.
+(global-unset-key (kbd "C-x c"))
+(define-key global-map [remap find-file] 'helm-find-files)
+(define-key global-map [remap list-buffers] 'helm-buffers-list)
+(define-key global-map [remap dabbrev-expand] 'helm-dabbrev)
+(define-key global-map [remap execute-extended-command] 'helm-M-x)
+
+(unless (boundp 'completion-in-region-function)
+  (define-key lisp-interaction-mode-map [remap completion-at-point] 'helm-lisp-completion-at-point)
+  (define-key emacs-lisp-mode-map       [remap completion-at-point] 'helm-lisp-completion-at-point))
+(global-set-key (kbd "C-c b") 'helm-exwm)
+
+
+;;;;;;;;;;
+;; hugo ;;
+;;;;;;;;;;
+(define-key global-map (kbd "C-c C-e") 'easy-hugo)
+
+;;;;;;;;;;;;;
+;; paredit ;;
+;;;;;;;;;;;;;
+(define-key paredit-mode-map (kbd "M-(") 'paredit-wrap-round)
+(define-key paredit-mode-map (kbd "M-)") 'paredit-wrap-round-from-behind)
+(define-key paredit-mode-map (kbd "M-s-8") 'paredit-wrap-square)
+(define-key paredit-mode-map (kbd "M-s-9") 'paredit-wrap-square-from-behind)
+(define-key paredit-mode-map (kbd "M-s-(") 'paredit-wrap-curly)
+(define-key paredit-mode-map (kbd "M-s-)") 'paredit-wrap-curly-from-behind)
+
+(define-key paredit-mode-map (kbd "C-w") 'paredit-kill-region-or-backward-word)
+(define-key paredit-mode-map (kbd "M-C-<backspace>") 'backward-kill-sexp)
+
+;; Change nasty paredit keybindings
+(defvar my-nasty-paredit-keybindings-remappings
+  '(("M-s"         "s-s"         paredit-splice-sexp)
+    ("M-<up>"      "s-<up>"      paredit-splice-sexp-killing-backward)
+    ("M-<down>"    "s-<down>"    paredit-splice-sexp-killing-forward)
+    ("C-<right>"   "s-<right>"   paredit-forward-slurp-sexp)
+    ("C-<left>"    "s-<left>"    paredit-forward-barf-sexp)
+    ("C-M-<left>"  "s-S-<left>"  paredit-backward-slurp-sexp)
+    ("C-M-<right>" "s-S-<right>" paredit-backward-barf-sexp)))
+
+(define-key paredit-mode-map (kbd "s-r") 'paredit-raise-sexp)
+
+(--each my-nasty-paredit-keybindings-remappings
+  (let ((original (car it))
+        (replacement (cadr it))
+        (command (car (last it))))
+    (define-key paredit-mode-map (read-kbd-macro original) nil)
+    (define-key paredit-mode-map (read-kbd-macro replacement) command)))
+
+;; don't hijack \ please
+(define-key paredit-mode-map (kbd "\\") nil)
+
+;;;;;;;;;;;;;;;;;
+;; perspective ;;
+;;;;;;;;;;;;;;;;;
+(define-key persp-mode-map (kbd "C-x p -") 'custom-persp-last)
+(define-key projectile-mode-map (kbd "s-w") 'projectile-persp-switch-project)
+
+;;;;;;;;;;;;;;;;;;;
+;; switch-window ;;
+;;;;;;;;;;;;;;;;;;;
+(use-package switch-window
+  :config
+  (global-set-key (kbd "M-o") 'switch-window)
+
+  (global-set-key (kbd "C-x 1") 'switch-window-then-maximize)
+  (global-set-key (kbd "C-x 2") 'switch-window-then-split-below)
+  (global-set-key (kbd "C-x 3") 'switch-window-then-split-right)
+  (global-set-key (kbd "C-x 0") 'switch-window-then-delete)
+
+  (global-set-key (kbd "C-x 4 d") 'switch-window-then-dired)
+  (global-set-key (kbd "C-x 4 f") 'switch-window-then-find-file)
+  (global-set-key (kbd "C-x 4 m") 'switch-window-then-compose-mail)
+  (global-set-key (kbd "C-x 4 r") 'switch-window-then-find-file-read-only)
+
+  (global-set-key (kbd "C-x 4 C-f") 'switch-window-then-find-file)
+  (global-set-key (kbd "C-x 4 C-o") 'switch-window-then-display-buffer)
+
+  (global-set-key (kbd "C-x 4 0") 'switch-window-then-kill-buffer))
+
+;;;;;;;;;
+;; org ;;
+;;;;;;;;;
+(global-set-key (kbd "C-c C-x C-r") 'org-clock-report)
+
+
+
+
+;;;;;;;;;;;
+;; Hydra ;;
+;;;;;;;;;;;
+(global-set-key (kbd "C-x j") 'dumb-jump-hydra/body)
+(global-set-key (kbd "s-g") 'hydra-avy/body)
+(global-set-key (kbd "C-x SPC") 'hydra-rectangle/body)
+(global-set-key (kbd "C-c o") 'hydra-global-org/body)
+(global-set-key (kbd "M-g M-g") 'hydra-goto-line/body)
+(global-set-key (kbd "C-c m") 'hydra-mark/body)
+(key-seq-define-global "./" 'hydra-mark/body)
+(key-seq-define-global ".m" 'hydra-mark-buffer/body)
+(key-seq-define-global "-a" 'hydra-ag/body)
+(key-seq-define emacs-lisp-mode-map "-e" 'hydra-lisp-eval/body)
+(key-seq-define-global ",p" 'projectile-command-map)
+(key-seq-define-global ",." 'multiple-cursors-hydra/body)
+(key-seq-define-global ",," 'avy-goto-char-timer)
+(key-seq-define-global ",w" 'hydra-copy/body)
+(key-seq-define-global "-y" 'hydra-yasnippet/body)
+
+(provide 'setup-keybindings)
+;;; setup-keybindings.el ends here
+#+END_SRC
+** setup-js2-mode.el
+#+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-js2-mode.el
+;;; setup-js2-mode.el --- tweak js2 settings -*- lexical-binding: t; -*-
+
+(setq-default js2-allow-rhino-new-expr-initializer nil)
+(setq-default js2-auto-indent-p nil)
+(setq-default js2-enter-indents-newline nil)
+
+(setq-default js2-idle-timer-delay 0.1)
+(setq-default js2-indent-on-enter-key nil)
+(setq-default js2-mirror-mode nil)
+(setq-default js2-strict-inconsistent-return-warning nil)
+(setq-default js2-auto-indent-p t)
+(setq-default js2-include-rhino-externs nil)
+(setq-default js2-include-gears-externs nil)
+(setq-default js2-include-node-externs t)
+(setq-default js2-concat-multiline-strings 'eol)
+(setq-default js2-rebind-eol-bol-keys nil)
+
+;; Let flycheck handle parse errors
+(setq-default js2-show-parse-errors nil)
+(setq-default js2-strict-missing-semi-warning nil)
+(setq-default js2-strict-trailing-comma-warning t) ;; jshint does not warn about this now for some reason
+(use-package flycheck)
+(add-hook 'js2-mode-hook (lambda () (flycheck-mode 1)))
+
+(use-package js2-refactor)
+(js2r-add-keybindings-with-prefix "C-c C-r")
+
+(add-hook 'js2-mode-hook (lambda ()
+                           (add-hook 'xref-backend-functions #'xref-js2-xref-backend nil t)))
+(setq js2-skip-preprocessor-directives t)
+(js2r-add-keybindings-with-prefix "C-c C-m")
+
+(require 'js2-imenu-extras)
+
+(js2-imenu-extras-setup)
+
+(defun js2r--remove-all-this-cruft-on-backward-delete ()
+  (set-temporary-overlay-map
+   (let ((map (make-sparse-keymap)))
+     (define-key map (kbd "DEL") 'undo-tree-undo)
+     (define-key map (kbd "C-h") 'undo-tree-undo)
+     map) nil))
+
+(defun js2r--does-not-need-semi ()
+  (save-excursion
+    (back-to-indentation)
+    (or (looking-at "if ")
+        (looking-at "function ")
+        (looking-at "for ")
+        (looking-at "while ")
+        (looking-at "try ")
+        (looking-at "} catch ")
+        (looking-at "} else "))))
+
+(defun js2r--comma-unless (delimiter)
+  (if (looking-at (concat "[\n\t\r ]*" (regexp-quote delimiter)))
+      ""
+    ","))
+
+(define-key js2-mode-map (kbd "C-c RET jt") 'jump-to-test-file)
+(define-key js2-mode-map (kbd "C-c RET ot") 'jump-to-test-file-other-window)
+(define-key js2-mode-map (kbd "C-c RET js") 'jump-to-source-file)
+(define-key js2-mode-map (kbd "C-c RET os") 'jump-to-source-file-other-window)
+(define-key js2-mode-map (kbd "C-c RET jo") 'jump-between-source-and-test-files)
+(define-key js2-mode-map (kbd "C-c RET oo") 'jump-between-source-and-test-files-other-window)
+
+(define-key js2-mode-map (kbd "C-c RET dp") 'js2r-duplicate-object-property-node)
+
+(define-key js2-mode-map (kbd "C-c RET ta") 'toggle-assert-refute)
+
+(defadvice js2r-inline-var (after reindent-buffer activate)
+  (cleanup-buffer))
+
+(defun js2-hide-test-functions ()
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (ignore-errors
+      (while (re-search-forward "\"[^\"]+\": function (")
+        (js2-mode-hide-element)))))
+
+(define-key js2-mode-map (kbd "C-c t") 'js2-hide-test-functions)
+
+;; js2-mode steals TAB, let's steal it back for yasnippet
+(defun js2-tab-properly ()
+  (interactive)
+  (let ((yas-fallback-behavior 'return-nil))
+    (unless (yas-expand)
+      (indent-for-tab-command)
+      (if (looking-back "^\s*")
+          (back-to-indentation)))))
+
+(define-key js2-mode-map (kbd "TAB") 'js2-tab-properly)
+
+;; When renaming/deleting js-files, check for corresponding testfile
+(define-key js2-mode-map (kbd "C-x C-r") 'js2r-rename-current-buffer-file)
+(define-key js2-mode-map (kbd "C-x C-k") 'js2r-delete-current-buffer-file)
+
+(define-key js2-mode-map (kbd "C-k") #'js2r-kill)
+
+(define-key js2-mode-map (kbd "M-j") (lambda (join-line -1)))
+
+(comment ;; avoid confusing shorthands
+ ;; Use lambda for anonymous functions
+ (font-lock-add-keywords
+  'js2-mode `(("\\(function\\) *("
+               (0 (progn (compose-region (match-beginning 1)
+                                         (match-end 1) "\u0192")
+                         nil)))))
+
+ ;; Use right arrow for return in one-line functions
+ (font-lock-add-keywords
+  'js2-mode `(("function *([^)]*) *{ *\\(return\\) "
+               (0 (progn (compose-region (match-beginning 1)
+                                         (match-end 1) "\u2190")
+                         nil))))))
+
+;; After js2 has parsed a js file, we look for jslint globals decl comment ("/* global Fred, _, Harry */") and
+;; add any symbols to a buffer-local var of acceptable global vars
+;; Note that we also support the "symbol: true" way of specifying names via a hack (remove any ":true"
+;; to make it look like a plain decl, and any ':false' are left behind so they'll effectively be ignored as
+;; you can't have a symbol called "someName:false"
+(add-hook 'js2-post-parse-callbacks
+          (lambda ()
+            (when (> (buffer-size) 0)
+              (let ((btext (replace-regexp-in-string
+                            ": *true" " "
+                            (replace-regexp-in-string "[\n\t ]+" " " (buffer-substring-no-properties 1 (buffer-size)) t t))))
+                (mapc (apply-partially 'add-to-list 'js2-additional-externs)
+                      (split-string
+                       (if (string-match "/\\* *global *\\(.*?\\) *\\*/" btext) (match-string-no-properties 1 btext) "")
+                       " *, *" t))
+                ))))
+
+(require 'json)
+
+(defun my-aget (key map)
+  (cdr (assoc key map)))
+
+(defun js2-fetch-autolint-externs (file)
+  (let* ((settings (with-temp-buffer
+                     (insert-file-literally file)
+                     (javascript-mode)
+                     (let (kill-ring kill-ring-yank-pointer) (kill-comment 1000))
+                     (->> (buffer-substring (point-min) (point-max))
+                          (s-trim)
+                          (s-chop-prefix "module.exports = ")
+                          (s-chop-suffix ";")
+                          (json-read-from-string))))
+         (predef (->> settings
+                      (my-aget 'linterOptions)
+                      (my-aget 'predef))))
+    (--each (append predef nil)
+      (add-to-list 'js2-additional-externs it))))
+
+(defun cjsp--eldoc-innards (beg)
+  (save-excursion
+    (goto-char beg)
+    (search-forward "=")
+    (let ((start (point)))
+      (search-forward "*/")
+      (forward-char -2)
+      (buffer-substring-no-properties start (point)))))
+
+(defun cjsp--indentation-of-html-line (html line-number)
+  (with-temp-buffer
+    (insert html)
+    (html-mode)
+    (indent-region (point-min) (point-max))
+    (goto-line line-number)
+    (back-to-indentation)
+    (current-column)))
+
+(defun cjsp--line-number-in-eldoc (p beg)
+  (save-excursion
+    (goto-char p)
+    (let ((l (line-number-at-pos)))
+      (goto-char beg)
+      (- l (line-number-at-pos) -1))))
+
+(defun js2-lineup-comment (parse-status)
+  "Indent a multi-line block comment continuation line."
+  (let* ((beg (nth 8 parse-status))
+         (first-line (js2-same-line beg))
+         (p (point))
+         (offset (save-excursion
+                   (goto-char beg)
+                   (cond
+
+                    ((looking-at "/\\*:DOC ")
+                     (+ 2 (current-column)
+                        (cjsp--indentation-of-html-line
+                         (cjsp--eldoc-innards beg)
+                         (cjsp--line-number-in-eldoc p beg))))
+
+                    ((looking-at "/\\*")
+                     (+ 1 (current-column)))
+
+                    (:else 0)))))
+    (unless first-line
+      (indent-line-to offset))))
+(setq js-indent-level 2)
+;; js-mode (which js2 is based on) binds "M-." which conflicts with xref, so
+;; unbind it.
+(define-key js-mode-map (kbd "M-.") nil)
+
+(provide 'setup-js2-mode)
+
+;;; setup-js2-mode.el ends here
+#+END_SRC
+** setup-magit.el
+#+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-magit.el
+;;; setup-magit.el
+
+;; move cursor into position when entering commit message
+(use-package diff-hl)
+
+(defun my/magit-cursor-fix ()
+ (beginning-of-buffer)
+ (when (looking-at "#")
+   (forward-line 2)))
+
+(defun magit-status-fullscreen (prefix)
+  (interactive "P")
+  (magit-status)
+  (unless prefix
+    (delete-other-windows)))
+
+(use-package magit-todos
+  :after magit
+  :after hl-todo)
+
+(use-package hl-todo :ensure t
+  :config
+  ;; Adding a new keyword: TEST.
+  (add-to-list 'hl-todo-keyword-faces '("TEST" . "#dc8cc3"))
+  :init
+  (add-hook 'text-mode-hook (lambda () (hl-todo-mode t))))
+
+
+;; full screen magit-status
+;; Efficient version control.
+(use-package magit
+  :config
+  (global-set-key (kbd "C-x g") 'magit-status)
+  (global-set-key (kbd "C-x M-g") 'magit-dispatch)
+  (add-hook 'git-commit-mode-hook 'my/magit-cursor-fix)
+  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
+  ;; don't prompt me
+  (set-default 'magit-pushq-always-verify nil)
+  ;; (set-default 'magit-revert-buffers 'silent)
+  (set-default 'magit-no-confirm '(stage-all-changes
+                                   unstage-all-changes))
+  (set-default 'magit-diff-refine-hunk t)
+  ;; update diff-hl
+  (global-diff-hl-mode))
+
+(define-key magit-file-mode-map
+  (kbd "C-c g") 'magit-file-dispatch)
+
+(require 'magit-git)
+(defun my/magit-check-file-and-popup ()
+  "If the file is version controlled with git
+  and has uncommitted changes, open the magit status popup."
+  (let ((file (buffer-file-name)))
+    (when (and file (magit-anything-modified-p t file))
+      (message "This file has uncommited changes!")
+      (when nil ;; Became annoying after some time.
+        (split-window-below)
+        (other-window 1)
+        (magit-status)))))
+
+;; I usually have local variables, so I want the message to show
+;; after the locals have been loaded.
+(add-hook 'find-file-hook
+          '(lambda ()
+             (add-hook 'hack-local-variables-hook 'my/magit-check-file-and-popup)))
+
+;; (use-package forge
+;;   :after magit
+;;   :config
+;;   (setq forge-topic-list-columns
+;;         '(("#" 4
+;;            (lambda (a b)
+;;              (> (car a) (car b)))
+;;            (:right-align t) number nil)
+;;           ("Title" 35 t nil title  nil)
+;;           ("Milestone" 9 t nil milestone nil)
+;;           ("State" 6 t nil state nil)
+;;           ("Updated" 10 t nill updated nil))))
+
+(add-hook 'server-switch-hook 'magit-commit-diff)
+(provide 'setup-magit)
+;;; setup-magit.el ends here
+#+END_SRC
+** setup-markdown.el
+#+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-markdown.el
+;;; setup-markdown.el
+(use-package markdown-mode
+  :mode (("\\.yml$" . yaml-mode)
+         ("\\.yaml$" . yaml-mode))
+  :config
+  (setq markdown-command "/usr/local/bin/pandoc")
+  ;; (setq markdown-command "pandoc --smart -f markdown -t html")
+  (setq markdown-imenu-generic-expression
+        '(("title"  "^\\(.*\\)[\n]=+$" 1)
+          ("h2-"    "^\\(.*\\)[\n]-+$" 1)
+          ("h1"   "^# \\(.*\\)$" 1)
+          ("h2"   "^## \\(.*\\)$" 1)
+          ("h3"   "^### \\(.*\\)$" 1)
+          ("h4"   "^#### \\(.*\\)$" 1)
+          ("h5"   "^##### \\(.*\\)$" 1)
+          ("h6"   "^###### \\(.*\\)$" 1)
+          ("fn"   "^\\[\\^\\(.*\\)\\]" 1)
+          ))
+  (add-hook 'markdown-mode-hook
+            (lambda ()
+              (setq imenu-generic-expression markdown-imenu-generic-expression)))
+
+  (add-hook 'markdown-mode-hook
+	    (lambda ()
+	      (visual-line-mode t)
+	      (writegood-mode t)
+	      (flyspell-mode t))))
+
+(provide 'setup-markdown)
+
+;;; setup-markdown.el ends here
+#+END_SRC
 ** setup-org.el
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-org.el
 ;;; setup-org.el
@@ -4757,6 +6813,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
   (use-package ob-go)
   (use-package  ob-restclient)
   (setq org-ellipsis " ⤵"
+        org-imenu-depth 7
         org-hide-block-startup t
         org-tags-exclude-from-inheritance (quote ("crypt"))
         org-crypt-key "D4F09EB110177E03C28E2FE1F5BBAE1E0392253F"
