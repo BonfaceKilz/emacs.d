@@ -56,7 +56,7 @@
 #+BEGIN_SRC emacs-lisp :padding no :tangle ~/.emacs.d/init.el :mkdirp yes :noweb yes
   ;;; init.el
 (require 'setup-package)
-
+(require 'sane-defaults)
 
 (defvar user-home-directory (concat (expand-file-name "~") "/"))
 
@@ -89,14 +89,12 @@
       `(("." . ,(expand-file-name
                  (concat user-emacs-directory "backups")))))
 
-(require 'setup-package)
 
-(use-package dash)
 (setq defuns-dir (expand-file-name "defuns" user-emacs-directory))
+
 (dolist (file (directory-files defuns-dir t "\\w+"))
   (when (file-regular-p file)
     (load file)))
-(require 'sane-defaults)
 (require 'setup-init)
 (require 'mode-mappings)
 (require 'appearance)
@@ -1625,8 +1623,6 @@ abort completely with `C-g'."
                            (run-with-timer 0.05 nil 'invert-face
                                            'mode-line)))
 
-;; Highlight current line
-(global-hl-line-mode 1)
 
 ;; Set custom theme path
 (setq custom-theme-directory (concat user-emacs-directory "themes"))
@@ -1644,9 +1640,6 @@ abort completely with `C-g'."
 
 ;; Don't defer screen updates when performing operations
 (setq redisplay-dont-pause t)
-
-;; Highlight matching parentheses when the point is on them.
-(show-paren-mode 1)
 
 (when window-system
   (setq frame-title-format '(buffer-file-name "%f" ("%b")))
@@ -1971,171 +1964,6 @@ abort completely with `C-g'."
 ** sane-defaults.el
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/sane-defaults.el
 ;;; sane-defaults.el
-(setq geiser-default-implementation 'racket)
-(setq geiser-racket-binary "/home/bonface/.guix-profile/bin/racket")
-
-(display-battery-mode)
-(setq echo-keystrokes 0.1
-      use-dialog-box nil
-      visible-bell t)
-
-(add-hook 'scheme-mode-hook 'geiser-mode)
-(setq geiser-default-implementation 'guile)
-
-(show-paren-mode t)
-
-(use-package diminish
-  :config
-  (diminish 'eldoc-mode)
-  (diminish 'org-indent-mode)
-  (diminish 'subword-mode)
-  (diminish 'visual-line-mode "")
-  (diminish 'isearch-mode "?")
-  (diminish 'flyspell-mode))
-
-;; Making it easier to discover Emacs key presses.
-(use-package which-key
-  :diminish which-key-mode
-  :init (which-key-mode)
-  :config (which-key-setup-side-window-bottom)
-  (setq which-key-idle-delay 0.2))
-
-(setq inhibit-startup-message t)
-
-(defun display-startup-echo-area-message ()
-  "The message that is shown after ‘user-init-file’ is loaded."
-  (message
-   (concat "Welcome "      user-full-name
-           "! Emacs "      emacs-version
-           "; Org-mode "   org-version
-           "; System "    (system-name)
-           (format "; Time %.3fs"
-                   (float-time (time-subtract (current-time)
-                                              before-init-time))))))
-
-;; Set custom themes to be safe
-(setf custom-safe-themes t)
-
-;; Allow pasting selection outside of Emacs
-(setq x-select-enable-clipboard t)
-
-;; Set some defaults
-(global-visual-line-mode)
-
-;; Auto refresh buffers
-(global-auto-revert-mode t)
-
-;; Also auto refresh dired, but be quiet about it
-(setq global-auto-revert-non-file-buffers t)
-(setq auto-revert-verbose nil)
-
-;; Show keystrokes in progress
-(setq echo-keystrokes 0.1)
-
-;; Move files to trash when deleting
-(setq delete-by-moving-to-trash t)
-
-;; Transparently open compressed files
-(auto-compression-mode t)
-
-;; Enable syntax highlighting for older Emacsen that have it off
-(global-font-lock-mode t)
-
-;; Answering just 'y' or 'n' will do
-(defalias 'yes-or-no-p 'y-or-n-p)
-
-;; UTF-8 please
-(setq locale-coding-system 'utf-8) ; pretty
-(set-terminal-coding-system 'utf-8) ; pretty
-(set-keyboard-coding-system 'utf-8) ; pretty
-(set-selection-coding-system 'utf-8) ; please
-(prefer-coding-system 'utf-8) ; with sugar on top
-
-;; Show active region
-(transient-mark-mode 1)
-(make-variable-buffer-local 'transient-mark-mode)
-(put 'transient-mark-mode 'permanent-local t)
-(setq-default transient-mark-mode t)
-
-;; Remove text in active region if inserting text
-(delete-selection-mode 1)
-
-;; Don't highlight matches with jump-char - it's distracting
-(setq jump-char-lazy-highlight-face nil)
-
-;; Always display line and column numbers
-(setq line-number-mode t)
-(setq column-number-mode t)
-
-;; Lines should be 80 characters wide, not 72
-(setq fill-column 80)
-
-;; Save a list of recent files visited. (open recent file with C-x f)
-(recentf-mode 1)
-(setq recentf-max-menu-items 25)
-(setq recentf-max-saved-items 100) ;; just 20 is too recent
-
-;; Save minibuffer history
-(savehist-mode 1)
-(setq history-length 1000)
-
-;; Undo/redo window configuration with C-c <left>/<right>
-(winner-mode 1)
-
-;; Never insert tabs
-(set-default 'indent-tabs-mode nil)
-
-;; Show me empty lines after buffer end
-(setq-default indicate-empty-lines t)
-
-;; Easily navigate sillycased words
-(global-subword-mode 1)
-
-;; Don't break lines for me, please
-(setq-default truncate-lines t)
-
-;; Keep cursor away from edges when scrolling up/down
-(use-package smooth-scrolling)
-
-;; Allow recursive minibuffers
-(setq enable-recursive-minibuffers t)
-
-;; Don't be so stingy on the memory, we have lots now. It's the distant future.
-(setq gc-cons-threshold 20000000)
-
-;; org-mode: Don't ruin S-arrow to switch windows please (use M-+ and M-- instead to toggle)
-;; (setq org-replace-disputed-keys t)
-
-;; Fontify org-mode code blocks
-(setq org-src-fontify-natively t)
-
-;; Represent undo-history as an actual tree (visualize with C-x u)
-(setq undo-tree-mode-lighter "")
-(use-package undo-tree
-  :config
-  (global-undo-tree-mode))
-
-
-;; Sentences do not need double spaces to end. Period.
-(set-default 'sentence-end-double-space nil)
-
-;; 80 chars is a good width.
-(set-default 'fill-column 80)
-
-;; Add parts of each file's directory to the buffer name if not unique
-(use-package uniquify-files
-  :config
-  (setq uniquify-buffer-name-style 'forward
-        uniquify-separator ":"))
-
-;; A saner ediff
-(setq ediff-diff-options "-w")
-(setq ediff-split-window-function 'split-window-horizontally)
-(setq ediff-window-setup-function 'ediff-setup-windows-plain)
-
-;; Nice says eval-expression-print-level needs to be set to nil (turned off) so
-;; that you can always see what's happening.
-(setq eval-expression-print-level nil)
 
 ;; When popping the mark, continue popping until the cursor actually moves
 ;; Also, if the last command was a copy - skip past all the expand-region cruft.
@@ -2148,27 +1976,17 @@ abort completely with `C-g'."
     (dotimes (i 10)
       (when (= p (point)) ad-do-it))))
 
-(setq set-mark-command-repeat-pop t)
+(defun display-startup-echo-area-message ()
+  "The message that is shown after ‘user-init-file’ is loaded."
+  (message
+   (concat "Welcome "      user-full-name
+           "! Emacs "      emacs-version
+           "; Org-mode "   org-version
+           "; System "    (system-name)
+           (format "; Time %.3fs"
+                   (float-time (time-subtract (current-time)
+                                              before-init-time))))))
 
-;; Offer to create parent directories if they do not exist
-;; http://iqbalansari.github.io/blog/2014/12/07/automatically-create-parent-directories-on-visiting-a-new-file-in-emacs/
-(defun my-create-non-existent-directory ()
-  (let ((parent-directory (file-name-directory buffer-file-name)))
-    (when (and (not (file-exists-p parent-directory))
-               (y-or-n-p (format "Directory `%s' does not exist! Create it?" parent-directory)))
-      (make-directory parent-directory t))))
-
-(add-to-list 'find-file-not-found-functions 'my-create-non-existent-directory)
-
-;; Don't set backup files
-;; I never use it
-(setq make-backup-files nil)
-
-(setq backup-directory-alist `((".*" . ,temporary-file-directory)))
-(setq auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
-
-;; Indentation and buffer cleanup
-;; Re-indent, untabify, and clean up whitespace
 (defun untabify-buffer ()
   (interactive)
   (untabify (point-min) (point-max)))
@@ -2190,175 +2008,238 @@ abort completely with `C-g'."
   (dolist (re '("\\\\│\·*\n" "\W*│\·*"))
     (replace-regexp re "" nil beg end)))
 
-(setq-default show-trailing-whitespace 'nil)
+;; http://iqbalansari.github.io/blog/2014/12/07/automatically-create-parent-directories-on-visiting-a-new-file-in-emacs/
+(defun bonz/create-non-existent-directory ()
+  "Offer to create parent directories if they do not exist"
+  (let ((parent-directory (file-name-directory buffer-file-name)))
+    (when (and (not (file-exists-p parent-directory))
+               (y-or-n-p (format "Directory `%s' does not exist! Create it?" parent-directory)))
+      (make-directory parent-directory t))))
 
-;; make the text-width in epub mode 80 chars long
-(setq nov-text-width 80)
+(add-to-list 'find-file-not-found-functions 'bonz/create-non-existent-directory)
 
-(setq tramp-default-method "ssh")
-(setq tramp-default-proxies-alist nil)
+(use-package smooth-scrolling :ensure)
 
-;; make opening large files reasonable
-;; (require 'vlf-setup)
+(use-package diminish
+  :ensure
+  :after use-package
+  :config
+  (diminish 'eldoc-mode)
+  (diminish 'org-indent-mode)
+  (diminish 'subword-mode)
+  (diminish 'visual-line-mode "")
+  (diminish 'isearch-mode "?")
+  (diminish 'flyspell-mode))
 
-;; source:
-;; https://emacs.stackexchange.com/questions/598/how-do-i-prevent-extremely-long-lines-making-emacs-slow
-(setq-default bidi-display-reordering nil)
+;; Making it easier to discover Emacs key presses.
+(use-package which-key
+  :ensure
+  :diminish which-key-mode
+  :init (which-key-mode)
+  :config (which-key-setup-side-window-bottom)
+  (setq which-key-idle-delay 0.2))
 
 ;; Save point position between sessions
 (use-package saveplace
+  :ensure
   :config
   (setq-default save-place t)
   (setq save-place-file (expand-file-name ".places" user-emacs-directory)))
 
-;; Default setup of smartparens
-(use-package smartparens)
-(require 'smartparens-config)
-(setq sp-autoescape-string-quote nil)
-(--each '(css-mode-hook
-          restclient-mode-hook
-          js-mode-hook
-          java-mode
-          php-mode
-          markdown-mode)
-  (add-hook it 'turn-on-smartparens-mode))
-;; Font lock dash.el
-(eval-after-load "dash" '(dash-enable-font-lock))
+(use-package smartparens
+  :ensure
+  :config
+  (require 'smartparens-config))
 
 ;; Highlight escape sequences
-(use-package highlight-escape-sequences)
-(hes-mode)
-(put 'font-lock-regexp-grouping-backslash 'face-alias 'font-lock-builtin-face)
+(use-package highlight-escape-sequences :ensure)
 
 ;; autocomplete
-(use-package auto-complete)
-(require 'auto-complete-config)
-(ac-config-default)
-(setq ac-show-menu-immediately-on-auto-complete t)
+(use-package auto-complete
+  :ensure
+  :config
+  (ac-config-default)
+  (setq ac-show-menu-immediately-on-auto-complete t))
 
 ;; Flyspell
 (use-package flyspell
-  :ensure t
+  :ensure
   :config
-  (if (eq system-type 'darwin)
-      (setq-default ispell-program-name "/usr/bin/aspell")
-    (setq-default ispell-program-name "/usr/bin/aspell"))
-  (setq ispell-dictionary "en_GB") ;; set the default dictionary
-  (setq flyspell-issue-welcome-flag nil)
-  (setq-default ispell-list-command "list")
-  (setq ispell-silently-savep t)
-  (setq ispell-personal-dictionary "~/.emacs.d/.aspell.en.pws")
   (custom-set-faces '(flyspell-incorrect ((t (:inverse-video t)))))
-  :hook (
-         (prog-mode . flyspell-prog-mode)
-         (text-mode . flyspell-mode)
-         (org-mode . flyspell-mode)
-         (c-mode . flyspell-prog-mode)
-         (python-mode . flyspell-prog-mode)
-         (web-mode . flyspell-prog-mode)
-         (emacs-lisp-mode-hook . flyspell-prog-mode))
-  )
+  (setq flyspell-issue-welcome-flag nil)
+  (setq ispell-dictionary "en_GB") ;; set the default dictionary
+  (setq ispell-personal-dictionary "~/.emacs.d/.aspell.en.pws")
+  (setq ispell-silently-savep t)
+  (setq-default ispell-list-command "list")
+  (setq-default ispell-program-name "/home/bonface/.guix/bin/aspell")
+  :hook ((prog-mode . flyspell-prog-mode-hook)
+         (text-mode . flyspell-mode-hook)
+         (org-mode . flyspell-mode-hook)
+         (c-mode . flyspell-prog-mode-hook)
+         (python-mode . flyspell-prog-mode-hook)
+         (web-mode . flyspell-prog-mode-hook)
+         (emacs-lisp-mode-hook . flyspell-prog-mode-hook)))
 
 ;; Avoid unwanted repetition
 (use-package synosaurus
-  :ensure t
+  :ensure
   :diminish synosaurus-mode
   :init    (synosaurus-mode)
   :config  (setq synosaurus-choose-method 'popup))
-  ;; 'ido is default.)
 
-(use-package fill-column-indicator)
-(setq fci-rule-color "#111122")
-
-;; ibuffer
-(setq ibuffer-show-empty-filter-groups nil)
-(add-hook 'ibuffer-mode-hook
-          '(lambda ()
-             (ibuffer-auto-mode 1)))
+(use-package fill-column-indicator
+  :ensure
+  :config
+  (setq fci-rule-color "#111122"))
 
 ;; move text
-(use-package move-text)
-(move-text-default-bindings)
-
-;; Turn on `display-time-mode' if you don't usoe an external bar.
-(setq display-time-default-load-average nil)
-(display-time-mode t)
-
-;; Golden ratio
-;; Turn it off be default
-(defun pl/helm-alive-p ()
-  (if (boundp 'helm-alive-p)
-      (symbol-value 'helm-alive-p)))
+(use-package move-text
+  :ensure
+  :config
+  (move-text-default-bindings))
 
 (use-package golden-ratio
+  :ensure
   :config
-  (add-to-list 'golden-ratio-inhibit-functions 'pl/helm-alive-p)
-  (golden-ratio-mode 0))
-
-;; ac mode
-(define-key ac-mode-map (kbd "M-TAB") 'auto-complete)
-
-(column-number-mode t)
-
-(setq display-time-day-and-date t)
-(display-time)
-
-;; Enable viewing recent files
-(recentf-mode 1)
-(setq recentf-max-menu-items 25)
-
-(smartparens-global-mode)
+  (add-to-list 'golden-ratio-inhibit-functions
+               '(lambda ()
+                  (if (boundp 'helm-alive-p)
+                      (symbol-value 'helm-alive-p))))
+  (golden-ratio-mode -1))
 
 ;; show emojis
-(use-package emojify)
-(add-hook 'after-init-hook #'global-emojify-mode)
+(use-package emojify
+  :ensure
+  :hook
+  ((after-init-hook . global-emojify-mode)))
 
 ;; add $PATH to eshell
 (use-package exec-path-from-shell
-  :ensure t
+  :ensure
   :init
   (when (memq window-system '(mac ns x))
-    (exec-path-from-shell-initialize))
-  )
-;; https://emacs.stackexchange.com/questions/32881/enabling-minibuffer-pinentry-with-emacs-25-and-gnupg-2-1-on-ubuntu-xenial
-(setq epa-pinentry-mode 'loopback)
+    (exec-path-from-shell-initialize)))
 
 ;; open epubs
 ;; (use-package justify-kp)
 (use-package nov
+  :ensure
   :config
   (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
   (setq nov-text-width 80)
   (setq visual-fill-column-center-text t)
-  (add-hook 'nov-mode-hook 'visual-line-mode)
-  (add-hook 'nov-mode-hook 'visual-fill-column-mode))
+  :hook
+  ((visual-line-mode . nov-mode-hook)
+   (visual-fill-column-mode . nov-mode-hook)))
 
-(global-subword-mode 1)
+(use-package browse-url
+  :ensure
+  :config
+  (defun actuator-browse-video (url &rest _args)
+    "Browse a URL with a dedicated video player.
+Avoids opening a browser window."
+    (start-process "mpv" nil "mpv" url))
+  :straight nil
+  :custom
+  (browse-url-handlers '(("youtu\\.?be" . actuator-browse-video)
+                         ("twitch"      . actuator-browse-video))))
 
-(setenv "LANG" "en_US.UTF-8")
-(setenv "LC_ALL" "en_US.UTF-8")
-(setenv "LC_CTYPE" "en_US.UTF-8")
+(use-package undo-tree
+  :ensure
+  :config
+  (global-undo-tree-mode))
 
-;; https://github.com/syl20bnr/spacemacs/issues/9409
-;; Prevent Emacs from consuming 100% cpu when idl
-(setq history-length 100)
-(put 'minibuffer-history 'history-length 50)
-(put 'evil-ex-history 'history-length 50)
-(put 'kill-ring 'history-length 25)
+;; Add parts of each file's directory to the buffer name if not unique
+(use-package uniquify-files
+  :ensure
+  :config
+  (setq uniquify-buffer-name-style 'forward
+        uniquify-separator ":"))
 
-(defun keyboard-quit-strong ()
-  "Run `keyboard-quit' to return emacs to a more responsive state.
+(use-package emacs
+  :init
+  (auto-compression-mode 1)
+  (column-number-mode t)
+  (delete-selection-mode 1)
+  (display-battery-mode)
+  (display-time)
+  (display-time-mode t)
+  (global-auto-revert-mode 1)
+  (global-hl-line-mode t)
+  (global-subword-mode 1)
+  (global-visual-line-mode)
+  (hes-mode)
+  (menu-bar-mode -1)
+  (recentf-mode 1)
+  (savehist-mode 1)
+  (scroll-bar-mode -1)
+  (show-paren-mode 1)
+  (show-paren-mode t)
+  (tool-bar-mode -1)
+  (transient-mark-mode 1)
+  (winner-mode 1) ; Undo/redo window configuration with C-c <left>/<right>
+  :config
+  (defun keyboard-quit-strong ()
+    "Run `keyboard-quit' to return emacs to a more responsive state.
     If repeated twice in a row, run `top-level' instead, to also exit
     any recursive editing levels."
-  (interactive)
-  (when (eq last-command 'keyboard-quit-strong)
-    (setq this-command 'top-level) ;dis-arm a 3rd C-g
-    (ding)
-    (top-level))
-  ;; Not reached after `top-level'. (A rare behavior in lisp.)
-  (keyboard-quit))
+    (interactive)
+    (when (eq last-command 'keyboard-quit-strong)
+      (setq this-command 'top-level) ;dis-arm a 3rd C-g
+      (ding)
+      (top-level))
+    ;; Not reached after `top-level'. (A rare behavior in lisp.)
+    (keyboard-quit))
 
-(global-set-key "\C-g" 'keyboard-quit-strong)
+  (define-key ac-mode-map (kbd "M-TAB") 'auto-complete)
+  (set-default 'indent-tabs-mode nil)
+  (setq auto-revert-verbose nil)
+  (setq column-number-mode t)
+  (setq custom-safe-themes t)
+  (setq delete-by-moving-to-trash t)
+  (setq display-time-day-and-date t)
+  (setq display-time-default-load-average nil)
+  (setq echo-keystrokes 0.1)
+  (setq ediff-diff-options "-w")
+  (setq ediff-split-window-function 'split-window-horizontally)
+  (setq ediff-window-setup-function 'ediff-setup-windows-plain)
+  (setq enable-recursive-minibuffers t)
+  (setq epa-pinentry-mode 'loopback)
+  (setq fill-column 80)
+  (setq gc-cons-threshold 20000000)
+  (setq geiser-default-implementation 'guile)
+  (setq geiser-default-implementation 'racket)
+  (setq geiser-racket-binary "/home/bonface/.guix-profile/bin/racket")
+  (setq global-auto-revert-non-file-buffers t)
+  (setq history-length 100)
+  (setq ibuffer-show-empty-filter-groups -1)
+  (setq inhibit-splash-screen t)
+  (setq jump-char-lazy-highlight-face -1)
+  (setq line-number-mode t)
+  (setq make-backup-files -1)
+  (setq nov-text-width 80)
+  (setq org-src-fontify-natively t)
+  (setq recentf-max-menu-items 25)
+  (setq recentf-max-saved-items 100)
+  (setq set-mark-command-repeat-pop t)
+  (setq show-trailing-whitespace 1)
+  (setq sp-autoescape-string-quote nil)
+  (setq tramp-default-method "ssh")
+  (setq undo-tree-mode-lighter "")
+  (setq use-dialog-box nil)
+  (setq use-dialog-box t)
+  (setq use-file-dialog nil)
+  (setq visible-bell t)
+  (setq x-select-enable-clipboard t)
+  (setq-default indicate-empty-lines t)
+  :hook
+  ((geiser-mode . scheme-mode-hook)
+   (ibuffer-auto-mode . ibuffer-mode-hook))
+
+  :bind (("C-z" . nil)
+         ("C-x C-z" . nil)
+         ("C-h h" . nil)
+         ("C-g" . keyboard-quit-strong)))
 
 (provide 'sane-defaults)
 ;;; sane-defaults.el ends here
