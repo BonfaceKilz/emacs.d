@@ -209,7 +209,7 @@ Really quick way to insert evaluated functions in the buffer.
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/defuns/lisp-defuns.el
 ;;; lisp-defuns.el -*- lexical-binding: t; -*-
 (use-package s)
-(require 'imenu)
+
 (require 'recentf)
 
 (defun create-scratch-buffer nil
@@ -1975,7 +1975,6 @@ abort completely with `C-g'."
            (format "; Time %.3fs"
                    (float-time (time-subtract (current-time)
                                               before-init-time))))))
-
 (defun untabify-buffer ()
   (interactive)
   (untabify (point-min) (point-max)))
@@ -2007,7 +2006,18 @@ abort completely with `C-g'."
 
 (add-to-list 'find-file-not-found-functions 'bonz/create-non-existent-directory)
 
-(use-package smooth-scrolling :ensure)
+(use-package browse-url
+  :ensure
+  :config
+  (defun actuator-browse-video (url &rest _args)
+    "Browse a URL with a dedicated video player.
+Avoids opening a browser window."
+    (start-process "mpv" nil "mpv" url))
+  :straight nil
+  :custom
+  (browse-url-handlers '(("youtu\\.?be" . actuator-browse-video)
+                         ("twitch"      . actuator-browse-video))))
+
 (use-package avy
   :ensure
   (setq avy-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l ?q ?w ?e ?r ?t ?y ?u ?o ?p ?v ?b))
@@ -2026,6 +2036,7 @@ abort completely with `C-g'."
   (setq avy-background nil)
   (setq avy-timeout-seconds 0.5))
 
+(use-package dash :ensure)
 
 (use-package diminish
   :ensure
@@ -2037,6 +2048,68 @@ abort completely with `C-g'."
   (diminish 'visual-line-mode "")
   (diminish 'isearch-mode "?")
   (diminish 'flyspell-mode))
+
+(use-package imenu
+  :config
+  (setq imenu-use-markers t)
+  (setq imenu-auto-rescan t)
+  (setq imenu-auto-rescan-maxout 600000)
+  (setq imenu-max-item-length 100)
+  (setq imenu-use-popup-menu nil)
+  (setq imenu-eager-completion-buffer t)
+  (setq imenu-space-replacement " ")
+  (setq imenu-level-separator "/")
+  :bind
+  (("M-i" . imenu)))
+
+(use-package imenu-list
+  :ensure
+  :after imenu
+  :config
+  (defun bonz/imenu-list-dwim (&optional arg)
+    "Convenience wrapper for `imenu-list'.
+Move between the current buffer and a dedicated window with the
+contents of `imenu'.
+
+The dedicated window is created if it does not exist, while it is
+updated once it is focused again through this command.
+
+With \\[universal-argument] toggle the display of the window."
+    (interactive "P")
+    (if arg
+        (imenu-list-smart-toggle)
+      (with-current-buffer
+          (if (eq major-mode 'imenu-list-major-mode)
+              (pop-to-buffer (other-buffer (current-buffer) t))
+            (imenu-list)))))
+
+  :bind ("C-i" . bonz/imenu-list-dwim))
+
+(use-package flimenu
+  :ensure
+  :after imenu
+  :config
+  (flimenu-global-mode 1))
+
+(use-package wgrep
+  :ensure
+  :commands wgrep
+  :config
+  (setq wgrep-auto-save-buffer t)
+  (setq wgrep-change-readonly-file t))
+
+
+;; guide-key
+(use-package guide-key
+  :config
+  (setq guide-key/guide-key-sequence '("C-x r" "C-x 4" "C-x v" "C-x 8" "C-x +"))
+  (setq guide-key/recursive-key-sequence-flag t)
+  (setq guide-key/popup-window-position 'bottom)
+  (gquide-key-mode 1))
+
+(use-package wordnut
+  :ensure t
+  :bind ("C-c !" . wordnut-lookup-current-word))
 
 ;; Making it easier to discover Emacs key presses.
 (use-package which-key
@@ -2091,8 +2164,12 @@ abort completely with `C-g'."
 (use-package synosaurus
   :ensure
   :diminish synosaurus-mode
-  :init    (synosaurus-mode)
-  :config  (setq synosaurus-choose-method 'popup))
+  :init
+  (synosaurus-mode)
+  :config
+  (setq synosaurus-choose-method 'popup)
+  :bind
+  (("M-#" . synosaurus-choose-and-replace)))
 
 (use-package fill-column-indicator
   :ensure
@@ -2139,29 +2216,8 @@ abort completely with `C-g'."
   ((visual-line-mode . nov-mode-hook)
    (visual-fill-column-mode . nov-mode-hook)))
 
-(use-package browse-url
-  :ensure
-  :config
-  (defun actuator-browse-video (url &rest _args)
-    "Browse a URL with a dedicated video player.
-Avoids opening a browser window."
-    (start-process "mpv" nil "mpv" url))
-  :straight nil
-  :custom
-  (browse-url-handlers '(("youtu\\.?be" . actuator-browse-video)
-                         ("twitch"      . actuator-browse-video))))
 
-(use-package undo-tree
-  :ensure
-  :config
-  (global-undo-tree-mode))
 
-;; Add parts of each file's directory to the buffer name if not unique
-(use-package uniquify-files
-  :ensure
-  :config
-  (setq uniquify-buffer-name-style 'forward
-        uniquify-separator ":"))
 
 (use-package emacs
   :init
@@ -2247,6 +2303,20 @@ Avoids opening a browser window."
          ("C-x C-z" . nil)
          ("C-h h" . nil)
          ("C-g" . keyboard-quit-strong)))
+
+(use-package smooth-scrolling :ensure)
+
+;; Add parts of each file's directory to the buffer name if not unique
+(use-package uniquify-files
+  :ensure
+  :config
+  (setq uniquify-buffer-name-style 'forward
+        uniquify-separator ":"))
+
+(use-package undo-tree
+  :ensure
+  :config
+  (global-undo-tree-mode))
 
 (provide 'sane-defaults)
 ;;; sane-defaults.el ends here
@@ -3885,20 +3955,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
 (global-set-key (kbd "M-S-i") 'change-inner)
 (global-set-key (kbd "M-S-o") 'change-outer)
 
-;; Bind Imenu M-i
-(global-set-key (kbd "M-i") 'imenu)
 
-;; guide-key
-(use-package guide-key
-  :config
-  (setq guide-key/guide-key-sequence '("C-x r" "C-x 4" "C-x v" "C-x 8" "C-x +"))
-  (setq guide-key/recursive-key-sequence-flag t)
-  (setq guide-key/popup-window-position 'bottom)
-  (guide-key-mode 1))
-(global-set-key (kbd "M-#") 'synosaurus-choose-and-replace)
-(use-package wordnut
-  :ensure t
-  :bind ("C-c !" . wordnut-lookup-current-word))
 
 ;; Map files to modes
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
