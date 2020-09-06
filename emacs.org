@@ -7,7 +7,6 @@
   - [[appearance.el][appearance.el]]
   - [[mode-mappings.el][mode-mappings.el]]
   - [[sane-defaults.el][sane-defaults.el]]
-  - [[setup-avy.el][setup-avy.el]]
   - [[setup-bbdb.el][setup-bbdb.el]]
   - [[setup-eshell.el][setup-eshell.el]]
   - [[setup-exwm.el][setup-exwm.el]]
@@ -98,7 +97,6 @@
 (require 'setup-init)
 (require 'mode-mappings)
 (require 'appearance)
-(require 'setup-avy)
 (require 'setup-bbdb)
 (require 'setup-elfeed)
 (require 'setup-exwm)
@@ -2010,6 +2008,24 @@ abort completely with `C-g'."
 (add-to-list 'find-file-not-found-functions 'bonz/create-non-existent-directory)
 
 (use-package smooth-scrolling :ensure)
+(use-package avy
+  :ensure
+  (setq avy-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l ?q ?w ?e ?r ?t ?y ?u ?o ?p ?v ?b))
+  (setq avy-dispatch-alist '((?X . avy-action-kill-move)
+                             (?x . avy-action-kill-stay)
+                             (?M . avy-action-mark)
+                             (?m . ot/avy-action-move-hydra)
+                             (?C . avy-action-copy)
+                             (?c . ot/avy-action-copy-hydra)
+                             (?i . avy-action-ispell)))
+  (setq avy-styles-alist '((avy-goto-word-0 . pre)
+                           (ot/avy-goto-word-0 . pre)
+                           (ot/avy-goto-sexp . pre)))
+  (setq avy-all-windows 'all-frames)
+  (setq avy-style 'at-full)
+  (setq avy-background nil)
+  (setq avy-timeout-seconds 0.5))
+
 
 (use-package diminish
   :ensure
@@ -2235,30 +2251,7 @@ Avoids opening a browser window."
 (provide 'sane-defaults)
 ;;; sane-defaults.el ends here
 #+END_SRC
-** setup-avy.el
-#+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-avy.el
-;; Setting up avy key bindings
 
-(use-package avy)
-(with-eval-after-load "avy"
-  (setq avy-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l ?q ?w ?e ?r ?t ?y ?u ?o ?p ?v ?b))
-  (setq avy-dispatch-alist '((?X . avy-action-kill-move)
-                             (?x . avy-action-kill-stay)
-                             (?M . avy-action-mark)
-                             (?m . ot/avy-action-move-hydra)
-                             (?C . avy-action-copy)
-                             (?c . ot/avy-action-copy-hydra)
-                             (?i . avy-action-ispell)))
-  (setq avy-styles-alist '((avy-goto-word-0 . pre)
-                           (ot/avy-goto-word-0 . pre)
-                           (ot/avy-goto-sexp . pre)))
-  (setq avy-all-windows 'all-frames)
-  (setq avy-style 'at-full)
-  (setq avy-background nil)
-  (setq avy-timeout-seconds 0.5))
-
-(provide 'setup-avy)
-#+END_SRC
 ** setup-bbdb.el
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-bbdb.el
 ;; Setting up avy key bindings
