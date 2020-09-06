@@ -21,7 +21,6 @@
   - [[setup-js2-mode.el][setup-js2-mode.el]]
   - [[setup-magit.el][setup-magit.el]]
   - [[setup-markdown.el][setup-markdown.el]]
-  - [[setup-neotree.el][setup-neotree.el]]
   - [[setup-org.el][setup-org.el]]
   - [[setup-package.el][setup-package.el]]
   - [[setup-paredit.el][setup-paredit.el]]
@@ -106,7 +105,6 @@
 (require 'setup-eshell)
 (require 'setup-paredit)
 (require 'setup-haskell)
-(require 'setup-neotree)
 (require 'setup-hledger)
 (require 'setup-org)
 (require 'setup-hugo)
@@ -4363,40 +4361,6 @@ This is an `:around' advice for `yas--make-control-overlay'."
 
 ;;; setup-markdown.el ends here
 #+END_SRC
-** setup-neotree.el
-#+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-neotree.el
-;;; setup-neotree.el
-
-(defun neotree-project-dir ()
-  "Open NeoTree using the git root."
-  (interactive)
-  (let ((project-dir (projectile-project-root))
-	(file-name (buffer-file-name)))
-    (neotree-toggle)
-    (if project-dir
-	(if (neo-global--window-exists-p)
-	    (progn
-	      (neotree-dir project-dir)
-	      (neotree-find file-name)))
-      (message "Could not find git project root."))))
-
-(use-package neotree
-  :config
-  (setq neo-smart-open t)
-  ;; (global-set-key "\C-c\ d" 'neotree-toggle)
-  (global-set-key [f8] 'neotree-project-dir))
-
-;; Only do this once:
-(when nil
-  (use-package all-the-icons)
-  (all-the-icons-install-fonts 'install-without-asking))
-
-(setq neo-theme 'icons)
-;; (neotree-refresh)
-
-;; Open it up upon startup.
-;; (neotree-toggle)
-
 ** setup-elfeed.el
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-elfeed.el
   ;;; setup-elfeed.el
@@ -4505,10 +4469,6 @@ This is an `:around' advice for `yas--make-control-overlay'."
 
   ;;; end setup-elfeed.el
 #+END_SRC
-(provide 'setup-neotree)
-;;; setup-neotree.el ends here
-#+END_SRC
-
 ** setup-org.el
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-org.el
 ;;; setup-org.el
