@@ -104,6 +104,7 @@
 (require 'appearance)
 (require 'setup-avy)
 (require 'setup-bbdb)
+(require 'setup-elfeed)
 (require 'setup-exwm)
 (require 'setup-eshell)
 (require 'setup-paredit)
@@ -147,17 +148,6 @@
 (use-package helm-swoop
   :config
   (setq helm-swoop-split-with-multiple-windows t))
-
-;; Elfeed
-(use-package elfeed)
-(global-set-key (kbd "C-x w") 'elfeed)
-(setq elfeed-feeds
-      '("https://lexi-lambda.github.io/feeds/all.rss.xml"
-        "https://cprss.s3.amazonaws.com/denoweekly.com.xml"
-        "https://cprss.s3.amazonaws.com/javascriptweekly.com.xml"
-        "https://eli.thegreenplace.net/feeds/python.atom.xml"
-        "http://www.aaronsw.com/2002/feeds/pgessays.rss"
-        "http://feeds.feedburner.com/HighScalability"))
 
 
 ;; Assuming the Guix checkout is in ~/guix.
@@ -4553,6 +4543,114 @@ This is an `:around' advice for `yas--make-control-overlay'."
 ;; Open it up upon startup.
 ;; (neotree-toggle)
 
+** setup-elfeed.el
+#+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-elfeed.el
+  ;;; setup-elfeed.el
+
+  (use-package elfeed
+    :config
+    (setq elfeed-feeds
+          '(("https://lexi-lambda.github.io/feeds/all.rss.xml")
+            ("https://cprss.s3.amazonaws.com/denoweekly.com.xml")
+            ("https://cprss.s3.amazonaws.com/javascriptweekly.com.xml")
+            ("https://eli.thegreenplace.net/feeds/python.atom.xml")
+            ("http://www.aaronsw.com/2002/feeds/pgessays.rss")
+            ("https://updates.orgmode.org/feed/updates")
+            ("https://blog.aaronbieber.com/posts/index.xml")
+            ("https://www.arp242.net/feed.xml")
+            ("https://emacsredux.com/atom.xml" emacs)
+            ("http://emacsrocks.com/atom.xml" emacs)
+            ("https://cestlaz.github.io/rss.xml" emacs)
+            ("http://blog.binchen.org/rss.xml" emacs)
+            ("http://www.howardism.org/index.xml" emacs)
+            ("http://irreal.org/blog/?feed=rss2" emacs)
+            ("http://mbork.pl/?action=rss" emacs)
+            ("https://www.masteringemacs.org/feed" emacs)
+            ("https://fuco1.github.io/rss.xml" emacs)
+            ("https://longreads.com/feed/")
+            ("https://nullprogram.com/feed/" emacs)
+            ("https://scripter.co/posts/index.xml" emacs)
+            ("http://pragmaticemacs.com/feed/" emacs)
+            ("http://www.lunaryorn.com/feed.atom" emacs)
+            ("http://endlessparentheses.com/atom.xml" emacs)
+            ("https://sachachua.com/blog/feed/" emacs)
+            ("https://www.drugsandwires.fail/feed/" comic)
+            ("http://feeds.feedburner.com/Explosm" comic)
+            ("https://www.foxtrot.com/feed/" comic)
+            ("http://feeds.feedburner.com/PoorlyDrawnLines" comic)
+            ("https://www.youtube.com/feeds/videos.xml?channel_id=UC0uTPqBCFIpZxlz_Lv1tk_g" emacs)
+            "http://feeds.feedburner.com/HighScalability"))
+    (defun actuator-elfeed-show-all ()
+      (interactive)
+      (bookmark-maybe-load-default-file)
+      (bookmark-jump "elfeed-all"))
+    (defun actuator-elfeed-show-unread ()
+      (interactive)
+      (bookmark-maybe-load-default-file)
+      (bookmark-jump "elfeed-unread"))
+    (defun actuator-elfeed-load-db-and-open ()
+      "Wrapper to load the elfeed database from disk before
+        opening. Taken from Pragmatic Emacs."
+      (interactive)
+      (window-configuration-to-register :elfeed-fullscreen)
+      (delete-other-windows)
+      (elfeed)
+      (elfeed-db-load)
+      (elfeed-search-update 1)
+      (elfeed-update))
+
+    (defun actuator-elfeed-save-db-and-bury ()
+      "Wrapper to save the Elfeed database to disk before burying
+    buffer. Taken from Pragmatic Emacs."
+      (interactive)
+      (elfeed-db-save)
+      (quit-window)
+      (garbage-collect)
+      (jump-to-register :elfeed-fullscreen))
+    (defun actuator-elfeed-mark-all-as-read ()
+      "Mark all feeds in search as read. Taken from Mike Zamansky"
+      (interactive)
+      (mark-whole-buffer)
+      (elfeed-search-untag-all-unread))
+
+    :bind
+    (("C-x w" . actuator-elfeed-load-db-and-open)
+     :map elfeed-search-mode-map
+     ("A" . actuator-elfeed-show-all)
+     ("U" . actuator-elfeed-show-unread)
+     ("q" . actuator-elfeed-save-db-and-bury)
+     ("R" . actuator-elfeed-mark-all-as-read))
+    :custom
+    (elfeed-search-filter "@1-week-ago +unread "))
+
+  ;; (add-hook 'elfeed-new-entry-hook
+  ;;           (elfeed-make-tagger :entry-title "sponsor\\|revenue\\|financial"
+  ;;                               :add '(junk debug1)
+  ;;                               :remove 'unread))
+  ;; (add-hook 'elfeed-new-entry-hook
+  ;;           (elfeed-make-tagger :before "2 weeks ago"
+  ;;                               :add 'debug2
+  ;;                               :remove 'unread))
+  ;; (add-hook 'elfeed-new-entry-hook
+  ;;           (elfeed-make-tagger :feed-title "Longreads"
+  ;;                               :entry-title "longreads"
+  ;;                               :add '(junk debug5)
+  ;;                               :remove 'unread))
+  ;; (add-hook 'elfeed-new-entry-hook
+  ;;           (elfeed-make-tagger :feed-url "youtube\\.com"
+  ;;                               :add '(video youtube)))
+  ;; (add-hook 'elfeed-new-entry-hook
+  ;;           (elfeed-make-tagger :feed-url "twitchrss"
+  ;;                               :add '(video twitch)))
+  ;; (add-hook 'elfeed-new-entry-hook
+  ;;           (elfeed-make-tagger :feed-url "reddit"
+  ;;                               :add 'reddit))
+
+
+  (provide 'setup-elfeed)
+
+  ;;; end setup-elfeed.el
+#+END_SRC
 (provide 'setup-neotree)
 ;;; setup-neotree.el ends here
 #+END_SRC
