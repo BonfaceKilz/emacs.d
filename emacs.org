@@ -56,6 +56,7 @@
 
 #+BEGIN_SRC emacs-lisp :padding no :tangle ~/.emacs.d/init.el :mkdirp yes :noweb yes
   ;;; init.el
+(require 'setup-init)
 
 (defvar user-home-directory (concat (expand-file-name "~") "/"))
 
@@ -90,7 +91,7 @@
 
 (require 'setup-package)
 (require 'setup-envs)
-(require 'setup-init)
+
 (use-package dash)
 (setq defuns-dir (expand-file-name "defuns" user-emacs-directory))
 (dolist (file (directory-files defuns-dir t "\\w+"))
@@ -5264,18 +5265,45 @@ This is an `:around' advice for `yas--make-control-overlay'."
 ;; Internet repos for new packages
 (setq package-archives '(("org"       . "https://orgmode.org/elpa/")
                          ("gnu"       . "http://elpa.gnu.org/packages/")
-                         ("melpa"     . "https://melpa.org/packages/")
-                         ("melpa stable"     . "https://stable.melpa.org/packages/")
-                         ))
-(package-initialize)
-;; Unless it's already installed, update the packages archives,
-;; then install the most recent version of “use-package”.
+                         ("melpa"     . "https://melpa.org/packages/")))
+;; Initialise the packages, avoiding a re-initialisation.
+(unless (bound-and-true-p package--initialized)
+  (setq package-enable-at-startup nil)
+  (package-initialize))
+
+;; Make sure `use-package' is available.
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
-(require 'use-package)
+
+;; Configure `use-package' prior to loading it.
+(eval-and-compile
+  (setq use-package-always-ensure nil)
+  (setq use-package-always-defer nil)
+  (setq use-package-always-demand nil)
+  (setq use-package-expand-minimally nil)
+  (setq use-package-enable-imenu-support t)
+  (setq use-package-compute-statistics t)
+  ;; The following is VERY IMPORTANT.  Write hooks using their real name
+  ;; instead of a shorter version: after-init ==> `after-init-hook'.
+  ;;
+  ;; This is to empower help commands with their contextual awareness,
+  ;; such as `describe-symbol'.
+  (setq use-package-hook-name-suffix nil))
+
+(eval-when-compile
+  (require 'use-package))
 
 (setq use-package-always-ensure t)
+
+;; Do not initialise the package manager.  This is done in `init.el'.
+(setq package-enable-at-startup nil)
+
+;; Allow loading from the package cache.
+(setq package-quickstart t)
+
+;; Do not resize the frame at this early stage.
+(setq frame-inhibit-implied-resize t)
 
 (provide 'setup-package)
 
