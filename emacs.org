@@ -7544,76 +7544,273 @@ This is an `:around' advice for `yas--make-control-overlay'."
 ;;; setup-yasnippet.el ends here
 #+END_SRC
 * Email
-** Initial setup                                                     :crypt:
------BEGIN PGP MESSAGE-----
+** Initial setup
 
-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
-Tk397jUGfdh4vA0RpuZt7ketBA3GNh0=
-=eFxI
------END PGP MESSAGE-----
+#+NAME: gnus
+#+BEGIN_SRC elisp :tangle 
+;; (setq mail-host-address "gmail.com")
+
+;; (setq user-mail-address "bonfacemunyoki@gmail.com"
+;;       user-full-name "Bonface M. K.")
+
+(use-package auth-source
+  :config
+  (setq auth-sources '("~/.authinfo.gpg"))
+  (setq user-full-name "Bonface M. K.")
+  (setq user-mail-address "bonfacemunyoki@gmail.com")
+
+  (defun bonz/auth-get-field (host prop)
+    "Find PROP in `auth-sources' for HOST entry."
+    (let* ((source (auth-source-search :host host))
+           (field (plist-get
+                   (flatten-list source)
+                   prop)))
+      (if source
+          field
+        (user-error "No entry in auth sources")))))
+
+(use-package mm-encode
+  :config
+  (setq mm-encrypt-option 'guided)
+  (setq mm-sign-option 'guided))
+
+(use-package mml-sec
+  :config
+  (setq mml-secure-openpgp-encrypt-to-self t)
+  (setq mml-secure-openpgp-sign-with-sender t)
+  (setq mml-secure-smime-encrypt-to-self t)
+  (setq mml-secure-smime-sign-with-sender t))
+
+(use-package epa-file
+  :config
+  (setq epa-file-cache-passphrase-for-symmetric-encryption nil))
+
+(use-package message
+  :config
+  (setq mail-user-agent 'message-user-agent)
+  (setq compose-mail-user-agent-warnings nil)
+  (setq message-mail-user-agent nil)    ; default is `gnus'
+  (setq message-confirm-send nil)
+  (setq message-kill-buffer-on-exit t)
+  (setq message-wide-reply-confirm-recipients t)
+  (setq message-default-charset 'utf-8)
+  (add-to-list 'mm-body-charset-encoding-alist '(utf-8 . base64))
+
+  (defun bonz/message-header-add-gcc ()
+    "While `gnus' is running, add pre-populated Gcc header.
+
+The Gcc header places a copy of the outgoing message to the
+appropriate directory of the IMAP server, as per the contents of
+~/.authinfo.gpg.
+
+In the absence of a Gcc header, the outgoing message will not
+appear in the appropriate maildir directory, though it will still
+be sent.
+
+Add this function to `message-header-setup-hook'."
+    (if (gnus-alive-p)
+        (progn
+          (when (message-fetch-field "Gcc")
+            (message-remove-header "Gcc"))
+          (message-add-header "Gcc: nnmaildir+archive:Sent"))
+      message))
+  :hook ((message-header-setup-hook . prot/message-header-add-gcc)
+         (message-setup-hook . message-sort-headers)))
+
+(use-package gnus
+  :config
+  ;; accounts
+  (setq gnus-select-method '(nnnil ""))
+  (setq gnus-secondary-select-methods
+        '((nntp "news.gwene.org")
+          (nnmaildir "prv" (directory "~/.mail/prv"))
+          (nnmaildir "inf" (directory "~/.mail/inf"))
+          (nnmaildir "pub" (directory "~/.mail/pub"))))
+  )
+(require 'nnir)
+(require 'gnus-demon)
+(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+
+;; Let Gnus know Gmail search syntax
+(add-to-list 'nnir-imap-search-arguments '("gmail" . "X-GM-RAW"))
+;; `gnus-group-make-nnir-group' use Gmail search syntax *by default*.
+;; You can press `G G` instead `C-u G G` instead.
+(setq nnir-imap-default-search-key "gmail")
+
+(defun w3m-copy-url-at-point ()
+  (interactive)
+  (let ((url (w3m-anchor)))
+    (if (w3m-url-valid url)
+        (kill-new (w3m-anchor))
+      (message "No URL at point!"))))
+
+(add-hook 'w3m-mode-hook
+	  (lambda ()
+	    (local-set-key "\M-W" 'w3m-copy-url-at-point)))
+
+
+
+;; ask encryption password once
+(setq epa-file-cache-passphrase-for-symmetric-encryption t)
+
+(setq gnus-thread-sort-functions
+      '(gnus-thread-sort-by-most-recent-date
+        (not gnus-thread-sort-by-number)))
+
+; NO 'passive
+(setq gnus-use-cache t)
+
+;; {{ press "o" to view all groups
+(defun my-gnus-group-list-subscribed-groups ()
+  "List all subscribed groups with or without un-read messages"
+  (interactive)
+  (gnus-group-list-all-groups 5))
+
+(define-key gnus-group-mode-map
+  ;; list all the subscribed groups even they contain zero un-read messages
+  (kbd "o") 'my-gnus-group-list-subscribed-groups)
+
+;; source: https://blog.petitepomme.net/post/28547901478/installing-and-configuring-bbdb-3
+(require 'bbdb)
+(bbdb-initialize 'message 'gnus 'mail)
+;; (add-hook 'gnus-startup-hook 'bbdb-insinuate-gnus)
+;; (bbdb-mua-auto-update-init 'gnus 'message)
+
+;; size of the bbdb popup
+(setq bbdb-pop-up-window-size 10)
+
+;; What do we do when invoking bbdb interactively
+(setq bbdb-mua-update-interactive-p '(query . create))
+
+;; Make sure we look at every address in a message and not only the
+;; first one
+(setq bbdb-message-all-addresses t)
+
+;; use ; on a message to invoke bbdb interactively
+(add-hook
+ 'gnus-summary-mode-hook
+ (lambda ()
+   (define-key gnus-summary-mode-map (kbd ";") 'bbdb-mua-edit-field)))
+;; ;; This is for non interactive bbdb invocation, but it was a bit
+;; ;; too much
+;; (setq bbdb-update-records-p 'query)
+
+;; auto-complete emacs address using bbdb UI
+(add-hook 'message-mode-hook
+          '(lambda ()
+             (flyspell-mode t)
+             (local-set-key (kbd "TAB") 'bbdb-complete-mail)))
+
+;; Fetch only part of the article if we can.
+;; I saw this in someone's .gnus
+(setq gnus-read-active-file 'some)
+
+(setq gnus-select-method
+      '(nnimap "gmail"
+               (nnimap-address "imap.gmail.com")  ; it could also be imap.googlemail.com if that's your server.
+               (nnimap-server-port 993)
+               (nnimap-stream ssl)))
+
+
+(setq message-send-mail-function 'smtpmail-send-it
+      smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil))
+      smtpmail-auth-credentials '(("smtp.gmail.com" 587
+                                   "bonfacemunyoki@gmail.com" nil))
+      smtpmail-default-smtp-server "smtp.gmail.com"
+      smtpmail-smtp-server "smtp.gmail.com"
+      smtpmail-smtp-service 587
+      gnus-ignored-newsgroups "^to\\.\\|^[0-9. ]+\\( \\|$\\)\\|^[\"]\"[#'()]")
+
+(setq gnus-summary-thread-gathering-function 'gnus-gather-threads-by-subject)
+
+;; Also, I prefer to see only the top level message.  If a message has
+;; several replies or is part of a thread, only show the first message.
+;; `gnus-thread-ignore-subject' will ignore the subject and
+;; look at 'In-Reply-To:' and 'References:' headers.
+(setq gnus-thread-hide-subtree t)
+(setq gnus-thread-ignore-subject t)
+
+(require 'w3m)
+(setq mm-text-html-renderer 'w3m) ; OPTIONAL
+
+;; Tree view for groups.
+(add-hook 'gnus-group-mode-hook 'gnus-topic-mode)
+
+(eval-after-load 'gnus-topic
+  '(progn
+     (setq gnus-message-archive-group '((format-time-string "sent.%Y")))
+     (setq gnus-server-alist '(("archive" nnfolder "archive" (nnfolder-directory "~/Mail/archive")
+                                (nnfolder-active-file "~/Mail/archive/active")
+                                (nnfolder-get-new-mail nil)
+                                (nnfolder-inhibit-expiry t))))
+
+     ;; "Gnus" is the root folder, and there are three mail accounts, "misc", "hotmail", "gmail"
+     (setq gnus-topic-topology '(("Gnus" visible nil nil)
+                                 (("Misc" visible nil nil))
+                                 (("[Gmail]/" visible nil nil))))
+
+     ;;each topic corresponds to a public imap folder
+     (setq gnus-topic-alist '(
+                              ("[Gmail]/" ; the key of topic
+                               "[Gmail]/All Mail"
+                               "[Gmail]/Important"
+                               "Newsletters"
+                               ;; "Gmail Forums"
+                               "Gmail Primary"
+                               "Gmail Social"
+                               "Genenetwork"
+                               "GNU"
+                               "Third Party Apps"
+                               "[Gmail]/Drafts"
+                               "[Gmail]/Sent Mail"
+                               "[Gmail]/Spam"
+                               "[Gmail]/Starred"
+                               "[Gmail]/Trash"
+                               "[Gmail]"
+                               )
+                              ("Misc" ; the key of topic
+                               "nnfolder+archive:sent.2018"
+                               "nnfolder+archive:sent.2019"
+                               "nndraft:drafts")
+                              ))
+     ))
+(gnus-add-configuration
+ '(article
+   (horizontal 1.0
+               (vertical 60 (group 1.0))
+               (vertical 1.0
+                         (summary 0.20 point)
+                         (article 1.0)))))
+
+(gnus-add-configuration
+ '(summary
+   (horizontal 1.0
+               (vertical 60 (group 1.0))
+               (vertical 1.0 (summary 1.0 point)))))
+
+(eval-after-load 'mailcap
+  '(progn
+     (cond
+      ;; on macOS, maybe change mailcap-mime-data?
+      ((eq system-type 'darwin))
+      ;; on Windows, maybe change mailcap-mime-data?
+      ((eq system-type 'windows-nt))
+      (t
+       ;; Linux, read ~/.mailcap
+       (mailcap-parse-mailcaps)))))
+
+;; https://www.thregr.org/~wavexx/software/gnus-desktop-notify.el/
+;; (require 'gnus-desktop-notify)
+;; (gnus-desktop-notify-mode)
+(gnus-demon-add-scanmail)
+(gnus-demon-add-handler 'gnus-demon-scan-news nil 60)
+
+(setq gc-cons-threshold 3500000)
+#+END_SRC
+
+#+BEGIN_SRC elisp :tangle ~/.gnus.el :noweb yes
+<<gnus>>
+#+END_SRC
 ** Password                                                           :crypt:
 -----BEGIN PGP MESSAGE-----
 
