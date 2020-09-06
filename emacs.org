@@ -95,6 +95,7 @@
 (dolist (file (directory-files defuns-dir t "\\w+"))
   (when (file-regular-p file)
     (load file)))
+
 (require 'setup-init)
 (require 'mode-mappings)
 (require 'appearance)
@@ -1610,9 +1611,7 @@ abort completely with `C-g'."
 ** appearance.el
 #+begin_src emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/appearance.el
 ;;; appearance.el
-(setf custom-safe-themes t)
-
-(setq bonface/default-font "-PfEd-DejaVu Sans Mono-medium-normal-normal-*-13-*-*-*-m-0-iso10646-1")
+(setq bonz/default-font "-PfEd-DejaVu Sans Mono-medium-normal-normal-*-13-*-*-*-m-0-iso10646-1")
 ;; (setq bonface/default-font "-PfEd-opendyslexic-medium-normal-normal-*-13-*-*-*-m-0-iso10646-1")
 
 (add-to-list 'default-frame-alist '(font . "DejaVu Sans Mono-13"))
@@ -1652,27 +1651,24 @@ abort completely with `C-g'."
 (use-package spacemacs-common
     :ensure spacemacs-theme)
 
-
-(defun my/disable-all-themes ()
+(defun disable-all-themes ()
   (dolist (th custom-enabled-themes)
-    (disable-theme th))
-  )
+    (disable-theme th)))
 
-(defun my/load-dark-theme ()
+(defun bonz/load-dark-theme ()
   (load-theme 'doom-gruvbox))
 
-(defun my/load-light-theme ()
+(defun bonz/load-light-theme ()
   (load-theme 'spacemacs-light))
 
-(defun my/toggle-theme () "Toggle between dark and light themes."
+(defun bonz/toggle-theme () "Toggle between dark and light themes."
        (interactive)
        ;; Load dark if light is top-most enabled theme, else load light.
        (if (equal (car custom-enabled-themes) 'spacemacs-light)
-           (my/load-dark-theme)
-         (my/load-light-theme)
-         ))
+           (bonz/load-dark-theme)
+         (bonz/load-light-theme)))
 
-(my/load-dark-theme)
+(bonz/load-dark-theme)
 
 (use-package all-the-icons)
 (use-package doom-modeline
@@ -1828,8 +1824,7 @@ abort completely with `C-g'."
   (add-hook 'org-mode-hook
             '(lambda () (rainbow-delimiters-mode 1)))
   (add-hook 'prog-mode-hook
-            '(lambda () (rainbow-delimiters-mode 1)))
-  )
+            '(lambda () (rainbow-delimiters-mode 1))))
 
 (column-number-mode t)
 (use-package dimmer
@@ -1838,7 +1833,7 @@ abort completely with `C-g'."
 
 ;; Remove the font size modified by the spacemacs theme.
 ;;  https://emacs.stackexchange.com/questions/22584/disable-enlarged-org-mode-header-appearance
-(defun my/org-mode-hook ()
+(defun bonz/org-mode-hook ()
   "Stop the org-level headers from increasing in height relative to the other text."
   (dolist (face '(org-level-1
                   org-level-2
@@ -1847,9 +1842,7 @@ abort completely with `C-g'."
                   org-level-5))
     (set-face-attribute face nil :weight 'semi-bold :height 1.0)))
 
-(add-hook 'org-mode-hook 'my/org-mode-hook)
-
-
+(add-hook 'org-mode-hook 'bonz/org-mode-hook)
 
 (provide 'appearance)
 
