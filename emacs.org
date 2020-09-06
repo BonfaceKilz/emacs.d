@@ -56,7 +56,8 @@
 
 #+BEGIN_SRC emacs-lisp :padding no :tangle ~/.emacs.d/init.el :mkdirp yes :noweb yes
   ;;; init.el
-(require 'setup-init)
+(require 'setup-package)
+
 
 (defvar user-home-directory (concat (expand-file-name "~") "/"))
 
@@ -99,8 +100,9 @@
     (load file)))
 
 (setq gc-cons-threshold 3500000)
-(require 'mode-mappings)
 (require 'sane-defaults)
+(require 'setup-init)
+(require 'mode-mappings)
 (require 'appearance)
 (require 'setup-avy)
 (require 'setup-bbdb)
