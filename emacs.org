@@ -4658,8 +4658,6 @@ _h_   _l_   _o_k        _y_ank
   (recenter))
 (advice-add 'swiper :after #'bjm-swiper-recenter)
 
-(require 'helm)
-(require 'helm-config)
 (when (executable-find "curl")
   (setq helm-google-suggest-use-curl-p t))
 
@@ -6436,7 +6434,6 @@ This is an `:around' advice for `yas--make-control-overlay'."
 ** setup-org.el
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-org.el
 ;;; setup-org.el
-(require 'ol-man)
 ;; Org-mode
 (use-package toc-org
   :ensure
