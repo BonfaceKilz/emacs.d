@@ -2453,7 +2453,7 @@ With \\[universal-argument] toggle the display of the window."
    (php-refactor-mode . php-mode-hook))
   :bind (("C-g" . keyboard-quit-strong)))
 
-(use-package py-autopep8)
+(use-package py-autopep8 :ensure)
 
 (use-package elpy
   :ensure
@@ -2463,7 +2463,7 @@ With \\[universal-argument] toggle the display of the window."
   (setq python-shell-interpreter "python")
   (setq python-shell-interpreter-args "-i"))
 
-(use-package django-mode)
+(use-package django-mode :ensure)
 
 (use-package smooth-scrolling :ensure)
 
