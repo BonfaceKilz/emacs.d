@@ -1906,7 +1906,6 @@ abort completely with `C-g'."
     "Browse a URL with a dedicated video player.
 Avoids opening a browser window."
     (start-process "mpv" nil "mpv" url))
-  :straight nil
   :custom
   (browse-url-handlers '(("youtu\\.?be" . actuator-browse-video)
                          ("twitch"      . actuator-browse-video))))
