@@ -4465,6 +4465,7 @@ _h_   _l_   _o_k        _y_ank
   (setq exwm-workspace-show-all-buffers 't)
   ;; Set the initial workspace number.
   (setq exwm-workspace-number 4)
+
   ;; Line-editing shortcuts
   (setq exwm-input-simulation-keys
         '(([?\C-b] . [left])
