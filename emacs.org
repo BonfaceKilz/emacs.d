@@ -2279,16 +2279,16 @@ With \\[universal-argument] toggle the display of the window."
          (c-mode . flyspell-prog-mode-hook)
          (python-mode . flyspell-prog-mode-hook)
          (web-mode . flyspell-prog-mode-hook)
-         (emacs-lisp-mode-hook . flyspell-prog-mode-hook)))
+         (emacs-lisp-mode . flyspell-prog-mode-hook)))
 
 ;; Avoid unwanted repetition
 (use-package synosaurus
   :ensure
   :diminish synosaurus-mode
-  :init
-  (synosaurus-mode)
   :config
   (setq synosaurus-choose-method 'popup)
+  (synosaurus-mode 1)
+  :bind
   (("M-#" . synosaurus-choose-and-replace)))
 
 (use-package fill-column-indicator
