@@ -5,7 +5,6 @@
   - [[misc-defuns][misc-defuns]]
   - [[settings][settings]]
   - [[appearance.el][appearance.el]]
-  - [[mode-mappings.el][mode-mappings.el]]
   - [[sane-defaults.el][sane-defaults.el]]
   - [[setup-bbdb.el][setup-bbdb.el]]
   - [[setup-eshell.el][setup-eshell.el]]
