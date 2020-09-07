@@ -4185,10 +4185,15 @@ _h_   _l_   _o_k        _y_ank
 ;; Efficient version control.
 (use-package magit
   :ensure
+  :preface
+  (defun bonz/magit-cursor-fix ()
+    (beginning-of-buffer)
+    (when (looking-at "#")
+      (forward-line 2)))
   :config
   (global-set-key (kbd "C-x g") 'magit-status)
   (global-set-key (kbd "C-x M-g") 'magit-dispatch)
-  (add-hook 'git-commit-mode-hook 'my/magit-cursor-fix)
+  (add-hook 'git-commit-mode-hook 'bonz/magit-cursor-fix)
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
   ;; don't prompt me
   (set-default 'magit-pushq-always-verify nil)
@@ -4197,10 +4202,10 @@ _h_   _l_   _o_k        _y_ank
                                    unstage-all-changes))
   (set-default 'magit-diff-refine-hunk t)
   ;; update diff-hl
-  (global-diff-hl-mode))
+  (global-diff-hl-mode)
+   :bind-keymap
+  ("C-c f" . magit-file-dispatch))
 
-(define-key magit-file-mode-map
-  (kbd "C-c g") 'magit-file-dispatch)
 
 (require 'magit-git)
 (defun my/magit-check-file-and-popup ()
