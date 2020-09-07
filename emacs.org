@@ -7474,6 +7474,14 @@ This is an `:around' advice for `yas--make-control-overlay'."
   ;; respect the spacing in my snippet declarations
   (setq yas-indent-line 'fixed))
 
+(use-package php-auto-yasnippets
+  :config
+  (defun bonz/php-mode-hook ()
+    "My PHP-mode hook."
+    (flycheck-mode t))
+  :hook
+  ((bonz/php-mode-hook . php-mode-hook)))
+
 ;; Nice “interface” to said program
 (use-package yankpad :ensure t
   ;; :if company-mode ;; load & initialise only if company-mode is defined
