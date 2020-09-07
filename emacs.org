@@ -2675,6 +2675,18 @@ With \\[universal-argument] toggle the display of the window."
 (use-package haskell-mode
   :ensure
   :mode ( "\\.hs$" . haskell-mode)
+  :config
+  (setq haskell-process-suggest-remove-import-lines t)
+  (setq haskell-process-suggest-remove-import-lines t)
+  (setq haskell-process-auto-import-loaded-modules t)
+  (setq haskell-process-log t)
+  (setq haskell-process-type 'ghci)
+  (setq haskell-stylish-on-save t)
+  (eval-after-load "which-function-mode"
+    '(add-to-list 'which-func-modes 'haskell-mode))
+  :hook
+  ((interactive-haskell-mode . haskell-mode-hook)
+   (haskell-decl-scan-mode . haskell-mode-hook))
   :bind (:map haskell-mode-map
               ("C-c C-c" . haskell-compile)
               ("C-c i" . haskell-navigate-import)
@@ -2684,23 +2696,6 @@ With \\[universal-argument] toggle the display of the window."
               ("C-c C-k" . haskell-interactive-mode-clear)
               :map haskell-cabal-mode-map
               ("C-c C-c" . haskell-compile)))
-
-(eval-after-load "which-function-mode"
-  '(add-to-list 'which-func-modes 'haskell-mode))
-
-(require 'haskell-interactive-mode)
-(require 'haskell-process)
-(add-hook 'haskell-mode-hook 'interactive-haskell-mode)
-(add-hook 'haskell-mode-hook 'haskell-decl-scan-mode)
-
-(custom-set-variables
- '(haskell-stylish-on-save t))
-
-(custom-set-variables
- '(haskell-process-suggest-remove-import-lines t)
- '(haskell-process-auto-import-loaded-modules t)
- '(haskell-process-log t)
- '(haskell-process-type 'ghci))
 
 (provide 'setup-haskell)
 
