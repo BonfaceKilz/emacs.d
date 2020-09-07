@@ -2644,12 +2644,6 @@ With \\[universal-argument] toggle the display of the window."
 				  (interactive)
 				  (exwm-workspace-switch ,ws-num))))))
 
-(require 'exwm-systemtray)
-(setq exwm-systemtray-height 16)
-(exwm-systemtray-enable)
-
-(exwm-switch-to-workspace-key 1)
-
 (add-to-list 'display-buffer-alist
 	     `(,(rx bos " *async command*")
 	       (display-buffer-no-window)))
@@ -2664,6 +2658,11 @@ With \\[universal-argument] toggle the display of the window."
    (concat exwm-class-name ":"
            (if (<= (length exwm-title) 7) exwm-title
              (concat (substring exwm-title 0 6) "...")))))
+
+;; (require 'exwm-systemtray)
+;; (setq exwm-systemtray-height 16)
+;; (exwm-systemtray-enable)
+;; (exwm-switch-to-workspace-key 1)
 
 (provide 'setup-exwm)
 
