@@ -1977,7 +1977,7 @@ With \\[universal-argument] toggle the display of the window."
               (pop-to-buffer (other-buffer (current-buffer) t))
             (imenu-list)))))
 
-  :bind ("C-i" . bonz/imenu-list-dwim))
+  :bind (("C-," . bonz/imenu-list-dwim)))
 
 (use-package flimenu
   :ensure
