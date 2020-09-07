@@ -95,7 +95,6 @@
     (load file)))
 
 (require 'setup-init)
-(require 'mode-mappings)
 (require 'appearance)
 (require 'setup-bbdb)
 (require 'setup-elfeed)
@@ -1844,112 +1843,6 @@ abort completely with `C-g'."
 
 ;;; appearance.el ends here
 #+end_src
-** mode-mappings.el
-- This file maps code extensions to the preferred major and minor modes
-#+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/mode-mappings.el
-;;; mode-mappings ends here
-
-;; shell-script-mode
-(add-to-list 'auto-mode-alist '("\\.zsh$" . shell-script-mode))
-
-;; conf-mode
-(add-to-list 'auto-mode-alist '("\\.gitconfig$" . conf-mode))
-(add-to-list 'auto-mode-alist '("\\.hbs$" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.erb$" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.html$" . web-mode))
-
-(eval-after-load 'js2-mode
-  '(define-key js2-mode-map (kbd "C-c b") 'web-beautify-js))
-;; Or if you're using 'js-mode' (a.k.a 'javascript-mode')
-(eval-after-load 'js
-  '(define-key js-mode-map (kbd "C-c b") 'web-beautify-js))
-
-(eval-after-load 'json-mode
-  '(define-key json-mode-map (kbd "C-c b") 'web-beautify-js))
-
-(eval-after-load 'sgml-mode
-  '(define-key html-mode-map (kbd "C-c b") 'web-beautify-html))
-
-(eval-after-load 'web-mode
-  '(define-key web-mode-map (kbd "C-c b") 'web-beautify-html))
-
-(eval-after-load 'css-mode
-  '(define-key css-mode-map (kbd "C-c b") 'web-beautify-css))
-
-;; Turn off linum mode in org mode and web mode
-;; linum-mode slows down Emacs when there is a large number
-;; of lines.
-(defun nolinum ()
-  (global-linum-mode 0))
-
-(add-hook 'org-mode-hook 'nolinum)
-(add-hook 'web-mode-hook 'nolinum)
-
-;; yaml
-(add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
-(add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))
-
-;; PHP
-(add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
-(add-hook 'php-mode-hook 'php-enable-psr2-coding-style)
-(add-hook 'php-mode-hook 'php-refactor-mode)
-
-;; (use-package phpstan)
-(use-package php-auto-yasnippets)
-(defun my-php-mode-hook ()
-  "My PHP-mode hook."
-  (flycheck-mode t)
-  ;; (flycheck-select-checker 'phpstan)
-)
-(add-hook 'php-mode-hook 'my-php-mode-hook)
-
-;; Javascript
-(use-package js2-mode)
-(use-package tern-auto-complete)
-(use-package xref-js2)
-(add-to-list 'auto-mode-alist '("\\.js\\'" . rjsx-mode))
-(add-hook 'js-mode-hook 'js2-minor-mode)
-(add-hook 'js-mode-hook
-	  (lambda ()
-	    (js2-refactor-mode t)))
-;; Python
-(use-package py-autopep8)
-(setq python-shell-interpreter "python"
-      python-shell-interpreter-args "-i")
-
-(setq shell-file-name "/usr/bin/zsh")
-
-
-;; Django
-(use-package django-mode)
-;; (add-to-list 'auto-mode-alist '("\\.djhtml$" . django-html-mode))
-
-;; Golang
-(add-to-list 'auto-mode-alist '("\\.go\\'" . go-mode))
-;; Info mode
-(add-to-list 'auto-mode-alist '("\\info.gz$" . info-mode))
-
-(use-package hledger-mode)
-(add-to-list 'auto-mode-alist '("\\.journal$" . hledger-mode))
-(setq hledger-file "/home/bonface/Self/finances/hledger.journal")
-
-;; Enabling reading epub files
-(add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
-(provide 'mode-mappings)
-
-;; Org-mode
-(use-package toc-org)
-(if (require 'toc-org nil t)
-    (add-hook 'org-mode-hook 'toc-org-mode)
-  (warn "toc-org not found"))
-(add-to-list 'auto-mode-alist '("\\.\\(org\\|org_archive\\)$" . org-mode))
-
-;; purescript
-(add-to-list 'auto-mode-alist '("\\.purs\\'" . purescript-mode))
-(add-hook 'purescript-mode-hook #'haskell-indentation-mode)
-;;; mode-mappings ends here
-#+END_SRC
-
 ** sane-defaults.el
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/sane-defaults.el
 ;;; sane-defaults.el
@@ -2018,8 +1911,10 @@ Avoids opening a browser window."
   (browse-url-handlers '(("youtu\\.?be" . actuator-browse-video)
                          ("twitch"      . actuator-browse-video))))
 
+
 (use-package avy
   :ensure
+  :config
   (setq avy-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l ?q ?w ?e ?r ?t ?y ?u ?o ?p ?v ?b))
   (setq avy-dispatch-alist '((?X . avy-action-kill-move)
                              (?x . avy-action-kill-stay)
@@ -2107,8 +2002,24 @@ With \\[universal-argument] toggle the display of the window."
   (setq guide-key/popup-window-position 'bottom)
   (guide-key-mode 1))
 
+(use-package web-beautify
+  :ensure
+  :config
+  (eval-after-load 'js2-mode
+    '(define-key js2-mode-map (kbd "C-c b") 'web-beautify-js))
+  (eval-after-load 'js
+    '(define-key js-mode-map (kbd "C-c b") 'web-beautify-js))
+  (eval-after-load 'json-mode
+    '(define-key json-mode-map (kbd "C-c b") 'web-beautify-js))
+  (eval-after-load 'sgml-mode
+    '(define-key html-mode-map (kbd "C-c b") 'web-beautify-html))
+  (eval-after-load 'web-mode
+    '(define-key web-mode-map (kbd "C-c b") 'web-beautify-html))
+  (eval-after-load 'css-mode
+    '(define-key css-mode-map (kbd "C-c b") 'web-beautify-css)))
+
 (use-package wordnut
-  :ensure t
+  :ensure
   :bind ("C-c !" . wordnut-lookup-current-word))
 
 ;; Making it easier to discover Emacs key presses.
@@ -2204,20 +2115,23 @@ With \\[universal-argument] toggle the display of the window."
   (when (memq window-system '(mac ns x))
     (exec-path-from-shell-initialize)))
 
+(use-package purescript-mode
+  :mode "\\.purs$"
+  :ensure
+  :hook
+  ((haskell-indentation-mode . purescript-mode-hook)))
+
 ;; open epubs
 ;; (use-package justify-kp)
 (use-package nov
+  :mode ("\\.epub$" . nov-mode)
   :ensure
   :config
-  (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
   (setq nov-text-width 80)
   (setq visual-fill-column-center-text t)
   :hook
   ((visual-line-mode . nov-mode-hook)
    (visual-fill-column-mode . nov-mode-hook)))
-
-
-
 
 (use-package emacs
   :init
@@ -2254,6 +2168,25 @@ With \\[universal-argument] toggle the display of the window."
     ;; Not reached after `top-level'. (A rare behavior in lisp.)
     (keyboard-quit))
 
+  (defun nolinum ()
+    (global-linum-mode 0))
+
+  (add-to-list 'auto-mode-alist '("\\.zsh$" . shell-script-mode))
+  ;; conf-mode
+  (add-to-list 'auto-mode-alist '("\\.gitconfig$" . conf-mode))
+  (add-to-list 'auto-mode-alist '("\\.hbs$" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.erb$" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.html$" . web-mode))
+  ;; yaml
+  (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
+  (add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))
+  ;; PHP
+  (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
+  ;; Golang
+  (add-to-list 'auto-mode-alist '("\\.go\\'" . go-mode))
+  (add-to-list 'auto-mode-alist '("\\info.gz$" . info-mode))
+  (add-to-list 'auto-mode-alist '("\\.\\(org\\|org_archive\\)$" . org-mode))
+  
   (define-key ac-mode-map (kbd "M-TAB") 'auto-complete)
   (set-default 'indent-tabs-mode nil)
   (setq auto-revert-verbose nil)
@@ -2286,6 +2219,7 @@ With \\[universal-argument] toggle the display of the window."
   (setq recentf-max-saved-items 100)
   (setq set-mark-command-repeat-pop t)
   (setq show-trailing-whitespace 1)
+  (setq shell-file-name "/usr/bin/zsh")
   (setq sp-autoescape-string-quote nil)
   (setq tramp-default-method "ssh")
   (setq undo-tree-mode-lighter "")
@@ -2297,12 +2231,28 @@ With \\[universal-argument] toggle the display of the window."
   (setq-default indicate-empty-lines t)
   :hook
   ((geiser-mode . scheme-mode-hook)
-   (ibuffer-auto-mode . ibuffer-mode-hook))
+   (ibuffer-auto-mode . ibuffer-mode-hook)
+   (nolim . org-mode-hook)
+   (nolim . web-mode-hook)
+   (php-enable-psr2-coding-style . php-mode-hook)
+   (php-refactor-mode . php-mode-hook))
 
   :bind (("C-z" . nil)
          ("C-x C-z" . nil)
          ("C-h h" . nil)
          ("C-g" . keyboard-quit-strong)))
+
+(use-package py-autopep8)
+
+(use-package elpy
+  :ensure
+  :init
+  (elpy-enable)
+  :config
+  (setq python-shell-interpreter "python")
+  (setq python-shell-interpreter-args "-i"))
+
+(use-package django-mode)
 
 (use-package smooth-scrolling :ensure)
 
@@ -7433,10 +7383,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-python.el
 ;;; setup-python.el
 
-(use-package elpy
-  :ensure t
-  :init
-  (elpy-enable))
+
 
 (provide 'setup-python)
 
