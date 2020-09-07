@@ -1944,9 +1944,6 @@ Avoids opening a browser window."
   (browse-url-handlers '(("youtu\\.?be" . actuator-browse-video)
                          ("twitch"      . actuator-browse-video))))
 
-;; Shrinking fringes to 1 pixel
-
-
 (use-package ace-window
   :config
   (add-to-list 'aw-dispatch-alist '(?w hydra-window-size/body) t)
@@ -1983,7 +1980,6 @@ Avoids opening a browser window."
 ;; you're wondering, Company stands for Complete Anything.
 (use-package company
   :ensure
-  :demand t
   :bind (;; Replace `completion-at-point' and `complete-symbol' with
          ;; `company-manual-begin'. You might think this could be put
          ;; in the `:bind*' declaration below, but it seems that
@@ -2153,7 +2149,6 @@ This is an `:around' advice for `yas--make-control-overlay'."
 
     (advice-add #'yas--make-control-overlay :around
                 #'radian--advice-company-overrides-yasnippet)))
-
 
 (use-package dash :ensure)
 
@@ -2374,7 +2369,6 @@ With \\[universal-argument] toggle the display of the window."
   (savehist-mode 1)
   (scroll-bar-mode -1)
   (show-paren-mode 1)
-  (show-paren-mode t)
   (tool-bar-mode -1)
   (transient-mark-mode 1)
   (winner-mode 1) ; Undo/redo window configuration with C-c <left>/<right>
@@ -2426,7 +2420,6 @@ With \\[universal-argument] toggle the display of the window."
   (setq epa-pinentry-mode 'loopback)
   (setq fill-column 80)
   (setq gc-cons-threshold 20000000)
-  (setq geiser-default-implementation 'guile)
   (setq geiser-default-implementation 'racket)
   (setq geiser-racket-binary "/home/bonface/.guix-profile/bin/racket")
   (setq global-auto-revert-non-file-buffers t)
@@ -2458,7 +2451,6 @@ With \\[universal-argument] toggle the display of the window."
    (nolim . web-mode-hook)
    (php-enable-psr2-coding-style . php-mode-hook)
    (php-refactor-mode . php-mode-hook))
-
   :bind (("C-g" . keyboard-quit-strong)))
 
 (use-package py-autopep8)
