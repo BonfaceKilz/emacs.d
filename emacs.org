@@ -6435,15 +6435,9 @@ This is an `:around' advice for `yas--make-control-overlay'."
 ** setup-org.el
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-org.el
 ;;; setup-org.el
+
 ;; Org-mode
-(use-package toc-org
-  :ensure
-  :hook
-  ((toc-org-mode . org-mode-hook)))
-(setq org-plantuml-jar-path (expand-file-name "/home/bonface/.guix-profile/bin/plantuml"))
-(add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
-(global-set-key (kbd "C-c b") 'org-switchb)
-(setq org-select-task-completing t)
+
 (defun org-clock-select-task (&optional prompt)
   "Select a task that was recently associated with clocking.
   If `org-select-task-completing', use a completing-read to select.
@@ -6541,19 +6535,14 @@ This is an `:around' advice for `yas--make-control-overlay'."
                                  (+ i ?0)
                                (+ i (- ?A 10)))
                              l) crlist)) och)
-    crlist
-    ))
-
-;; Reset the org-template expnsion system, this is need after upgrading to org 9 for some reason
-(setq org-structure-template-alist (eval (car (get 'org-structure-template-alist 'standard-value))))
+    crlist))
 
 ;; From Jason
 (defun clone-and-narrow-org-element ()
   (interactive)
   (setq current-prefix-arg '(4)) ; C-u
   (call-interactively 'clone-indirect-buffer)
-  (org-narrow-to-element)
-  )
+  (org-narrow-to-element))
 
 (defun bh/is-project-p ()
   "Any task with a todo keyword subtask"
@@ -6604,9 +6593,6 @@ This is an `:around' advice for `yas--make-control-overlay'."
   (let ((str (read-passwd (concat (replace-regexp-in-string "%22" "\"" (replace-regexp-in-string "%0A" "\n" desc)) prompt ": "))))
     str))
 
-;; (pinentry-start)
-
-
 (defun find-project-task ()
   "Move point to the parent (project) task if any"
   (save-restriction
@@ -6618,7 +6604,32 @@ This is an `:around' advice for `yas--make-control-overlay'."
       (goto-char parent-task)
       parent-task)))
 
-(cl-defun my/make/org-capture-template
+
+(use-package ob-async :ensure)
+(use-package ob-elm :ensure)
+(use-package ob-go :ensure)
+(use-package  ob-restclient :ensure)
+(use-package toc-org
+  :ensure
+  :hook
+  ((toc-org-mode . org-mode-hook)))
+
+(use-package magit-org-todos
+  :ensure
+  :config
+  (magit-org-todos-autoinsert))
+
+(use-package writegood-mode :ensure)
+(use-package org-pomodoro :ensure)
+
+(use-package org
+  :ensure
+  :hook (org-mode . writegood-mode)
+  :config
+  ;; (require 'ox-extra)
+  ;; (require 'ob)
+  
+  (cl-defun my/make/org-capture-template
     (shortcut heading &optional (no-todo nil) (description heading) (category heading))
   "Quickly produce an org-capture-template.
 
@@ -6641,8 +6652,60 @@ This is an `:around' advice for `yas--make-control-overlay'."
               , (concat "*" (unless no-todo " TODO") " %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n\n")
               :empty-lines 1)
   )
-(setq confirm-kill-emacs 'yes-or-no-p)
-(setq org-capture-templates
+  
+  (setq alert-default-style 'libnotify)
+  (setq epa-pinentry-mode 'loopback)
+  (setq org-agenda-files '("/home/bonface/Self/org/journal.org" "/home/bonface/Self/org/notes.org"))
+  (setq org-agenda-ndays 7)
+  (setq org-agenda-show-all-dates t)
+  (setq org-agenda-skip-deadline-if-done t)
+  (setq org-agenda-skip-scheduled-if-done t)
+  (setq org-agenda-start-on-weekday nil)
+  (setq org-agenda-text-search-extra-files (quote (agenda-archives)))
+  (setq org-archive-location "%s_archive::* Archived Tasks")
+  (setq org-catch-invisible-edits 'show)
+  (setq org-clock-history-length 23)
+  (setq org-clock-in-resume t)
+  (setq org-clock-in-switch-to-state 'clock-in-to-inprogress)
+  (setq org-clock-out-remove-zero-time-clocks t)
+  (setq org-clock-out-when-done t)
+  (setq org-clock-persist t)
+  (setq org-clock-report-include-clocking-task t)
+  (setq org-crypt-key "D4F09EB110177E03C28E2FE1F5BBAE1E0392253F")
+  (setq org-deadline-warning-days 14)
+  (setq org-default-notes-file "~/Self/org/journal.org")
+  (setq org-ellipsis " ⤵")
+  (setq org-fontify-quote-and-verse-blocks t)
+  (setq org-hide-block-startup t)
+  (setq org-imenu-depth 7)
+  (setq org-log-done t)
+  (setq org-log-into-drawer t)
+  (setq org-log-note-clock-out t)
+  (setq org-plantuml-jar-path (expand-file-name "/home/bonface/.guix-profile/bin/plantuml"))
+  (setq org-return-follows-link t)
+  (setq org-reverse-note-order nil)
+  (setq org-select-task-completing t)
+  ;; Reset the org-template expnsion system, this is need after upgrading to org 9 for some reason
+  (setq org-structure-template-alist (eval (car (get 'org-structure-template-alist 'standard-value))))
+  (setq org-special-ctrl-a/e t)
+  (setq org-src-preserve-indentation t)
+  (setq org-src-tab-acts-natively t)
+  (setq org-startup-indented t)
+  (setq org-tags-exclude-from-inheritance (quote ("crypt")))
+  (setq org-timer-default-timer 45)
+  (setq org-use-fast-todo-selection t)
+  (setq org-use-speed-commands t)
+  (setq org-yank-adjusted-subtrees t)
+  (setq  org-todo-keywords (quote ((sequence "TODO(t)" "STARTED(s@/!)" "|" "DONE(d/!)")
+                                   (sequence "WAITING(w@/!)" "ON_HOLD(h@/!)" "|" "CANCELLED(c@/!)")
+                                   (sequence "MEETING(m)" "IN_PROGRESS(i@/!)" "FINISHED(f/!)" "|" "DROPPED(d@/!)"))))
+  (setq org-todo-keyword-faces (quote (("TODO" :foreground "green" :weight bold)
+                                       ("STARTED" :foreground "yellow" :weight bold)
+                                       ("DONE" :foreground "orange" :weight bold)
+                                       ("WAITING" :foreground "brown" :weight bold)
+                                       ("ON_HOLD" :foreground "grey" :weight bold)
+                                       ("CANCELLED" :foreground "red" :weight bold))))
+  (setq org-capture-templates
       `(
         ,(my/make/org-capture-template "t" "Tasks, Getting Things Done")
         ,(my/make/org-capture-template "r" "Research")
@@ -6656,120 +6719,11 @@ This is an `:around' advice for `yas--make-control-overlay'."
         ("n" "Note" entry (file "~/Self/org/notes.org")
          "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
         ))
-
-(use-package magit-org-todos
-  :config
-  (magit-org-todos-autoinsert))
-
-(use-package writegood-mode)
-(use-package org-pomodoro)
-(use-package org
-  :ensure org-plus-contrib
-  :hook (org-mode . writegood-mode)
-  :config
-  (require 'ox-extra)
-  (require 'ob)
-  (use-package ob-async)
-  (use-package ob-elm)
-  (use-package ob-go)
-  (use-package  ob-restclient)
-  (setq org-ellipsis " ⤵"
-        org-imenu-depth 7
-        org-hide-block-startup t
-        org-tags-exclude-from-inheritance (quote ("crypt"))
-        org-crypt-key "D4F09EB110177E03C28E2FE1F5BBAE1E0392253F"
-        ;; When you yank a subtree and paste it alongside a subtree of depth ‘d’,
-        ;; then the yanked tree's depth is adjusted to become depth ‘d’ as well.
-        ;; If you don't want this, then refile instead of copy pasting.
-        epa-pinentry-mode 'loopback
-        org-yank-adjusted-subtrees t
-        ;; C-k no longer removes tags, if activated in the middle of a heading's name.
-        org-special-ctrl-a/e t
-        alert-default-style 'libnotify
-        ;; Avoid accidentally editing folded regions, say by adding text after
-        ;; an Org “⋯”.
-        org-catch-invisible-edits 'show
-        ;; I use indentation-sensitive programming languages. Tangling should
-        ;; preserve my indentation.
-        org-src-preserve-indentation t
-        ;; Tab should do indent in code blocks
-        org-src-tab-acts-natively t
-        ;; Give quote and verse blocks a nice look.
-        org-fontify-quote-and-verse-blocks t
-        ;; Pressing ENTER on a link should follow it.
-        org-return-follows-link t
-        org-log-done t
-        org-todo-keywords (quote ((sequence "TODO(t)" "STARTED(s@/!)" "|" "DONE(d/!)")
-                                  (sequence "WAITING(w@/!)" "ON_HOLD(h@/!)" "|" "CANCELLED(c@/!)")
-                                  (sequence "MEETING(m)" "IN_PROGRESS(i@/!)" "FINISHED(f/!)" "|" "DROPPED(d@/!)")
-                                  ))
-        org-todo-keyword-faces (quote (("TODO" :foreground "green" :weight bold)
-                                       ("STARTED" :foreground "yellow" :weight bold)
-                                       ("DONE" :foreground "orange" :weight bold)
-                                       ("WAITING" :foreground "brown" :weight bold)
-                                       ("ON_HOLD" :foreground "grey" :weight bold)
-                                       ("CANCELLED" :foreground "red" :weight bold)))
-        org-use-fast-todo-selection t
-        org-clock-in-switch-to-state 'clock-in-to-inprogress
-        org-archive-location "%s_archive::* Archived Tasks"
-        org-log-into-drawer t
-        org-use-speed-commands t
-        org-reverse-note-order nil
-        org-log-note-clock-out t
-        ;; Include agenda archive files when searching for things
-        org-agenda-text-search-extra-files (quote (agenda-archives))
-        ;; Tasks get a 25 minute count down timer
-        org-timer-default-timer 45
-        ;; Default notes file
-        org-default-notes-file "~/Self/org/journal.org"
-
-        ;; List of all the files where todo items can be found. Only one for now.
-        org-agenda-files '("/home/bonface/Self/org/journal.org"
-                           "/home/bonface/Self/org/notes.org")
-        ;; How many days ahead the default agenda view should look
-        org-agenda-ndays 7
-
-        ;; How many days early a deadline item will begin showing up in your agenda list.
-        org-deadline-warning-days 14
-
-        ;; In the agenda view, days that have no associated tasks will still have a line showing the date.
-        org-agenda-show-all-dates t
-
-        org-agenda-skip-deadline-if-done t
-        org-startup-indented t
-
-        ;; Scheduled items marked as complete will not show up in your agenda view.
-        org-agenda-skip-scheduled-if-done t
-
-        ;; The agenda view – even in the 7-days-at-a-time view – will always begin on the current day.
-        ;; This is important, since while using org-mode as a day planner, you never want to think of
-        ;; days gone past. That’s something you do in other ways, such as when reviewing completed tasks.
-        org-agenda-start-on-weekday nil
-
-        ;; Show lot of clocking history
-        org-clock-history-length 23
-
-        ;; Resume clocking task on clock-in if the clock is open
-        org-clock-in-resume t
-
-        ;; Sometimes I change tasks I'm clocking quickly - this removes clocked tasks with 0:00 duration
-        org-clock-out-remove-zero-time-clocks t
-
-        ;; Clock out when moving task to a done state
-        org-clock-out-when-done t
-
-        ;; Save the running clock and all clock history when exiting Emacs, load it on startup
-        org-clock-persist t
-
-        ;; Do not prompt to resume an active clock
-        ;; (setq org-clock-persist-query-resume nil)
-
-        ;; Include current clocking task in clock reports
-        org-clock-report-include-clocking-task t
-        )
-  ;; Resume clocking task when emacs is restarted
+  (setq org-capture-templates-contexts
+        '(("r" ((in-mode . "gnus-summary-mode")
+                (in-mode . "gnus-article-mode")
+                (in-mode . "message-mode")))))
   (org-clock-persistence-insinuate)
-
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((shell . t)
@@ -6793,14 +6747,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
   (add-hook 'org-mode-hook '(lambda ()
                               (local-set-key (kbd "<return>") 'org-return-indent))
             (local-set-key (kbd "C-M-<return>") 'electric-indent-just-newline))
-
-  ;; Use the timer we set when clocking in happens.
   (add-hook 'org-clock-in-hook 'org-pomodoro)
-  ;; (add-hook 'org-clock-out-hook
-  ;;           (lambda () (org-timer-stop)))
-  ;; (add-hook 'org-clock-in-hook
-  ;;           (lambda () (org-timer-set-timer '(16))))
-
   (eval-after-load "org-present"
     '(progn
        (add-hook 'org-present-mode-hook
@@ -6818,37 +6765,25 @@ This is an `:around' advice for `yas--make-control-overlay'."
                    (org-remove-inline-images)
                    (org-present-show-cursor)
                    (org-present-read-write)))))
-  ;; Invoking the agenda command shows the agenda and enables
-  ;; the org-agenda variables.
   (org-agenda "a" "a")
-  ;; Setting up org-crypt
   (require 'org-crypt)
   (org-crypt-use-before-save-magic)
-  (setq org-tags-exclude-from-inheritance (quote ("crypt")))
-  (setq org-crypt-key "D4F09EB110177E03C28E2FE1F5BBAE1E0392253F")
   (setenv "GPG_AGENT_INFO" nil)
 
-  ;; Invoking the agenda command shows the agenda and enables
-  ;; the org-agenda variables.
-  ;; Pressing ‘c’ in the org-agenda view shows all completed tasks,
-  ;; which should be archived.
   (add-to-list 'org-agenda-custom-commands
                '("c" todo "DONE|ON_HOLD|CANCELLED" nil))
   (add-to-list 'org-agenda-custom-commands
                '("%" "Appointments" agenda* "Today's appointments"
                  ((org-agenda-span 1)
                   (org-agenda-max-entries 3))))
+  (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
   (add-to-list 'org-agenda-custom-commands
                '("u" alltodo ""
                  ((org-agenda-skip-function
                    (lambda ()
                      (org-agenda-skip-entry-if 'scheduled 'deadline 'regexp  "\n]+>")))
                   (org-agenda-overriding-header "Unscheduled TODO entries: "))))
-  (setq org-capture-templates-contexts
-        '(("r" ((in-mode . "gnus-summary-mode")
-                (in-mode . "gnus-article-mode")
-                (in-mode . "message-mode")))))
-
+  
   :bind (("C-c C-x n" . clone-and-narrow-org-element)
          ("C-c l" . org-store-link)
          ("C-c a" . org-agenda)
@@ -6863,8 +6798,6 @@ This is an `:around' advice for `yas--make-control-overlay'."
          ("s-e" . org-edit-src-block)
          :map org-src-mode-map
          ("s-e" . org-edit-src-block)))
-
-(ox-extras-activate '(ignore-headlines))
 
 (use-package org-journal
   :bind (("C-c j" . org-journal-new-entry))
@@ -7052,9 +6985,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
   :ensure
   :straight (org-fc :type git :host github :repo "l3kn/org-fc")
   :custom
-  (org-fc-directories '("~/Self/org-roam/"))
-  :config
-  (require 'org-fc-hydra))
+  (org-fc-directories '("~/Self/org-roam/")))
 
 (global-set-key (kbd "C-c f") 'org-fc-hydra/body)
 (setq org-journal-dir "/home/bonface/Self/org/journal/")
@@ -7121,19 +7052,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
 
 ;; letter class, for formal letters
 
-(add-to-list 'org-export-latex-classes
 
-             '("letter"
-               "\\documentclass[11pt]{letter}\n
-      \\usepackage[utf8]{inputenc}\n
-      \\usepackage[T1]{fontenc}\n
-      \\usepackage{color}"
-               
-               ("\\section{%s}" . "\\section*{%s}")
-               ("\\subsection{%s}" . "\\subsection*{%s}")
-               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-               ("\\paragraph{%s}" . "\\paragraph*{%s}")
-               ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 
 (provide 'setup-org)
 ;;; setup-org.el ends here
