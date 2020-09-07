@@ -100,6 +100,7 @@
       `(("." . ,(expand-file-name
                  (concat user-emacs-directory "backups")))))
 
+(require 'setup-package)
 
 (create-directory-if-nonexistent
  (expand-file-name "defuns" user-emacs-directory))
@@ -108,7 +109,6 @@
 (dolist (file (directory-files defuns-dir t "\\w+"))
   (when (file-regular-p file)
     (load file)))
-(require 'setup-package)
 (require 'setup-init)
 (require 'sane-defaults)
 (require 'appearance)
