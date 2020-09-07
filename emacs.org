@@ -7176,17 +7176,6 @@ This is an `:around' advice for `yas--make-control-overlay'."
 (eval-when-compile
   (require 'use-package))
 
-(setq use-package-always-ensure t)
-
-;; Do not initialise the package manager.  This is done in `init.el'.
-(setq package-enable-at-startup nil)
-
-;; Allow loading from the package cache.
-(setq package-quickstart t)
-
-;; Do not resize the frame at this early stage.
-(setq frame-inhibit-implied-resize t)
-
 (provide 'setup-package)
 
 ;;; setup-package.el
@@ -7196,7 +7185,6 @@ This is an `:around' advice for `yas--make-control-overlay'."
 ;;; setup-paredit.el
 
 ;; My keybindings for paredit
-(use-package s)
 (use-package paredit :ensure)
 
 (defun paredit-wrap-round-from-behind ()
@@ -7225,7 +7213,6 @@ This is an `:around' advice for `yas--make-control-overlay'."
 (add-hook 'clojure-mode-hook (lambda () (paredit-mode 1)))
 (add-hook 'cider-repl-mode-hook (lambda () (paredit-mode 1)))
 (add-hook 'emacs-lisp-mode-hook (lambda () (paredit-mode 1)))
-
 
 ;; Enable `paredit-mode' in the minibuffer, during `eval-expression'.
 (defun conditionally-enable-paredit-mode ()
@@ -7415,12 +7402,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
 ** Initial setup
 
 #+NAME: gnus
-#+BEGIN_SRC elisp :tangle 
-;; (setq mail-host-address "gmail.com")
-
-;; (setq user-mail-address "bonfacemunyoki@gmail.com"
-;;       user-full-name "Bonface M. K.")
-
+#+BEGIN_SRC elisp :tangle ~/.emacs.d/settings/setup-email.el
 (use-package auth-source
   :ensure
   :config
@@ -7481,206 +7463,276 @@ Add this function to `message-header-setup-hook'."
         (progn
           (when (message-fetch-field "Gcc")
             (message-remove-header "Gcc"))
-          (message-add-header "Gcc: nnmaildir+archive:Sent"))
+          (message-add-header "Gcc: nnfolder+archive:sent.2020")) ;nnimap+gmail:[Gmail]/Sent Mail
       message))
-  :hook ((message-header-setup-hook . prot/message-header-add-gcc)
+  :hook ((message-header-setup-hook . bonz/message-header-add-gcc)
          (message-setup-hook . message-sort-headers)))
-
-(use-package gnus
-  :config
-  ;; accounts
-  (setq gnus-select-method '(nnnil ""))
-  (setq gnus-secondary-select-methods
-        '((nntp "news.gwene.org")
-          (nnmaildir "prv" (directory "~/.mail/prv"))
-          (nnmaildir "inf" (directory "~/.mail/inf"))
-          (nnmaildir "pub" (directory "~/.mail/pub"))))
-  )
-(require 'nnir)
-(require 'gnus-demon)
-(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
-
-;; Let Gnus know Gmail search syntax
-(add-to-list 'nnir-imap-search-arguments '("gmail" . "X-GM-RAW"))
-;; `gnus-group-make-nnir-group' use Gmail search syntax *by default*.
-;; You can press `G G` instead `C-u G G` instead.
-(setq nnir-imap-default-search-key "gmail")
 
 (use-package w3m :ensure)
 (use-package notmuch :ensure)
 (defun w3m-copy-url-at-point ()
-  (interactive)
-  (let ((url (w3m-anchor)))
-    (if (w3m-url-valid url)
-        (kill-new (w3m-anchor))
-      (message "No URL at point!"))))
+    (interactive)
+    (let ((url (w3m-anchor)))
+      (if (w3m-url-valid url)
+          (kill-new (w3m-anchor))
+        (message "No URL at point!"))))
 
 (add-hook 'w3m-mode-hook
-	  (lambda ()
-	    (local-set-key "\M-W" 'w3m-copy-url-at-point)))
+            (lambda ()
+              (local-set-key "\M-W" 'w3m-copy-url-at-point)))
 
+(setq mm-text-html-renderer 'w3m) ; OPTIONAL  
 
+(use-package gnus
+  :ensure
+  :config
+  
+  (setq gnus-ignored-newsgroups "^to\\.\\|^[0-9. ]+\\( \\|$\\)\\|^[\"]\"[#'()]")
 
-;; ask encryption password once
-(setq epa-file-cache-passphrase-for-symmetric-encryption t)
+  ;; accounts
+  (setq gnus-select-method '(nnnil ""))
+  (setq gnus-secondary-select-methods
+        '((nntp "news.gwene.org")
+          (nnimap "gmail"
+                  (nnimap-address "imap.gmail.com")  ; it could also be imap.googlemail.com if that's your server.
+                  (nnimap-server-port "imaps")
+                  (nnimap-stream ssl))))
+  (setq nnir-method-default-engines
+        '((nnmaildir . notmuch)))
 
-(setq gnus-thread-sort-functions
-      '(gnus-thread-sort-by-most-recent-date
-        (not gnus-thread-sort-by-number)))
+  (setq gnus-parameters
+        '(("gmail"
+           (posting-style
+            (gcc "nnimap+gmail:Sent")
+            (From
+             (format "%s <%s>" user-full-name
+                     (bonz/auth-get-field "gmail" :user)))))))
+  
+  (setq gnus-gcc-mark-as-read t)
+  (setq gnus-agent t)
+  (setq gnus-novice-user t)
+  ;; checking sources
+  (setq gnus-check-new-newsgroups 'ask-server)
+  (setq gnus-read-active-file 'some)
+  ;; dribble
+  (setq gnus-use-dribble-file t)
+  (setq gnus-always-read-dribble-file t)
+  :bind ("C-c m" . gnus))
 
-; NO 'passive
-(setq gnus-use-cache t)
+(use-package nnmail
+  :config
+  (setq nnmail-expiry-wait 30))
 
-;; {{ press "o" to view all groups
-(defun my-gnus-group-list-subscribed-groups ()
-  "List all subscribed groups with or without un-read messages"
-  (interactive)
-  (gnus-group-list-all-groups 5))
+(use-package gnus-agent
+  :after gnus
+  :config
+  (setq gnus-agent-article-alist-save-format 1)  ; uncompressed
+  (setq gnus-agent-cache t)
+  (setq gnus-agent-confirmation-function 'y-or-n-p)
+  (setq gnus-agent-consider-all-articles nil)
+  (setq gnus-agent-directory "~/News/agent/")
+  (setq gnus-agent-enable-expiration 'ENABLE)
+  (setq gnus-agent-expire-all nil)
+  (setq gnus-agent-expire-days 30)
+  (setq gnus-agent-mark-unread-after-downloaded t)
+  (setq gnus-agent-queue-mail t)        ; queue if unplugged
+  (setq gnus-agent-synchronize-flags nil))
 
-(define-key gnus-group-mode-map
-  ;; list all the subscribed groups even they contain zero un-read messages
-  (kbd "o") 'my-gnus-group-list-subscribed-groups)
+(use-package gnus-art
+  :after gnus
+  :demand
+  :config
+  (setq gnus-article-browse-delete-temp 'ask)
+  (setq gnus-article-over-scroll nil)
+  (setq gnus-article-show-cursor t)
+  (setq gnus-article-sort-functions
+        '((not gnus-article-sort-by-number)
+          (not gnus-article-sort-by-date)))
+  (setq gnus-article-truncate-lines nil)
+  (setq gnus-html-frame-width 80)
+  (setq gnus-html-image-automatic-caching t)
+  (setq gnus-inhibit-images t)
+  (setq gnus-max-image-proportion 0.7)
+  (setq gnus-treat-display-smileys nil)
+  (setq gnus-article-mode-line-format "%G %S %m")
+  (setq gnus-visible-headers
+        '("^From:" "^Subject:" "^To:" "^Cc:" "^Newsgroups:" "^Date:"
+          "Followup-To:" "Reply-To:" "^Organization:" "^X-Newsreader:"
+          "^X-Mailer:"))
+  (setq gnus-sorted-header-list gnus-visible-headers)
+  :hook (gnus-article-mode-hook . (lambda ()
+                                    (setq-local fill-column 80)))
+  :bind (:map gnus-article-mode-map
+              ("i" . gnus-article-show-images)
+              ("s" . gnus-mime-save-part)
+              ("o" . gnus-mime-copy-part)))
 
-;; source: https://blog.petitepomme.net/post/28547901478/installing-and-configuring-bbdb-3
-(require 'bbdb)
-(bbdb-initialize 'message 'gnus 'mail)
-;; (add-hook 'gnus-startup-hook 'bbdb-insinuate-gnus)
-;; (bbdb-mua-auto-update-init 'gnus 'message)
+(use-package gnus-async
+  :after gnus
+  :config
+  (setq gnus-asynchronous t)
+  (setq gnus-use-article-prefetch 15))
 
-;; size of the bbdb popup
-(setq bbdb-pop-up-window-size 10)
+(use-package gnus-group
+  :after gnus
+  :demand
+  :config
+  (setq gnus-level-subscribed 6)
+  (setq gnus-level-unsubscribed 7)
+  (setq gnus-level-zombie 8)
+  (setq gnus-activate-level 2)
+  (setq gnus-list-groups-with-ticked-articles nil)
+  (setq gnus-group-sort-function
+        '((gnus-group-sort-by-unread)
+          (gnus-group-sort-by-alphabet)
+          (gnus-group-sort-by-rank)))
+  (setq gnus-group-line-format "%M%p%P%5y:%B%(%g%)\n")
+  (setq gnus-group-mode-line-format "%%b")
+  :hook ((gnus-group-mode-hook . hl-line-mode)
+         (gnus-select-group-hook . gnus-group-set-timestamp))
+  :bind (:map gnus-group-mode-map
+              ("M-n" . gnus-topic-goto-next-topic)
+              ("M-p" . gnus-topic-goto-previous-topic)))
 
-;; What do we do when invoking bbdb interactively
-(setq bbdb-mua-update-interactive-p '(query . create))
+(use-package gnus-topic
+  :after (gnus gnus-group)
+  :config
+  (setq gnus-topic-display-empty-topics nil)
+  :hook (gnus-group-mode-hook . gnus-topic-mode))
 
-;; Make sure we look at every address in a message and not only the
-;; first one
-(setq bbdb-message-all-addresses t)
+(use-package gnus-sum
+  :after (gnus gnus-group)
+  :demand
+  :config
+  (setq gnus-auto-select-first nil)
+  (setq gnus-summary-ignore-duplicates t)
+  (setq gnus-suppress-duplicates t)
+  (setq gnus-save-duplicate-list t)
+  (setq gnus-summary-goto-unread nil)
+  (setq gnus-summary-make-false-root 'adopt)
+  (setq gnus-summary-thread-gathering-function
+        'gnus-gather-threads-by-subject)
+  (setq gnus-summary-gather-subject-limit 'fuzzy)
+  (setq gnus-thread-sort-functions
+        '((not gnus-thread-sort-by-date)
+          (not gnus-thread-sort-by-number)))
+  (setq gnus-subthread-sort-functions
+        'gnus-thread-sort-by-date)
+  (setq gnus-thread-hide-subtree nil)
+  (setq gnus-thread-ignore-subject nil)
+  (setq gnus-user-date-format-alist
+        '(((gnus-seconds-today) . "Today at %R")
+          ((+ (* 60 60 24) (gnus-seconds-today)) . "Yesterday, %R")
+          (t . "%Y-%m-%d %R")))
 
-;; use ; on a message to invoke bbdb interactively
-(add-hook
- 'gnus-summary-mode-hook
- (lambda ()
-   (define-key gnus-summary-mode-map (kbd ";") 'bbdb-mua-edit-field)))
-;; ;; This is for non interactive bbdb invocation, but it was a bit
-;; ;; too much
-;; (setq bbdb-update-records-p 'query)
+  ;; When the %f specifier in `gnus-summary-line-format' matches my
+  ;; name, this will use the contents of the "To:" field, prefixed by
+  ;; the string I specify.  Useful when checking your "Sent" summary.
+  (setq gnus-ignored-from-addresses "Bonface M. K.")
+  (setq gnus-summary-to-prefix "To: ")
 
-;; auto-complete emacs address using bbdb UI
-(add-hook 'message-mode-hook
-          '(lambda ()
-             (flyspell-mode t)
-             (local-set-key (kbd "TAB") 'bbdb-complete-mail)))
+  (setq gnus-summary-line-format "%U%R  %-16,16&user-date;  %4L:%-25,25f  %B%s\n")
+  (setq gnus-summary-mode-line-format "%p")
+  (setq gnus-sum-thread-tree-false-root "─┬> ")
+  (setq gnus-sum-thread-tree-indent " ")
+  (setq gnus-sum-thread-tree-single-indent "")
+  (setq gnus-sum-thread-tree-leaf-with-other "├─> ")
+  (setq gnus-sum-thread-tree-root "")
+  (setq gnus-sum-thread-tree-single-leaf "└─> ")
+  (setq gnus-sum-thread-tree-vertical "│")
 
-;; Fetch only part of the article if we can.
-;; I saw this in someone's .gnus
-(setq gnus-read-active-file 'some)
+  (defun bonz/gnus-summary-save-parts-all ()
+    "Save relevant message MIME parts to a desired directory.
+EXPERIMENTAL"
+    (interactive)
+    (let ((dir "~/Downloads/mail-attachments"))
+      (if major-mode 'gnus-summary-mode
+        (progn
+          (unless (file-directory-p dir)
+            (make-directory dir))
+          (gnus-summary-save-parts "text/.*" dir nil t))
+        (user-error "Not in a `gnus' summary buffer"))))
 
-(setq gnus-select-method
-      '(nnimap "gmail"
-               (nnimap-address "imap.gmail.com")  ; it could also be imap.googlemail.com if that's your server.
-               (nnimap-server-port 993)
-               (nnimap-stream ssl)))
+  :hook (gnus-summary-mode-hook . hl-line-mode)
+  :bind (:map gnus-summary-mode-map
+              ("X x" . bonz/gnus-summary-save-parts-all)
+              ("<delete>" . gnus-summary-delete-article)
+              ("n" . gnus-summary-next-article)
+              ("p" . gnus-summary-prev-article)
+              ("N" . gnus-summary-next-unread-article)
+              ("P" . gnus-summary-prev-unread-article)
+              ("M-n" . gnus-summary-next-thread)
+              ("M-p" . gnus-summary-prev-thread)
+              ("C-M-n" . gnus-summary-next-group)
+              ("C-M-p" . gnus-summary-prev-group)
+              ("C-M-^" . gnus-summary-refer-thread)))
 
+(use-package gnus-srvr
+  :after gnus
+  :hook ((gnus-browse-mode-hook gnus-server-mode-hook) . hl-line-mode))
 
-(setq message-send-mail-function 'smtpmail-send-it
-      smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil))
-      smtpmail-auth-credentials '(("smtp.gmail.com" 587
-                                   "bonfacemunyoki@gmail.com" nil))
-      smtpmail-default-smtp-server "smtp.gmail.com"
-      smtpmail-smtp-server "smtp.gmail.com"
-      smtpmail-smtp-service 587
-      gnus-ignored-newsgroups "^to\\.\\|^[0-9. ]+\\( \\|$\\)\\|^[\"]\"[#'()]")
+(use-package gnus-win
+  :config
+  (gnus-add-configuration
+   '(article
+     (horizontal 1.0
+                 (vertical 40 (group 1.0))
+                 (vertical 1.0
+                           (summary 0.16 point)
+                           (article 1.0)))))
 
-(setq gnus-summary-thread-gathering-function 'gnus-gather-threads-by-subject)
+  (gnus-add-configuration
+   '(summary
+     (horizontal 1.0
+                 (vertical 40 (group 1.0))
+                 (vertical 1.0 (summary 1.0 point))))))
 
-;; Also, I prefer to see only the top level message.  If a message has
-;; several replies or is part of a thread, only show the first message.
-;; `gnus-thread-ignore-subject' will ignore the subject and
-;; look at 'In-Reply-To:' and 'References:' headers.
-(setq gnus-thread-hide-subtree t)
-(setq gnus-thread-ignore-subject t)
+(use-package gnus-dired
+  :after (gnus dired)
+  :hook (dired-mode-hook . gnus-dired-mode))
 
-(require 'w3m)
-(setq mm-text-html-renderer 'w3m) ; OPTIONAL
+(use-package smtpmail
+  :ensure
+  :init
+  (setq smtpmail-default-smtp-server "smtp.gmail.com")
+  :config
+  (setq smtpmail-smtp-server "smtp.gmail.com")
+  (setq smtpmail-stream-type 'ssl)
+  (setq smtpmail-smtp-service 587)
+  (setq smtpmail-queue-mail nil))
 
-;; Tree view for groups.
-(add-hook 'gnus-group-mode-hook 'gnus-topic-mode)
+(use-package smtpmail-async
+  :after smtpmail
+  :config
+  (setq send-mail-function 'async-smtpmail-send-it)
+  (setq message-send-mail-function 'async-smtpmail-send-it))
 
-(eval-after-load 'gnus-topic
-  '(progn
-     (setq gnus-message-archive-group '((format-time-string "sent.%Y")))
-     (setq gnus-server-alist '(("archive" nnfolder "archive" (nnfolder-directory "~/Mail/archive")
-                                (nnfolder-active-file "~/Mail/archive/active")
-                                (nnfolder-get-new-mail nil)
-                                (nnfolder-inhibit-expiry t))))
+(use-package ebdb
+  :ensure
+  :pin gnu                              ; Prefer ELPA version
+  :config
+  (use-package ebdb-gnus)
+  (use-package ebdb-message)
+  (setq ebdb-default-window-size 0.2)
+  (setq ebdb-mua-pop-up t)
 
-     ;; "Gnus" is the root folder, and there are three mail accounts, "misc", "hotmail", "gmail"
-     (setq gnus-topic-topology '(("Gnus" visible nil nil)
-                                 (("Misc" visible nil nil))
-                                 (("[Gmail]/" visible nil nil))))
+  (defun bonz/ebdb-auto-update ()
+    "Conditions for updating EBDB records."
+    (if (ebdb-mua-message-header "Newsgroups")
+        'query
+      'existing))
 
-     ;;each topic corresponds to a public imap folder
-     (setq gnus-topic-alist '(
-                              ("[Gmail]/" ; the key of topic
-                               "[Gmail]/All Mail"
-                               "[Gmail]/Important"
-                               "Newsletters"
-                               ;; "Gmail Forums"
-                               "Gmail Primary"
-                               "Gmail Social"
-                               "Genenetwork"
-                               "GNU"
-                               "Third Party Apps"
-                               "[Gmail]/Drafts"
-                               "[Gmail]/Sent Mail"
-                               "[Gmail]/Spam"
-                               "[Gmail]/Starred"
-                               "[Gmail]/Trash"
-                               "[Gmail]"
-                               )
-                              ("Misc" ; the key of topic
-                               "nnfolder+archive:sent.2018"
-                               "nnfolder+archive:sent.2019"
-                               "nndraft:drafts")
-                              ))
-     ))
-(gnus-add-configuration
- '(article
-   (horizontal 1.0
-               (vertical 60 (group 1.0))
-               (vertical 1.0
-                         (summary 0.20 point)
-                         (article 1.0)))))
+  (setq ebdb-mua-auto-update-p #'bonz/ebdb-auto-update)
+  (setq ebdb-mua-sender-update-p #'bonz/ebdb-auto-update)
+  (setq ebdb-mua-reader-update-p #'bonz/ebdb-auto-update)
+  (setq ebdb-add-aka t)
+  (setq ebdb-add-name nil)
+  (setq ebdb-add-mails 'query)
+  (setq ebdb-complete-mail 'capf)
+  (setq ebdb-mail-avoid-redundancy nil)
+  (setq ebdb-complete-mail-allow-cycling 3))
 
-(gnus-add-configuration
- '(summary
-   (horizontal 1.0
-               (vertical 60 (group 1.0))
-               (vertical 1.0 (summary 1.0 point)))))
-
-(eval-after-load 'mailcap
-  '(progn
-     (cond
-      ;; on macOS, maybe change mailcap-mime-data?
-      ((eq system-type 'darwin))
-      ;; on Windows, maybe change mailcap-mime-data?
-      ((eq system-type 'windows-nt))
-      (t
-       ;; Linux, read ~/.mailcap
-       (mailcap-parse-mailcaps)))))
-
-;; https://www.thregr.org/~wavexx/software/gnus-desktop-notify.el/
-;; (require 'gnus-desktop-notify)
-;; (gnus-desktop-notify-mode)
-(gnus-demon-add-scanmail)
-(gnus-demon-add-handler 'gnus-demon-scan-news nil 60)
-
-(setq gc-cons-threshold 3500000)
-#+END_SRC
-
-#+BEGIN_SRC elisp :tangle ~/.gnus.el :noweb yes
-<<gnus>>
+(provide 'setup-email)
 #+END_SRC
 ** Password                                                           :crypt:
 -----BEGIN PGP MESSAGE-----
