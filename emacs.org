@@ -4762,9 +4762,8 @@ This is an `:around' advice for `yas--make-control-overlay'."
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-hledger.el
 ;;; setup-hledger.el
 
-;; I've used `use-package` declarations
-
-(use-package hledger-mode :ensure t
+(use-package hledger-mode
+ :ensure
   :mode ("\\.journal\\'" "\\.hledger\\'")
   :preface
   (defun hledger/next-entry ()
@@ -4788,15 +4787,22 @@ This is an `:around' advice for `yas--make-control-overlay'."
     (hledger-backward-entry)
     (hledger-pulse-momentary-current-entry))
 
+  (defun bonz/ledger-with-timer ()
+    (run-with-timer 1
+		    nil
+		    (lambda ()
+		      (when (equal hledger-last-run-command
+				   "balancesheet")
+			;; highlight frequently changing accounts
+			(highlight-regexp "^.*\\(Ksh\\|Expense\\).*$")
+			(highlight-regexp "^.*Liability*$"
+					  'hledger-warning-face)))))
   :bind (("C-c j" . hledger-run-command)
 	 :map hledger-mode-map
 	 ("C-c e" . hledger-jentry)
 	 ("M-p" . hledger/prev-entry)
 	 ("M-n" . hledger/next-entry))
   :init
-
-  (setq hledger-jfile "~/Self/finances/hledger.journal"
-	tab-width 4)
   ;; Expanded account balances in the overall monthly report are
   ;; mostly noise for me and do not convey any meaningful information.
   (setq hledger-show-expanded-report nil)
@@ -4806,22 +4812,10 @@ This is an `:around' advice for `yas--make-control-overlay'."
 
   :config
   (setq company-mode t)
-  (add-to-list 'auto-mode-alist '("\\.journal\\'" . hledger-mode))
-  ;;(add-to-list 'company-backends 'hledger-company)
-  (add-hook 'hledger-view-mode-hook #'hl-line-mode)
-  (add-hook 'hledger-view-mode-hook #'center-text-for-reading)
-  (add-hook 'hledger-view-mode-hook
-	    (lambda ()
-	      (run-with-timer 1
-			      nil
-			      (lambda ()
-				(when (equal hledger-last-run-command
-					     "balancesheet")
-				  ;; highlight frequently changing accounts
-				  (highlight-regexp "^.*\\(Ksh\\|Expense\\).*$")
-				  (highlight-regexp "^.*Liability*$"
-						    'hledger-warning-face))))))
-  )
+  (setq hledger-file "/home/bonface/Self/finances/hledger.journal")
+  :hook ((hl-line-mode . hledger-view-mode-hook)
+         (center-text-for-reading . hledger-view-mode-hook)
+         (bonz/ledger-with-timer . hledger-view-mode-hook)))
 
 (use-package hledger-input
   :pin manual
@@ -4837,15 +4831,14 @@ This is an `:around' advice for `yas--make-control-overlay'."
 	(message (hledger-shell-command-to-string (format " balance -N %s "
 							  account)))
       (message "No account at point")))
-
+  (defun bonz/make-company-delay ()
+	      (make-local-variable 'company-idle-delay)
+	      (setq-local company-idle-delay 0.1))
   :config
   (setq hledger-input-buffer-height 20)
-  (add-hook 'hledger-input-post-commit-hook #'hledger-show-new-balances)
-  (add-hook 'hledger-input-mode-hook #'auto-fill-mode)
-  (add-hook 'hledger-input-mode-hook
-	    (lambda ()
-	      (make-local-variable 'company-idle-delay)
-	      (setq-local company-idle-delay 0.1))))
+  :hook ((hledger-show-new-balances . hledger-input-post-commit-hook)
+        (auto-fill-mode . hledger-input-mode-hook)
+        (bonz/make-company-delay . hledger-input-mode-hook)))
 
 (provide 'setup-hledger)
 
