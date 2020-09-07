@@ -111,6 +111,7 @@
     (load file)))
 (require 'setup-init)
 (require 'sane-defaults)
+(require 'setup-email)
 (require 'appearance)
 (require 'setup-elfeed)
 (require 'setup-exwm)
