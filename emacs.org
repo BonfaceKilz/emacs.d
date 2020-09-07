@@ -1992,7 +1992,6 @@ With \\[universal-argument] toggle the display of the window."
   (setq wgrep-auto-save-buffer t)
   (setq wgrep-change-readonly-file t))
 
-
 ;; guide-key
 (use-package guide-key
   :config
@@ -2078,7 +2077,6 @@ With \\[universal-argument] toggle the display of the window."
   (synosaurus-mode)
   :config
   (setq synosaurus-choose-method 'popup)
-  :bind
   (("M-#" . synosaurus-choose-and-replace)))
 
 (use-package fill-column-indicator
@@ -4767,9 +4765,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
 ;; I've used `use-package` declarations
 
 (use-package hledger-mode :ensure t
-  :after htmlize
   :mode ("\\.journal\\'" "\\.hledger\\'")
-  :commands hledger-enable-reporting
   :preface
   (defun hledger/next-entry ()
     "Move to next entry and pulse."
