@@ -91,9 +91,8 @@
   (when (file-regular-p file)
     (load file)))
 (require 'setup-package)
-(require 'sane-defaults)
-
 (require 'setup-init)
+(require 'sane-defaults)
 (require 'appearance)
 (require 'setup-bbdb)
 (require 'setup-elfeed)
@@ -1867,6 +1866,7 @@ abort completely with `C-g'."
            (format "; Time %.3fs"
                    (float-time (time-subtract (current-time)
                                               before-init-time))))))
+
 (defun untabify-buffer ()
   (interactive)
   (untabify (point-min) (point-max)))
@@ -1898,6 +1898,10 @@ abort completely with `C-g'."
 
 (add-to-list 'find-file-not-found-functions 'bonz/create-non-existent-directory)
 
+(use-package autopair
+  :config
+  (autopair-mode 1))
+
 (use-package browse-url
   :ensure
   :config
@@ -1909,6 +1913,21 @@ Avoids opening a browser window."
   (browse-url-handlers '(("youtu\\.?be" . actuator-browse-video)
                          ("twitch"      . actuator-browse-video))))
 
+;; Shrinking fringes to 1 pixel
+
+
+(use-package ace-window
+  :config
+  (add-to-list 'aw-dispatch-alist '(?w hydra-window-size/body) t)
+  (add-to-list 'aw-dispatch-alist '(?r hydra-window-scroll/body) t)
+  (add-to-list 'aw-dispatch-alist '(?\; hydra-window-frame/body) t)
+  (setq aw-dispatch-always nil)
+  (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+  (custom-set-faces
+   '(aw-leading-char-face
+     ((t (:inherit ace-jump-face-foreground :height 1.0)))))
+  (ace-window-display-mode 1)
+  :bind (("C-x o" . ace-window)))
 
 (use-package avy
   :ensure
@@ -1928,6 +1947,182 @@ Avoids opening a browser window."
   (setq avy-style 'at-full)
   (setq avy-background nil)
   (setq avy-timeout-seconds 0.5))
+
+;; This is the de-facto standard in-buffer completion package. In case
+;; you're wondering, Company stands for Complete Anything.
+(use-package company
+  :ensure
+  :demand t
+  :bind (;; Replace `completion-at-point' and `complete-symbol' with
+         ;; `company-manual-begin'. You might think this could be put
+         ;; in the `:bind*' declaration below, but it seems that
+         ;; `bind-key*' does not work with remappings.
+         ([remap completion-at-point] . company-manual-begin)
+         ([remap complete-symbol] . company-manual-begin)
+
+         ;; The following are keybindings that take effect whenever
+         ;; the completions menu is visible, even if the user has not
+         ;; explicitly interacted with Company.
+
+         :map company-active-map
+
+         ;; Make TAB always complete the current selection. Note that
+         ;; <tab> is for windowed Emacs and TAB is for terminal Emacs.
+         ("<tab>" . company-complete-selection)
+         ("TAB" . company-complete-selection)
+
+         ;; Prevent SPC from ever triggering a completion.
+         ("SPC" . nil)
+
+         ;; The following are keybindings that only take effect if the
+         ;; user has explicitly interacted with Company.
+
+         :map company-active-map
+         :filter (company-explicit-action-p)
+
+         ;; Make RET trigger a completion if and only if the user has
+         ;; explicitly interacted with Company. Note that <return> is
+         ;; for windowed Emacs and RET is for terminal Emacs.
+         ("<return>" . company-complete-selection)
+         ("RET" . company-complete-selection)
+
+         ;; We then do the same for the up and down arrows. Note that
+         ;; we use `company-select-previous' instead of
+         ;; `company-select-previous-or-abort'. I think the former
+         ;; makes more sense since the general idea of this `company'
+         ;; configuration is to decide whether or not to steal
+         ;; keypresses based on whether the user has explicitly
+         ;; interacted with `company', not based on the number of
+         ;; candidates.
+
+         ("<up>" . company-select-previous)
+         ("<down>" . company-select-next))
+
+  :bind* (;; The default keybinding for `completion-at-point' and
+          ;; `complete-symbol' is M-TAB or equivalently C-M-i. Here we
+          ;; make sure that no minor modes override this keybinding.
+          ("M-TAB" . company-manual-begin))
+
+  :diminish company-mode
+  :config
+  ;; Show completions instantly, rather than after half a second.
+  (setq company-idle-delay 0)
+
+  ;; Show completions after typing a single character, rather than
+  ;; after typing three characters.
+  (setq company-minimum-prefix-length 1)
+
+  ;; Show a maximum of 10 suggestions. This is the default but I think
+  ;; it's best to be explicit.
+  (setq company-tooltip-limit 10)
+
+  ;; Always display the entire suggestion list onscreen, placing it
+  ;; above the cursor if necessary.
+  (setq company-tooltip-minimum company-tooltip-limit)
+
+  ;; Always display suggestions in the tooltip, even if there is only
+  ;; one. Also, don't display metadata in the echo area. (This
+  ;; conflicts with ElDoc.)
+  (setq company-frontends '(company-pseudo-tooltip-frontend))
+
+  ;; Show quick-reference numbers in the tooltip. (Select a completion
+  ;; with M-1 through M-0.)
+  (setq company-show-numbers t)
+
+  ;; Prevent non-matching input (which will dismiss the completions
+  ;; menu), but only if the user interacts explicitly with Company.
+  (setq company-require-match #'company-explicit-action-p)
+
+  ;; Company appears to override our settings in `company-active-map'
+  ;; based on `company-auto-complete-chars'. Turning it off ensures we
+  ;; have full control.
+  (setq company-auto-complete-chars nil)
+
+  ;; Prevent Company completions from being lowercased in the
+  ;; completion menu. This has only been observed to happen for
+  ;; comments and strings in Clojure.
+  (setq company-dabbrev-downcase nil)
+
+  ;; Only search the current buffer to get suggestions for
+  ;; company-dabbrev (a backend that creates suggestions from text
+  ;; found in your buffers). This prevents Company from causing lag
+  ;; once you have a lot of buffers open.
+  (setq company-dabbrev-other-buffers nil)
+
+  ;; Make company-dabbrev case-sensitive. Case insensitivity seems
+  ;; like a great idea, but it turns out to look really bad when you
+  ;; have domain-specific words that have particular casing.
+  (setq company-dabbrev-ignore-case nil)
+
+  ;; Make it so that Company's keymap overrides Yasnippet's keymap
+  ;; when a snippet is active. This way, you can TAB to complete a
+  ;; suggestion for the current field in a snippet, and then TAB to
+  ;; move to the next field. Plus, C-g will dismiss the Company
+  ;; completions menu rather than cancelling the snippet and moving
+  ;; the cursor while leaving the completions menu on-screen in the
+  ;; same location.
+
+  (with-eval-after-load 'yasnippet
+    ;; TODO: this is all a horrible hack, can it be done with
+    ;; `bind-key' instead?
+
+    ;; This function translates the "event types" I get from
+    ;; `map-keymap' into things that I can pass to `lookup-key'
+    ;; and `define-key'. It's a hack, and I'd like to find a
+    ;; built-in function that accomplishes the same thing while
+    ;; taking care of any edge cases I might have missed in this
+    ;; ad-hoc solution.
+    (defun radian--normalize-event (event)
+      (if (vectorp event)
+          event
+        (vector event)))
+
+    ;; Here we define a hybrid keymap that delegates first to
+    ;; `company-active-map' and then to `yas-keymap'.
+    (setq radian--yas-company-keymap
+          ;; It starts out as a copy of `yas-keymap', and then we
+          ;; merge in all of the bindings from
+          ;; `company-active-map'.
+          (let ((keymap (copy-keymap yas-keymap)))
+            (map-keymap
+             (lambda (event company-cmd)
+               (let* ((event (radian--normalize-event event))
+                      (yas-cmd (lookup-key yas-keymap event)))
+                 ;; Here we use an extended menu item with the
+                 ;; `:filter' option, which allows us to
+                 ;; dynamically decide which command we want to
+                 ;; run when a key is pressed.
+                 (define-key keymap event
+                   `(menu-item
+                     nil ,company-cmd :filter
+                     (lambda (cmd)
+                       ;; There doesn't seem to be any obvious
+                       ;; function from Company to tell whether or
+                       ;; not a completion is in progress (à la
+                       ;; `company-explicit-action-p'), so I just
+                       ;; check whether or not `company-my-keymap'
+                       ;; is defined, which seems to be good
+                       ;; enough.
+                       (if company-my-keymap
+                           ',company-cmd
+                         ',yas-cmd))))))
+             company-active-map)
+            keymap))
+
+    ;; The function `yas--make-control-overlay' uses the current
+    ;; value of `yas-keymap' to build the Yasnippet overlay, so to
+    ;; override the Yasnippet keymap we only need to dynamically
+    ;; rebind `yas-keymap' for the duration of that function.
+    (defun radian--advice-company-overrides-yasnippet
+        (yas--make-control-overlay &rest args)
+      "Allow `company' to override `yasnippet'.
+This is an `:around' advice for `yas--make-control-overlay'."
+      (let ((yas-keymap radian--yas-company-keymap))
+        (apply yas--make-control-overlay args)))
+
+    (advice-add #'yas--make-control-overlay :around
+                #'radian--advice-company-overrides-yasnippet)))
+
 
 (use-package dash :ensure)
 
@@ -2137,6 +2332,7 @@ With \\[universal-argument] toggle the display of the window."
   (display-battery-mode)
   (display-time)
   (display-time-mode t)
+  (fringe-mode 7)
   (global-auto-revert-mode 1)
   (global-hl-line-mode t)
   (global-subword-mode 1)
@@ -3575,265 +3771,10 @@ _h_   _l_   _o_k        _y_ank
 (use-package server)
 (unless (server-running-p)
   (server-start))
-
-(use-package autopair
-  :config
-  (autopair-mode 1))
-
-;; Shrinking fringes to 1 pixel
-(fringe-mode 7)
-
-(use-package ace-window
-  :config
-  (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
-  (setq aw-dispatch-always nil)
-  (global-set-key (kbd "C-x o") 'ace-window)
-  (custom-set-faces
-   '(aw-leading-char-face
-     ((t (:inherit ace-jump-face-foreground :height 1.0)))))
-  (ace-window-display-mode 1))
-
-(add-to-list 'aw-dispatch-alist '(?w hydra-window-size/body) t)
-(add-to-list 'aw-dispatch-alist '(?r hydra-window-scroll/body) t)
-(add-to-list 'aw-dispatch-alist '(?\; hydra-window-frame/body) t)
-
-;; Remove security vulnerabiliyt
-(eval-after-load "enriched"
-  '(defun enriched-decode-display-prop (start end &optional param)
-     (list start end)))
-
-
-;; No splash screen
-(setq inhibit-splash-screen t
-      initial-major-mode 'org-mode)
-
-(setq initial-scratch-message (concat
-                               "#+Title: Persistent Scratch Buffer"
-                               "\n#\n # Welcome! This’ a place for trying things out. \n"))
-;; A very simple function to recreate the scratch buffer:
-;; ( http://emacswiki.org/emacs/RecreateScratchBuffer )
-(defun scratch ()
-  "create a scratch buffer"
-  (interactive)
-  (switch-to-buffer-other-window (get-buffer-create "*scratch*"))
-  (insert initial-scratch-message)
-  (org-mode))
-
-;; This doubles as a quick way to avoid the common formula: C-x b RET *scratch*
-(use-package persistent-scratch
-  :config
-  (persistent-scratch-setup-default))
-
-;; This is the de-facto standard in-buffer completion package. In case
-;; you're wondering, Company stands for Complete Anything.
-(use-package company
-  :demand t
-  :bind (;; Replace `completion-at-point' and `complete-symbol' with
-         ;; `company-manual-begin'. You might think this could be put
-         ;; in the `:bind*' declaration below, but it seems that
-         ;; `bind-key*' does not work with remappings.
-         ([remap completion-at-point] . company-manual-begin)
-         ([remap complete-symbol] . company-manual-begin)
-
-         ;; The following are keybindings that take effect whenever
-         ;; the completions menu is visible, even if the user has not
-         ;; explicitly interacted with Company.
-
-         :map company-active-map
-
-         ;; Make TAB always complete the current selection. Note that
-         ;; <tab> is for windowed Emacs and TAB is for terminal Emacs.
-         ("<tab>" . company-complete-selection)
-         ("TAB" . company-complete-selection)
-
-         ;; Prevent SPC from ever triggering a completion.
-         ("SPC" . nil)
-
-         ;; The following are keybindings that only take effect if the
-         ;; user has explicitly interacted with Company.
-
-         :map company-active-map
-         :filter (company-explicit-action-p)
-
-         ;; Make RET trigger a completion if and only if the user has
-         ;; explicitly interacted with Company. Note that <return> is
-         ;; for windowed Emacs and RET is for terminal Emacs.
-         ("<return>" . company-complete-selection)
-         ("RET" . company-complete-selection)
-
-         ;; We then do the same for the up and down arrows. Note that
-         ;; we use `company-select-previous' instead of
-         ;; `company-select-previous-or-abort'. I think the former
-         ;; makes more sense since the general idea of this `company'
-         ;; configuration is to decide whether or not to steal
-         ;; keypresses based on whether the user has explicitly
-         ;; interacted with `company', not based on the number of
-         ;; candidates.
-
-         ("<up>" . company-select-previous)
-         ("<down>" . company-select-next))
-
-  :bind* (;; The default keybinding for `completion-at-point' and
-          ;; `complete-symbol' is M-TAB or equivalently C-M-i. Here we
-          ;; make sure that no minor modes override this keybinding.
-          ("M-TAB" . company-manual-begin))
-
-  :diminish company-mode
   :config
 
-  ;; Turn on Company everywhere.
-  (global-company-mode 1)
-
-  ;; Show completions instantly, rather than after half a second.
-  (setq company-idle-delay 0)
-
-  ;; Show completions after typing a single character, rather than
-  ;; after typing three characters.
-  (setq company-minimum-prefix-length 1)
-
-  ;; Show a maximum of 10 suggestions. This is the default but I think
-  ;; it's best to be explicit.
-  (setq company-tooltip-limit 10)
-
-  ;; Always display the entire suggestion list onscreen, placing it
-  ;; above the cursor if necessary.
-  (setq company-tooltip-minimum company-tooltip-limit)
-
-  ;; Always display suggestions in the tooltip, even if there is only
-  ;; one. Also, don't display metadata in the echo area. (This
-  ;; conflicts with ElDoc.)
-  (setq company-frontends '(company-pseudo-tooltip-frontend))
-
-  ;; Show quick-reference numbers in the tooltip. (Select a completion
-  ;; with M-1 through M-0.)
-  (setq company-show-numbers t)
-
-  ;; Prevent non-matching input (which will dismiss the completions
-  ;; menu), but only if the user interacts explicitly with Company.
-  (setq company-require-match #'company-explicit-action-p)
-
-  ;; Company appears to override our settings in `company-active-map'
-  ;; based on `company-auto-complete-chars'. Turning it off ensures we
-  ;; have full control.
-  (setq company-auto-complete-chars nil)
-
-  ;; Prevent Company completions from being lowercased in the
-  ;; completion menu. This has only been observed to happen for
-  ;; comments and strings in Clojure.
-  (setq company-dabbrev-downcase nil)
-
-  ;; Only search the current buffer to get suggestions for
-  ;; company-dabbrev (a backend that creates suggestions from text
-  ;; found in your buffers). This prevents Company from causing lag
-  ;; once you have a lot of buffers open.
-  (setq company-dabbrev-other-buffers nil)
-
-  ;; Make company-dabbrev case-sensitive. Case insensitivity seems
-  ;; like a great idea, but it turns out to look really bad when you
-  ;; have domain-specific words that have particular casing.
-  (setq company-dabbrev-ignore-case nil)
-
-  ;; Make it so that Company's keymap overrides Yasnippet's keymap
-  ;; when a snippet is active. This way, you can TAB to complete a
-  ;; suggestion for the current field in a snippet, and then TAB to
-  ;; move to the next field. Plus, C-g will dismiss the Company
-  ;; completions menu rather than cancelling the snippet and moving
-  ;; the cursor while leaving the completions menu on-screen in the
-  ;; same location.
-
-  (with-eval-after-load 'yasnippet
-    ;; TODO: this is all a horrible hack, can it be done with
-    ;; `bind-key' instead?
-
-    ;; This function translates the "event types" I get from
-    ;; `map-keymap' into things that I can pass to `lookup-key'
-    ;; and `define-key'. It's a hack, and I'd like to find a
-    ;; built-in function that accomplishes the same thing while
-    ;; taking care of any edge cases I might have missed in this
-    ;; ad-hoc solution.
-    (defun radian--normalize-event (event)
-      (if (vectorp event)
-          event
-        (vector event)))
-
-    ;; Here we define a hybrid keymap that delegates first to
-    ;; `company-active-map' and then to `yas-keymap'.
-    (setq radian--yas-company-keymap
-          ;; It starts out as a copy of `yas-keymap', and then we
-          ;; merge in all of the bindings from
-          ;; `company-active-map'.
-          (let ((keymap (copy-keymap yas-keymap)))
-            (map-keymap
-             (lambda (event company-cmd)
-               (let* ((event (radian--normalize-event event))
-                      (yas-cmd (lookup-key yas-keymap event)))
-                 ;; Here we use an extended menu item with the
-                 ;; `:filter' option, which allows us to
-                 ;; dynamically decide which command we want to
-                 ;; run when a key is pressed.
-                 (define-key keymap event
-                   `(menu-item
-                     nil ,company-cmd :filter
-                     (lambda (cmd)
-                       ;; There doesn't seem to be any obvious
-                       ;; function from Company to tell whether or
-                       ;; not a completion is in progress (à la
-                       ;; `company-explicit-action-p'), so I just
-                       ;; check whether or not `company-my-keymap'
-                       ;; is defined, which seems to be good
-                       ;; enough.
-                       (if company-my-keymap
-                           ',company-cmd
-                         ',yas-cmd))))))
-             company-active-map)
-            keymap))
-
-    ;; The function `yas--make-control-overlay' uses the current
-    ;; value of `yas-keymap' to build the Yasnippet overlay, so to
-    ;; override the Yasnippet keymap we only need to dynamically
-    ;; rebind `yas-keymap' for the duration of that function.
-    (defun radian--advice-company-overrides-yasnippet
-        (yas--make-control-overlay &rest args)
-      "Allow `company' to override `yasnippet'.
-This is an `:around' advice for `yas--make-control-overlay'."
-      (let ((yas-keymap radian--yas-company-keymap))
-        (apply yas--make-control-overlay args)))
-
-    (advice-add #'yas--make-control-overlay :around
-                #'radian--advice-company-overrides-yasnippet)))
-
-;; (use-package company
-;;   :diminish
-;;   :config
-;;   (setq company-dabbrev-other-buffers t
-;;         company-dabbrev-code-other-buffers t
-
-;;         ;; Allow (lengthy) numbers to be eligible for completion.
-;;         company-complete-number t
-
-;;         ;; M-⟪num⟫ to select an option according to its number.
-;;         company-show-numbers t
-
-;;         ;; Only 2 letters required for completion to activate.
-;;         company-minimum-prefix-length 2
-
-;;         ;; Do not downcase completions by default.
-;;         company-dabbrev-downcase nil
-
-;;         ;; Even if I write something with the ‘wrong’ case,
-;;         ;; provide the ‘correct’ casing.
-;;         company-dabbrev-ignore-case t
-
-;;         ;; Immediately activate completion.
-;;         company-idle-delay 0
-;;         )
-
-;;   (global-company-mode 1)
-;;   :bind (("C-c /" . company-complete)))
-
-(menu-bar-mode -1)
-(tool-bar-mode -1)
-(scroll-bar-mode -1)
+(use-package server
+  :config
 
 (provide 'setup-init)
 
