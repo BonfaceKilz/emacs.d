@@ -120,7 +120,6 @@
 (require 'setup-hledger)
 (require 'setup-org)
 (require 'setup-hugo)
-(require 'setup-helm-org-clock)
 (require 'setup-hydra)
 (require 'setup-perspective)
 (require 'setup-python)
