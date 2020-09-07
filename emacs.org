@@ -3753,28 +3753,39 @@ _h_   _l_   _o_k        _y_ank
 ;;;; setup-init.el
 
 ;; Initial setup
-
-(defvar bootstrap-version)
-(let ((bootstrap-file
-       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-      (bootstrap-version 5))
-  (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
+(use-package emacs
+  :preface
+  ;; A very simple function to recreate the scratch buffer:
+  ;; ( http://emacswiki.org/emacs/RecreateScratchBuffer )
+  (defun scratch ()
+    "create a scratch buffer"
+    (interactive)
+    (switch-to-buffer-other-window (get-buffer-create "*scratch*"))
+    (insert initial-scratch-message)
+    (org-mode))
+  :config
+  (defvar bootstrap-version)
+  (let ((bootstrap-file
+         (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+        (bootstrap-version 5))
+    (unless (file-exists-p bootstrap-file)
+      (with-current-buffer
+          (url-retrieve-synchronously
+           "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+           'silent 'inhibit-cookies)
+        (goto-char (point-max))
+        (eval-print-last-sexp)))
+    (load bootstrap-file nil 'nomessage)
+    (setq initial-scratch-message
+          (concat
+           "#+Title: Persistent Scratch Buffer"
+           "\n#\n # Welcome! This’ a place for trying things out. \n"))))
 
 ;; Emacs server
-(use-package server)
-(unless (server-running-p)
-  (server-start))
-  :config
-
 (use-package server
   :config
+  (unless (server-running-p)
+    (server-start)))
 
 (provide 'setup-init)
 
