@@ -116,23 +116,23 @@
 (eval-after-load 'js2-mode '(require 'setup-js2-mode))
 (eval-after-load 'markdown-mode '(require 'setup-markdown))
 
-(use-package buffer-move)
-(use-package itail)
-(use-package guix)
-(use-package xclip
+(use-package buffer-move :ensure)
+(use-package itail :ensure)
+(use-package guix :ensure)
+(use-package xclip :ensure
   :config
   (xclip-mode 1))
 
 (use-package purescript-mode            ; PureScript mode
-  :ensure t)
+  :ensure)
 
 ;; Purescript
 (use-package psci                       ; psci integration
-  :ensure t)
+  :ensure)
 (require 'setup-keybindings)
 
 (setq default-buffer-file-coding-system 'utf-8)
-(use-package helm-swoop
+(use-package helm-swoop :ensure
   :config
   (setq helm-swoop-split-with-multiple-windows t))
 
@@ -145,7 +145,7 @@
   (add-to-list 'yas-snippet-dirs "~/guix/etc/snippets"))
 (load-file "~/guix/etc/copyright.el")
 
-(use-package multi-term
+(use-package multi-term :ensure
   :config
   (setq multi-term-program "/home/bonface/.guix-profile/bin/zsh")
   (add-hook 'term-mode-hook
@@ -190,7 +190,7 @@
               (add-to-list 'term-bind-key-alist '("M-[" . multi-term-prev))
               (add-to-list 'term-bind-key-alist '("M-]" . multi-term-next)))))
 
-(use-package dumb-jump)
+(use-package dumb-jump :ensure)
 (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
 
   ;;; init.el ends here
@@ -1636,10 +1636,9 @@ abort completely with `C-g'."
   (blink-cursor-mode -1))
 
 ;; Nice looking themes ^_^
-(use-package solarized-theme)
-(use-package doom-themes)
-(use-package spacemacs-common
-    :ensure spacemacs-theme)
+(use-package solarized-theme :ensure)
+(use-package doom-themes :ensure)
+(use-package ewal-spacemacs-themes :ensure)
 
 (defun disable-all-themes ()
   (dolist (th custom-enabled-themes)
@@ -1660,8 +1659,9 @@ abort completely with `C-g'."
 
 (bonz/load-dark-theme)
 
-(use-package all-the-icons)
+(use-package all-the-icons :ensure)
 (use-package doom-modeline
+  :ensure
   :hook (after-init . doom-modeline-mode)
   :config
   (setq doom-modeline-height 25)
@@ -1809,7 +1809,7 @@ abort completely with `C-g'."
 
 ;; Colour parens, and other delimiters, depending on their depth.
 ;; Very useful for parens heavy languages like Lisp.
-(use-package rainbow-delimiters
+(use-package rainbow-delimiters :ensure
   :config
   (add-hook 'org-mode-hook
             '(lambda () (rainbow-delimiters-mode 1)))
@@ -1818,6 +1818,7 @@ abort completely with `C-g'."
 
 (column-number-mode t)
 (use-package dimmer
+  :ensure
   :config (dimmer-mode)
   (setq dimmer-fraction 0.2))
 
@@ -2502,7 +2503,7 @@ With \\[universal-argument] toggle the display of the window."
 (setq eshell-cmpl-cycle-completions nil)
 
 ;; ref: http://pragmaticemacs.com/emacs/pop-up-a-quick-shell-with-shell-pop/
-(use-package shell-pop
+(use-package shell-pop :ensure
   :config
   (defun shell-pop-zsh ()
     (interactive)
@@ -2654,6 +2655,7 @@ With \\[universal-argument] toggle the display of the window."
 ;;; setup-haskell.el
 
 (use-package haskell-mode
+  :ensure
   :mode ( "\\.hs$" . haskell-mode)
   :bind (:map haskell-mode-map
               ("C-c C-c" . haskell-compile)
@@ -2746,7 +2748,7 @@ With \\[universal-argument] toggle the display of the window."
 (helm-projectile-on)
 (setq projectile-switch-project-action 'helm-projectile)
 (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
-(use-package helm-exwm)
+(use-package helm-exwm :ensure)
 (provide 'setup-helm)
 
 ;;; setup-helm.el ends here
@@ -2849,9 +2851,9 @@ With \\[universal-argument] toggle the display of the window."
 ** setup-hugo.el
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-hugo.el
 ;;; setup-hugo.el
-(use-package ox-hugo
+(use-package ox-hugo :ensure
   :after ox)
-(use-package easy-hugo
+(use-package easy-hugo :ensure
   :init
   (setq easy-hugo-basedir "~/Public/BonfaceKilz/")
   (setq easy-hugo-url "https://bonfacemunyoki.com")
@@ -2865,7 +2867,7 @@ With \\[universal-argument] toggle the display of the window."
 
 ** setup-hydra.el
 #+begin_src emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-hydra.el
-(use-package hydra)
+(use-package hydra :ensure)
 
 (defhydra hydra-org-template (:color blue :hint nil)
   "
@@ -3360,7 +3362,7 @@ _p_rint                                         _g_ view-markdown       _e_xport
   ("v" hydra-avy-move-actions/body)
   ("Y" avy-copy-region))
 
-(use-package ace-jump-mode)
+(use-package ace-jump-mode :ensure)
 (defhydra hydra-ace (:exit t :hint nil)
   "
  Move across windows^^
@@ -3743,7 +3745,7 @@ _h_   _l_   _o_k        _y_ank
 ** setup-keybindings.el
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-keybindings.el
 ;;; setup-keybindings.el
-(use-package key-seq) 
+(use-package key-seq :ensure)
 
 (key-chord-mode 1)
 
@@ -3778,12 +3780,12 @@ _h_   _l_   _o_k        _y_ank
 (global-set-key (kbd "C-x f") 'recentf-open-files)
 (global-set-key (kbd "C-x M-t") 'cleanup-region)
 (global-set-key (kbd "C-c n") 'cleanup-buffer)
-(use-package expand-region
+(use-package expand-region :ensure
   :config (global-set-key (kbd "C-=") 'er/expand-region))
-(use-package zoom-window
+(use-package zoom-window :ensure
   :config (global-set-key (kbd "C-x C-z") 'zoom-window-zoom))
 ;; setting up multiple cursors
-(use-package multiple-cursors
+(use-package multiple-cursors :ensure
   :config
   (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
   (global-set-key (kbd "C->") 'mc/mark-next-like-this)
@@ -3791,13 +3793,13 @@ _h_   _l_   _o_k        _y_ank
   (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
   (global-set-key (kbd "C-S-<mouse-1>") 'mc/add-cursor-on-click))
 ;; setting up smart-forward
-(use-package smart-forward
+(use-package smart-forward :ensure
   :config
   (global-set-key (kbd "M-S-<up>") 'smart-up)
   (global-set-key (kbd "M-S-<down>") 'smart-down)
   (global-set-key (kbd "M-S-<left>") 'smart-backward)
   (global-set-key (kbd "M-S-<right>") 'smart-forward))
-(use-package change-inner)
+(use-package change-inner :ensure)
 (require 'change-inner)
 (global-set-key (kbd "M-S-i") 'change-inner)
 (global-set-key (kbd "M-S-o") 'change-outer)
@@ -3878,7 +3880,7 @@ _h_   _l_   _o_k        _y_ank
 ;;;;;;;;;;;;;;;;;;;
 ;; switch-window ;;
 ;;;;;;;;;;;;;;;;;;;
-(use-package switch-window
+(use-package switch-window :ensure
   :config
   (global-set-key (kbd "M-o") 'switch-window)
 
@@ -4144,12 +4146,7 @@ _h_   _l_   _o_k        _y_ank
 ;;; setup-magit.el
 
 ;; move cursor into position when entering commit message
-(use-package diff-hl)
-
-(defun my/magit-cursor-fix ()
- (beginning-of-buffer)
- (when (looking-at "#")
-   (forward-line 2)))
+(use-package diff-hl :ensure)
 
 (defun magit-status-fullscreen (prefix)
   (interactive "P")
@@ -4158,10 +4155,12 @@ _h_   _l_   _o_k        _y_ank
     (delete-other-windows)))
 
 (use-package magit-todos
+  :ensure
   :after magit
   :after hl-todo)
 
-(use-package hl-todo :ensure t
+(use-package hl-todo
+  :ensure
   :config
   ;; Adding a new keyword: TEST.
   (add-to-list 'hl-todo-keyword-faces '("TEST" . "#dc8cc3"))
@@ -4172,6 +4171,7 @@ _h_   _l_   _o_k        _y_ank
 ;; full screen magit-status
 ;; Efficient version control.
 (use-package magit
+  :ensure
   :config
   (global-set-key (kbd "C-x g") 'magit-status)
   (global-set-key (kbd "C-x M-g") 'magit-dispatch)
@@ -4596,8 +4596,9 @@ _h_   _l_   _o_k        _y_ank
 ** setup-helm.el
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-helm.el
 ;;; setup-helm.el
-(use-package helm-ag)
+(use-package helm-ag :ensure)
 (use-package helm
+  :ensure
   :config
   (setq helm-split-window-in-side-P           t ; open helm buffer inside current window, not occupy whole other window
 	helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
@@ -4647,13 +4648,16 @@ _h_   _l_   _o_k        _y_ank
   (setq helm-google-suggest-use-curl-p t))
 
 ;; set up helm projectile
-(use-package helm-projectile)
-(projectile-global-mode)
-(setq projectile-completion-system 'helm)
-(helm-projectile-on)
-(setq projectile-switch-project-action 'helm-projectile)
-(define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
-(use-package helm-exwm)
+(use-package helm-projectile :ensure
+ :config
+ (projectile-global-mode)
+ (helm-projectile-on)
+ (setq projectile-switch-project-action 'helm-projectile)
+ (setq projectile-completion-system 'helm)
+ :bind-keymap
+ ("C-c p" . projectile-command-map))
+
+(use-package helm-exwm :ensure)
 (provide 'setup-helm)
 
 ;;; setup-helm.el ends here
@@ -6959,7 +6963,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
 (use-package ox-reveal :ensure t
   :config (setq org-reveal-root "https://cdn.jsdelivr.net/reveal.js/3.0.0/"))
 
-(use-package ox-gfm
+(use-package ox-gfm :ensure
   :config
   (eval-after-load "org"
     '(require 'ox-gfm nil t)))
@@ -6998,10 +7002,10 @@ This is an `:around' advice for `yas--make-control-overlay'."
 
 (setq org-confirm-babel-evaluate 'my-org-confirm-babel-evaluate)
 
-(eval-when-compile
-  (require 'el-patch))
+(use-package el-patch :ensure)
 
 (use-package deft
+  :ensure
   :after org
   :custom
   (deft-recursive t)
@@ -7031,6 +7035,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
          ("s-y" . org-download-yank))))
 
 (use-package org-fc
+  :ensure
   :straight (org-fc :type git :host github :repo "l3kn/org-fc")
   :custom
   (org-fc-directories '("~/Self/org-roam/"))
@@ -7176,8 +7181,8 @@ This is an `:around' advice for `yas--make-control-overlay'."
 ;;; setup-paredit.el
 
 ;; My keybindings for paredit
-(use-package paredit)
 (use-package s)
+(use-package paredit :ensure)
 
 (defun paredit-wrap-round-from-behind ()
   (interactive)
@@ -7241,10 +7246,10 @@ This is an `:around' advice for `yas--make-control-overlay'."
 ;;; setup-perspective.el
 
 ;; Load Perspective
-(use-package perspective)
+(use-package perspective :ensure)
 
 ;; Enable perspective mode
-(use-package persp-mode
+(use-package persp-mode :ensure
   :config
   (setq persp-autokill-buffer-on-remove 'kill-weak)
   ;; :hook after-init  ;; <--- offending line
@@ -7253,7 +7258,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
   )
 
 
-(use-package persp-projectile)
+(use-package persp-projectile :ensure)
 
 ;; TODO: implement persp-last as before-advice on persp-switch (?)
 (defmacro custom-persp (name &rest body)
@@ -7341,7 +7346,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
 ;;; setup-slime.el
 ;; Set your lisp system and, optionally, some contribs
 ;; (setq inferior-lisp-program "/usr/bin/sbcl")
-(use-package slime
+(use-package slime :ensure
   :config
   (setq inferior-lisp-program "clisp")
   (setq slime-contribs '(slime-fancy))
@@ -7372,7 +7377,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
   ((bonz/php-mode-hook . php-mode-hook)))
 
 ;; Nice “interface” to said program
-(use-package yankpad :ensure t
+(use-package yankpad :ensure
   ;; :if company-mode ;; load & initialise only if company-mode is defined
   :demand t
   :config
@@ -7386,7 +7391,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
   ;; Load the snippet templates -- useful after yankpad is altered
   (add-hook 'after-init-hook 'yankpad-reload))
 
-(use-package yasnippet-snippets)
+(use-package yasnippet-snippets :ensure)
 
 (provide 'setup-yasnippet)
 ;;; setup-yasnippet.el ends here
@@ -7402,6 +7407,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
 ;;       user-full-name "Bonface M. K.")
 
 (use-package auth-source
+  :ensure
   :config
   (setq auth-sources '("~/.authinfo.gpg"))
   (setq user-full-name "Bonface M. K.")
@@ -7485,6 +7491,8 @@ Add this function to `message-header-setup-hook'."
 ;; You can press `G G` instead `C-u G G` instead.
 (setq nnir-imap-default-search-key "gmail")
 
+(use-package w3m :ensure)
+(use-package notmuch :ensure)
 (defun w3m-copy-url-at-point ()
   (interactive)
   (let ((url (w3m-anchor)))
