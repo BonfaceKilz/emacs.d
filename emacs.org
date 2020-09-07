@@ -6659,9 +6659,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
               (file+headline org-default-notes-file
                              ,(concat heading "\n#+CATEGORY: " category))
               , (concat "*" (unless no-todo " TODO") " %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n\n")
-              :empty-lines 1)
-  )
-  
+              :empty-lines 1))
   (setq alert-default-style 'libnotify)
   (setq epa-pinentry-mode 'loopback)
   (setq org-agenda-files '("/home/bonface/Self/org/journal.org" "/home/bonface/Self/org/notes.org"))
@@ -6705,7 +6703,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
   (setq org-use-fast-todo-selection t)
   (setq org-use-speed-commands t)
   (setq org-yank-adjusted-subtrees t)
-  (setq  org-todo-keywords (quote ((sequence "TODO(t)" "STARTED(s@/!)" "|" "DONE(d/!)")
+  (setq org-todo-keywords (quote ((sequence "TODO(t)" "STARTED(s@/!)" "|" "DONE(d/!)")
                                    (sequence "WAITING(w@/!)" "ON_HOLD(h@/!)" "|" "CANCELLED(c@/!)")
                                    (sequence "MEETING(m)" "IN_PROGRESS(i@/!)" "FINISHED(f/!)" "|" "DROPPED(d@/!)"))))
   (setq org-todo-keyword-faces (quote (("TODO" :foreground "green" :weight bold)
@@ -6726,8 +6724,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
         ,(my/make/org-capture-template "i" "Meetings, Interviews or Zoom Calls")
         ,(my/make/org-capture-template "c" "Chores, Repetitive tasks")
         ("n" "Note" entry (file "~/Self/org/notes.org")
-         "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
-        ))
+         "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)))
   (setq org-capture-templates-contexts
         '(("r" ((in-mode . "gnus-summary-mode")
                 (in-mode . "gnus-article-mode")
