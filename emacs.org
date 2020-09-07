@@ -7704,6 +7704,33 @@ zU5v9uBkpXBn/apHFbMhkAAlvuA8YQ0/
 =Drv/
 -----END PGP MESSAGE-----
 
+** mbysnc
+#+BEGIN_SRC elisp :tangle ~/.mbsyncrc :noweb yes
+IMAPAccount gmail
+Host imap.gmail.com
+User bonfacemunyoki@gmail.com
+PassCmd "gpg2 -q --for-your-eyes-only --decrypt ~/.authinfo.gpg | awk -F ' ' '/gmail/ { print $6; exit; }'"
+SSLType IMAPS
+
+IMAPStore gmail-remote
+Account gmail
+
+MaildirStore gmail-local
+Subfolders Verbatim
+# The trailing "/" is important
+Path ~/.mail/gmail/
+Inbox ~/.mail/gmail/Inbox
+
+Channel gmail
+Master :gmail-remote:
+Slave :gmail-local:
+# Include everything
+Patterns *
+
+Create Both
+# Expunge Both
+SyncState *
+#+END_SRC
 * site-lisp
 #+begin_src emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/site-lisp/frame-cmds.el
   ;;; frame-cmds.el --- Frame and window commands (interactive functions).
