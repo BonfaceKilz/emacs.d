@@ -53,8 +53,6 @@
 
 #+BEGIN_SRC emacs-lisp :padding no :tangle ~/.emacs.d/init.el :mkdirp yes :noweb yes
   ;;; init.el
-(require 'setup-package)
-(require 'sane-defaults)
 
 (defvar user-home-directory (concat (expand-file-name "~") "/"))
 
@@ -93,6 +91,8 @@
 (dolist (file (directory-files defuns-dir t "\\w+"))
   (when (file-regular-p file)
     (load file)))
+(require 'setup-package)
+(require 'sane-defaults)
 
 (require 'setup-init)
 (require 'appearance)
