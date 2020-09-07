@@ -33,7 +33,6 @@
 - [[site-lisp][site-lisp]]
 - [[Xsessions settings][Xsessions settings]]
 - [[GHCI][GHCI]]
-
 * Emacs init.el
 - This file should be small and quite readable. Without this, things will crush
 - Set my user name and all my email address
@@ -63,7 +62,6 @@
 (setq settings-dir
       (expand-file-name "settings" user-emacs-directory))
 (add-to-list 'load-path settings-dir)
-(setq bbdb/news-auto-create-p t)
 
 ;; Set path to dependencies
 (setq site-lisp-dir
@@ -94,7 +92,6 @@
 (require 'setup-init)
 (require 'sane-defaults)
 (require 'appearance)
-(require 'setup-bbdb)
 (require 'setup-elfeed)
 (require 'setup-exwm)
 (require 'setup-eshell)
@@ -2459,58 +2456,10 @@ With \\[universal-argument] toggle the display of the window."
   :ensure
   :config
   (global-undo-tree-mode))
-
 (provide 'sane-defaults)
 ;;; sane-defaults.el ends here
 #+END_SRC
 
-** setup-bbdb.el
-#+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-bbdb.el
-;; Setting up avy key bindings
-
-(defun message-mode-hook-setup ()
-  (bbdb-initialize 'message)
-  (bbdb-initialize 'gnus)
-  (local-set-key (kbd "TAB") 'bbdb-complete-name))
-(add-hook 'message-mode-hook 'message-mode-hook-setup)
-
-;; import Gmail contacts in vcard format into bbdb
-(setq gmail2bbdb-bbdb-file "~/.bbdb")
-
-(defun bbdb-initialize-hook-setup ()
-  ;; @see http://emacs-fu.blogspot.com.au/2009/08/managing-e-mail-addresses-with-bbdb.html
-  (setq
-   bbdb-offer-save 1                        ;; 1 means save-without-asking
-   bbdb-use-pop-up t                        ;; allow popups for addresses
-   bbdb-electric-p t                        ;; be disposable with SPC
-   bbdb-popup-target-lines  1               ;; very small
-   bbdb-dwim-net-address-allow-redundancy t ;; always use full name
-   bbdb-quiet-about-name-mismatches 2       ;; show name-mismatches 2 secs
-   bbdb-always-add-address t                ;; add new addresses to existing...
-   ;; ...contacts automatically
-   bbdb-canonicalize-redundant-nets-p t     ;; x@foo.bar.cx => x@bar.cx
-   bbdb-completion-type nil                 ;; complete on anything
-   bbdb-complete-name-allow-cycling t       ;; cycle through matches
-   bbbd-message-caching-enabled t           ;; be fast
-   bbdb-use-alternate-names t               ;; use AKA
-   bbdb-elided-display t                    ;; single-line addresses
-   ;; auto-create addresses from mail
-   bbdb/mail-auto-create-p 'bbdb-ignore-some-messages-hook
-   bbdb-ignore-some-messages-alist ;; don't ask about fake addresses
-   ;; NOTE: there can be only one entry per header (such as To, From)
-   ;; http://flex.ee.uec.ac.jp/texi/bbdb/bbdb_11.html
-   '(( "From" . "no.?reply\\|DAEMON\\|daemon\\|facebookmail\\|twitter\\|notifications")))
-
-  ;; just remove some warning since bbdb package hook the mail-mode
-  (setq compose-mail-user-agent-warnings nil))
-
-(add-hook 'bbdb-initialize-hook 'bbdb-initialize-hook-setup)
-
-(with-eval-after-load 'gmail2bbdb
-  (setq gmail2bbdb-exclude-people-without-name t))
-
-(provide 'setup-bbdb)
-#+END_SRC
 ** setup-eshell.el
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-eshell.el
 ;;; setup-eshell.el
@@ -3725,7 +3674,7 @@ _h_   _l_   _o_k        _y_ank
 [_a_] Attach file
 [_s_] Send mail (C-c C-c)
 "
-       ("c" counsel-bbdb-complete-mail)
+       ("c" ebdb-counsel)
        ("a" mml-attach-file)
        ("s" message-send-and-exit)
        ("i" dianyou-insert-email-address-from-received-mails)
