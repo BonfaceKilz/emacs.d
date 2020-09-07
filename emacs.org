@@ -6528,6 +6528,11 @@ This is an `:around' advice for `yas--make-control-overlay'."
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-org.el
 ;;; setup-org.el
 (require 'ol-man)
+;; Org-mode
+(use-package toc-org
+  :ensure
+  :hook
+  ((toc-org-mode . org-mode-hook)))
 (setq org-plantuml-jar-path (expand-file-name "/home/bonface/.guix-profile/bin/plantuml"))
 (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
 (global-set-key (kbd "C-c b") 'org-switchb)
