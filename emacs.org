@@ -2459,10 +2459,7 @@ With \\[universal-argument] toggle the display of the window."
    (php-enable-psr2-coding-style . php-mode-hook)
    (php-refactor-mode . php-mode-hook))
 
-  :bind (("C-z" . nil)
-         ("C-x C-z" . nil)
-         ("C-h h" . nil)
-         ("C-g" . keyboard-quit-strong)))
+  :bind (("C-g" . keyboard-quit-strong)))
 
 (use-package py-autopep8)
 
