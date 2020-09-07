@@ -2434,7 +2434,6 @@ With \\[universal-argument] toggle the display of the window."
   (setq tramp-default-method "ssh")
   (setq undo-tree-mode-lighter "")
   (setq use-dialog-box nil)
-  (setq use-dialog-box t)
   (setq use-file-dialog nil)
   (setq visible-bell t)
   (setq x-select-enable-clipboard t)
