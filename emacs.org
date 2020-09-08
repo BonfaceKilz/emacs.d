@@ -140,6 +140,9 @@
 (require 'setup-slime)
 (require 'setup-helm)
 
+;; Assuming the Guix checkout is in ~/guix.
+(with-eval-after-load 'geiser-guile
+  (add-to-list 'geiser-guile-load-path "~/guix"))
 
 (eval-after-load 'org '(require 'setup-org))
 (eval-after-load 'magit '(require
@@ -168,9 +171,6 @@
   (setq helm-swoop-split-with-multiple-windows t))
 
 
-;; Assuming the Guix checkout is in ~/guix.
-(with-eval-after-load 'geiser-guile
-  (add-to-list 'geiser-guile-load-path "~/guix"))
 
 (with-eval-after-load 'yasnippet
   (add-to-list 'yas-snippet-dirs "~/guix/etc/snippets"))
@@ -2444,7 +2444,7 @@ With \\[universal-argument] toggle the display of the window."
   (setq x-select-enable-clipboard t)
   (setq-default indicate-empty-lines t)
   :hook
-  ((geiser-mode . scheme-mode-hook)
+  (;;(geiser-mode . scheme-mode-hook)
    (ibuffer-auto-mode . ibuffer-mode-hook)
    (nolim . org-mode-hook)
    (nolim . web-mode-hook)
