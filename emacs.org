@@ -6060,7 +6060,6 @@ This is an `:around' advice for `yas--make-control-overlay'."
 (setq-default js2-show-parse-errors nil)
 (setq-default js2-strict-missing-semi-warning nil)
 (setq-default js2-strict-trailing-comma-warning t) ;; jshint does not warn about this now for some reason
-(use-package flycheck)
 (add-hook 'js2-mode-hook (lambda () (flycheck-mode 1)))
 
 (use-package js2-refactor)
