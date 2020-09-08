@@ -7460,16 +7460,16 @@ This is an `:around' advice for `yas--make-control-overlay'."
                                   (nnfolder-get-new-mail nil)
                                   (nnfolder-inhibit-expiry t))))))
   ;; accounts
-  (setq gnus-select-method '(nnnil ""))
+  (setq gnus-select-method
+        '(nnimap "gmail"
+                 (nnimap-address "imap.gmail.com")
+                 (nnimap-server-port "imaps")
+                 (nnimap-stream ssl)))
   (setq gnus-secondary-select-methods
         '((nntp "news.gwene.org")
-          (nnimap "gmail"
-                  (nnimap-address "imap.gmail.com")  ; it could also be imap.googlemail.com if that's your server.
-                  (nnimap-server-port "imaps")
-                  (nnimap-stream ssl))))
+          ))
   (setq nnir-method-default-engines
         '((nnmaildir . notmuch)))
-  
     
   (setq gnus-gcc-mark-as-read t)
   (setq gnus-agent t)
