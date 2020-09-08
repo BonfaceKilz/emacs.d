@@ -7668,10 +7668,14 @@ EXPERIMENTAL"
   :init
   (setq smtpmail-default-smtp-server "smtp.gmail.com")
   :config
-  (setq smtpmail-smtp-server "smtp.gmail.com")
-  (setq smtpmail-stream-type 'ssl)
-  (setq smtpmail-smtp-service 587)
-  (setq smtpmail-queue-mail nil))
+  (setq message-send-mail-function 'smtpmail-send-it
+        smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil))
+        smtpmail-auth-credentials '(("smtp.gmail.com" 587
+                                     "bonfacemunyoki@gmail.com" nil))
+        smtpmail-default-smtp-server "smtp.gmail.com"
+        smtpmail-smtp-server "smtp.gmail.com"
+        smtpmail-smtp-service 587
+        gnus-ignored-newsgroups "^to\\.\\|^[0-9. ]+\\( \\|$\\)\\|^[\"]\"[#'()]"))
 
 (use-package smtpmail-async
   :after smtpmail
