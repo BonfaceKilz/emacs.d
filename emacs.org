@@ -129,7 +129,6 @@
 (require 'setup-exwm)
 (require 'setup-eshell)
 (require 'setup-paredit)
-(require 'setup-haskell)
 (require 'setup-hledger)
 (require 'setup-org)
 (require 'setup-hugo)
@@ -223,7 +222,6 @@
 
 (use-package dumb-jump :ensure)
 (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
-(setq haskell-indentation-mode -1)
   ;;; init.el ends here
 #+END_SRC
 * Defuns
@@ -2330,12 +2328,6 @@ With \\[universal-argument] toggle the display of the window."
   (when (memq window-system '(mac ns x))
     (exec-path-from-shell-initialize)))
 
-(use-package purescript-mode
-  :mode "\\.purs$"
-  :ensure
-  :hook
-  ((haskell-indentation-mode . purescript-mode-hook)))
-
 ;; open epubs
 ;; (use-package justify-kp)
 (use-package nov
@@ -2370,7 +2362,6 @@ With \\[universal-argument] toggle the display of the window."
   (tool-bar-mode -1)
   (transient-mark-mode 1)
   (winner-mode 1) ; Undo/redo window configuration with C-c <left>/<right>
-  (setq haskell-indentation-mode -1)
   :config
   (defun keyboard-quit-strong ()
     "Run `keyboard-quit' to return emacs to a more responsive state.
@@ -2607,8 +2598,6 @@ instead."
               (select-window help)
             (select-window (get-mru-window)))))))
   
-  (setq haskell-indentation-mode -1)
-
   ;; Defines, among others, aliases for common minibuffer commands to
   ;; Super-KEY.  Normally these should go in individual package
   ;; declarations, but their grouping here makes things easier to
@@ -2855,39 +2844,7 @@ instead."
 
 ;;; setup-exwm.el ends here
 #+END_SRC
-** setup-haskell.el
-#+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-haskell.el
-;;; setup-haskell.el
 
-(use-package haskell-mode
-  :ensure
-  :mode ( "\\.hs$" . haskell-mode)
-  :config
-  (custom-set-variables
-   '(haskell-process-suggest-remove-import-lines t)
-   '(haskell-process-auto-import-loaded-modules t)
-   '(haskell-process-log t)
-   '(haskell-process-type 'ghci)
-   '(haskell-stylish-on-save t))
-  (eval-after-load "which-function-mode"
-    '(add-to-list 'which-func-modes 'haskell-mode))
-  :hook
-  ((interactive-haskell-mode . haskell-mode-hook)
-   (haskell-decl-scan-mode . haskell-mode-hook))
-  :bind (:map haskell-mode-map
-              ("C-c C-c" . haskell-compile)
-              ("C-c i" . haskell-navigate-import)
-              ("C-`" . haskell-interactive-bring)
-              ("C-c C-t" . haskell-process-do-type)
-              ("C-c C-i" . haskell-process-do-info)
-              ("C-c C-k" . haskell-interactive-mode-clear)
-              :map haskell-cabal-mode-map
-              ("C-c C-c" . haskell-compile)))
-
-(provide 'setup-haskell)
-
-;;; setup-haskell.el ends here
-#+END_SRC
 ** setup-helm.el
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-helm.el
 ;;; setup-helm.el
