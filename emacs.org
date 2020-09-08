@@ -223,6 +223,7 @@
 
 (use-package dumb-jump :ensure)
 (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
+(setq haskell-indentation-mode -1)
   ;;; init.el ends here
 #+END_SRC
 * Defuns
@@ -2369,6 +2370,7 @@ With \\[universal-argument] toggle the display of the window."
   (tool-bar-mode -1)
   (transient-mark-mode 1)
   (winner-mode 1) ; Undo/redo window configuration with C-c <left>/<right>
+  (setq haskell-indentation-mode -1)
   :config
   (defun keyboard-quit-strong ()
     "Run `keyboard-quit' to return emacs to a more responsive state.
