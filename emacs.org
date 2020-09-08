@@ -7569,7 +7569,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
 (use-package gnus-topic
   :after (gnus gnus-group)
   :config
-  (setq gnus-topic-display-empty-topics nil)
+  (setq gnus-topic-display-empty-topics t)
   :hook (gnus-group-mode-hook . gnus-topic-mode))
 
 (use-package gnus-sum
