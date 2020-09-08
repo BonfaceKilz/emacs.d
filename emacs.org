@@ -2733,16 +2733,6 @@ With \\[universal-argument] toggle the display of the window."
 	 ("C-i" . helm-execute-persistent-action)
 	 ("C-z" . helm-select-action)))
 
-(use-package ivy
-  :ensure swiper
-  :ensure counsel
-  :config
-  (ivy-mode 1)
-  (setq ivy-use-virtual-buffers t)
-  (setq enable-recursive-minibuffers t)
-  ;; enable this if you want `swiper' to use it
-  (setq search-default-mode #'char-fold-to-regexp))
-
 (setq ivy-display-style 'fancy)
 ;;advise swiper to recenter on exit
 (defun bjm-swiper-recenter (&rest args)
@@ -4586,7 +4576,6 @@ _h_   _l_   _o_k        _y_ank
   :config
   (ivy-mode 1)
   (setq ivy-use-virtual-buffers t)
-  (setq enable-recursive-minibuffers t)
   ;; enable this if you want `swiper' to use it
   (setq search-default-mode #'char-fold-to-regexp))
 
