@@ -7486,6 +7486,9 @@ This is an `:around' advice for `yas--make-control-overlay'."
   ;; dribble
   (setq gnus-use-dribble-file t)
   (setq gnus-always-read-dribble-file t)
+  ;; demon
+  (gnus-demon-add-scanmail)
+  (gnus-demon-add-handler 'gnus-demon-scan-news nil 60)
   :bind ("C-c m" . gnus))
 
 (use-package nnmail
