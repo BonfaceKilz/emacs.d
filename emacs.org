@@ -223,7 +223,6 @@
 
 (use-package dumb-jump :ensure)
 (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
-
   ;;; init.el ends here
 #+END_SRC
 * Defuns
@@ -2483,7 +2482,7 @@ With \\[universal-argument] toggle the display of the window."
 ** setup-eshell.el
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-eshell.el
 ;;; setup-eshell.el
-(use-package f)
+(use-package f :ensure)
 
 (setq eshell-visual-commands
       '("less" "tmux" "htop" "top" "bash" "zsh" "fish"))
@@ -2704,8 +2703,8 @@ With \\[universal-argument] toggle the display of the window."
 ** setup-helm.el
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-helm.el
 ;;; setup-helm.el
-(use-package helm-ag)
-(use-package helm
+(use-package helm-ag :ensure)
+(use-package helm :ensure
   :config
   (setq helm-split-window-in-side-P           t ; open helm buffer inside current window, not occupy whole other window
 	helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
@@ -2755,7 +2754,7 @@ With \\[universal-argument] toggle the display of the window."
   (setq helm-google-suggest-use-curl-p t))
 
 ;; set up helm projectile
-(use-package helm-projectile)
+(use-package helm-projectile :ensure)
 (projectile-global-mode)
 (setq projectile-completion-system 'helm)
 (helm-projectile-on)
@@ -6255,7 +6254,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
 ;;; setup-magit.el
 
 ;; move cursor into position when entering commit message
-(use-package diff-hl)
+(use-package diff-hl :ensure)
 
 (defun my/magit-cursor-fix ()
  (beginning-of-buffer)
@@ -6268,11 +6267,11 @@ This is an `:around' advice for `yas--make-control-overlay'."
   (unless prefix
     (delete-other-windows)))
 
-(use-package magit-todos
+(use-package magit-todos :ensure
   :after magit
   :after hl-todo)
 
-(use-package hl-todo :ensure t
+(use-package hl-todo :ensure
   :config
   ;; Adding a new keyword: TEST.
   (add-to-list 'hl-todo-keyword-faces '("TEST" . "#dc8cc3"))
@@ -6282,7 +6281,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
 
 ;; full screen magit-status
 ;; Efficient version control.
-(use-package magit
+(use-package magit :ensure
   :config
   (global-set-key (kbd "C-x g") 'magit-status)
   (global-set-key (kbd "C-x M-g") 'magit-dispatch)
@@ -6338,7 +6337,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
 ** setup-markdown.el
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-markdown.el
 ;;; setup-markdown.el
-(use-package markdown-mode
+(use-package markdown-mode :ensure
   :mode (("\\.yml$" . yaml-mode)
          ("\\.yaml$" . yaml-mode))
   :config
@@ -7206,14 +7205,14 @@ This is an `:around' advice for `yas--make-control-overlay'."
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-yasnippet.el
 ;;; setup-yasnippet.el
 
-(use-package yasnippet
+(use-package yasnippet :ensure
   :diminish yas-minor-mode
   :config
   (yas-global-mode 1)
   ;; respect the spacing in my snippet declarations
   (setq yas-indent-line 'fixed))
 
-(use-package php-auto-yasnippets
+(use-package php-auto-yasnippets :ensure
   :config
   (defun bonz/php-mode-hook ()
     "My PHP-mode hook."
