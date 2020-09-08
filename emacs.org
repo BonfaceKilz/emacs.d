@@ -6703,10 +6703,10 @@ This is an `:around' advice for `yas--make-control-overlay'."
   :config
   ;; (require 'ox-extra)
   ;; (require 'ob)
-  
+
   (cl-defun my/make/org-capture-template
-    (shortcut heading &optional (no-todo nil) (description heading) (category heading))
-  "Quickly produce an org-capture-template.
+      (shortcut heading &optional (no-todo nil) (description heading) (category heading))
+    "Quickly produce an org-capture-template.
 
       After adding the result of this function to ‘org-capture-templates’,
       we will be able perform a capture with “C-c c ‘shortcut’”
@@ -6721,11 +6721,11 @@ This is an `:around' advice for `yas--make-control-overlay'."
       Defaults for ‘description’ and ‘category’ are set to the same as
       the ‘heading’. Default for ‘no-todo’ is ‘nil’.
       "
-  `(,shortcut ,description entry
-              (file+headline org-default-notes-file
-                             ,(concat heading "\n#+CATEGORY: " category))
-              , (concat "*" (unless no-todo " TODO") " %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n\n")
-              :empty-lines 1))
+    `(,shortcut ,description entry
+                (file+headline org-default-notes-file
+                               ,(concat heading "\n#+CATEGORY: " category))
+                , (concat "*" (unless no-todo " TODO") " %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n\n")
+                :empty-lines 1))
   (setq alert-default-style 'libnotify)
   (setq epa-pinentry-mode 'loopback)
   (setq org-agenda-files '("/home/bonface/Self/org/journal.org" "/home/bonface/Self/org/notes.org"))
@@ -6770,8 +6770,8 @@ This is an `:around' advice for `yas--make-control-overlay'."
   (setq org-use-speed-commands t)
   (setq org-yank-adjusted-subtrees t)
   (setq org-todo-keywords (quote ((sequence "TODO(t)" "STARTED(s@/!)" "|" "DONE(d/!)")
-                                   (sequence "WAITING(w@/!)" "ON_HOLD(h@/!)" "|" "CANCELLED(c@/!)")
-                                   (sequence "MEETING(m)" "IN_PROGRESS(i@/!)" "FINISHED(f/!)" "|" "DROPPED(d@/!)"))))
+                                  (sequence "WAITING(w@/!)" "ON_HOLD(h@/!)" "|" "CANCELLED(c@/!)")
+                                  (sequence "MEETING(m)" "IN_PROGRESS(i@/!)" "FINISHED(f/!)" "|" "DROPPED(d@/!)"))))
   (setq org-todo-keyword-faces (quote (("TODO" :foreground "green" :weight bold)
                                        ("STARTED" :foreground "yellow" :weight bold)
                                        ("DONE" :foreground "orange" :weight bold)
@@ -6779,18 +6779,18 @@ This is an `:around' advice for `yas--make-control-overlay'."
                                        ("ON_HOLD" :foreground "grey" :weight bold)
                                        ("CANCELLED" :foreground "red" :weight bold))))
   (setq org-capture-templates
-      `(
-        ,(my/make/org-capture-template "t" "Tasks, Getting Things Done")
-        ,(my/make/org-capture-template "r" "Research")
-        ,(my/make/org-capture-template "m" "Email")
-        ,(my/make/org-capture-template "e" "Emacs (•̀ᴗ•́)و")
-        ,(my/make/org-capture-template "b" "Blog")
-        ,(my/make/org-capture-template "a" "Arbitrary Reading and Learning")
-        ,(my/make/org-capture-template "p" "Personal Matters")
-        ,(my/make/org-capture-template "i" "Meetings, Interviews or Zoom Calls")
-        ,(my/make/org-capture-template "c" "Chores, Repetitive tasks")
-        ("n" "Note" entry (file "~/Self/org/notes.org")
-         "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)))
+        `(
+          ,(my/make/org-capture-template "t" "Tasks, Getting Things Done")
+          ,(my/make/org-capture-template "r" "Research")
+          ,(my/make/org-capture-template "m" "Email")
+          ,(my/make/org-capture-template "e" "Emacs (•̀ᴗ•́)و")
+          ,(my/make/org-capture-template "b" "Blog")
+          ,(my/make/org-capture-template "a" "Arbitrary Reading and Learning")
+          ,(my/make/org-capture-template "p" "Personal Matters")
+          ,(my/make/org-capture-template "i" "Meetings, Interviews or Zoom Calls")
+          ,(my/make/org-capture-template "c" "Chores, Repetitive tasks")
+          ("n" "Note" entry (file "~/Self/org/notes.org")
+           "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)))
   (setq org-capture-templates-contexts
         '(("r" ((in-mode . "gnus-summary-mode")
                 (in-mode . "gnus-article-mode")
@@ -6855,7 +6855,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
                    (lambda ()
                      (org-agenda-skip-entry-if 'scheduled 'deadline 'regexp  "\n]+>")))
                   (org-agenda-overriding-header "Unscheduled TODO entries: "))))
-  
+
   :bind (("C-c C-x n" . clone-and-narrow-org-element)
          ("C-c l" . org-store-link)
          ("C-c a" . org-agenda)
@@ -7116,11 +7116,11 @@ This is an `:around' advice for `yas--make-control-overlay'."
   commentstyle=\\color{red},
   }\n
       \\usepackage{verbatim}\n
-      \\institute{{{{beamerinstitute}}}}\n          
+      \\institute{{{{beamerinstitute}}}}\n
        \\subject{{{{beamersubject}}}}\n"
 
                ("\\section{%s}" . "\\section*{%s}")
-               
+
                ("\\begin{frame}[fragile]\\frametitle{%s}"
                 "\\end{frame}"
                 "\\begin{frame}[fragile]\\frametitle{%s}"
