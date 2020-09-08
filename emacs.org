@@ -7430,27 +7430,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
   (setq message-wide-reply-confirm-recipients t)
   (setq message-default-charset 'utf-8)
   (add-to-list 'mm-body-charset-encoding-alist '(utf-8 . base64))
-
-  (defun bonz/message-header-add-gcc ()
-    "While `gnus' is running, add pre-populated Gcc header.
-
-The Gcc header places a copy of the outgoing message to the
-appropriate directory of the IMAP server, as per the contents of
-~/.authinfo.gpg.
-
-In the absence of a Gcc header, the outgoing message will not
-appear in the appropriate maildir directory, though it will still
-be sent.
-
-Add this function to `message-header-setup-hook'."
-    (if (gnus-alive-p)
-        (progn
-          (when (message-fetch-field "Gcc")
-            (message-remove-header "Gcc"))
-          (message-add-header "Gcc: nnfolder+archive:sent.2020")) ;nnimap+gmail:[Gmail]/Sent Mail
-      message))
-  :hook ((message-header-setup-hook . bonz/message-header-add-gcc)
-         (message-setup-hook . message-sort-headers)))
+  :hook ((message-setup-hook . message-sort-headers)))
 
 (use-package w3m :ensure)
 (use-package notmuch :ensure)
@@ -7470,9 +7450,14 @@ Add this function to `message-header-setup-hook'."
 (use-package gnus
   :ensure
   :config
-  
   (setq gnus-ignored-newsgroups "^to\\.\\|^[0-9. ]+\\( \\|$\\)\\|^[\"]\"[#'()]")
-
+  (eval-after-load 'gnus-topic
+    '(progn
+       (setq gnus-message-archive-group '((format-time-string "sent.%Y")))
+       (setq gnus-server-alist '(("archive" nnfolder "archive" (nnfolder-directory "~/Mail/archive")
+                                  (nnfolder-active-file "~/Mail/archive/active")
+                                  (nnfolder-get-new-mail nil)
+                                  (nnfolder-inhibit-expiry t))))))
   ;; accounts
   (setq gnus-select-method '(nnnil ""))
   (setq gnus-secondary-select-methods
@@ -7483,14 +7468,14 @@ Add this function to `message-header-setup-hook'."
                   (nnimap-stream ssl))))
   (setq nnir-method-default-engines
         '((nnmaildir . notmuch)))
-
-  (setq gnus-parameters
-        '(("gmail"
-           (posting-style
-            (gcc "nnimap+gmail:Sent")
-            (From
-             (format "%s <%s>" user-full-name
-                     (bonz/auth-get-field "gmail" :user)))))))
+  
+  ;; (setq gnus-parameters
+  ;;       '(("gmail"
+  ;;          (posting-style
+  ;;           (gcc "nnimap+gmail:Sent")
+  ;;           (From
+  ;;            (format "%s <%s>" user-full-name
+  ;;                    (bonz/auth-get-field "gmail" :user)))))))
   
   (setq gnus-gcc-mark-as-read t)
   (setq gnus-agent t)
