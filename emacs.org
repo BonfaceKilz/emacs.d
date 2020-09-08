@@ -7470,14 +7470,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
   (setq nnir-method-default-engines
         '((nnmaildir . notmuch)))
   
-  ;; (setq gnus-parameters
-  ;;       '(("gmail"
-  ;;          (posting-style
-  ;;           (gcc "nnimap+gmail:Sent")
-  ;;           (From
-  ;;            (format "%s <%s>" user-full-name
-  ;;                    (bonz/auth-get-field "gmail" :user)))))))
-  
+    
   (setq gnus-gcc-mark-as-read t)
   (setq gnus-agent t)
   (setq gnus-novice-user t)
