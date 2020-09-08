@@ -3926,7 +3926,6 @@ _h_   _l_   _o_k        _y_ank
 (global-set-key (kbd "C-x g") 'magit-status)
 (global-set-key (kbd "C-x f") 'recentf-open-files)
 (global-set-key (kbd "C-x M-t") 'cleanup-region)
-(global-set-key (kbd "C-c n") 'cleanup-buffer)
 (use-package expand-region :ensure
   :config (global-set-key (kbd "C-=") 'er/expand-region))
 (use-package zoom-window :ensure
