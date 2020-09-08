@@ -2452,6 +2452,192 @@ With \\[universal-argument] toggle the display of the window."
    (php-refactor-mode . php-mode-hook))
   :bind (("C-g" . keyboard-quit-strong)))
 
+(use-package minibuffer
+  :config
+;;; General minibuffer configurations
+  ;; Super-powerful completion style for out-of-order groups of matches
+  ;; using a comprehensive set of matching styles.
+  (use-package orderless
+    :ensure
+    :config
+    (setq orderless-regexp-separator "[/\s_-]+")
+    (setq orderless-matching-styles
+          '(orderless-flex
+            orderless-strict-leading-initialism
+            orderless-regexp
+            orderless-prefixes
+            orderless-literal))
+
+    (defun prot/orderless-literal-dispatcher (pattern _index _total)
+      (when (string-suffix-p "=" pattern)
+        `(orderless-literal . ,(substring pattern 0 -1))))
+
+    (defun prot/orderless-initialism-dispatcher (pattern _index _total)
+      (when (string-suffix-p "," pattern)
+        `(orderless-strict-leading-initialism . ,(substring pattern 0 -1))))
+
+    (setq orderless-style-dispatchers
+          '(prot/orderless-literal-dispatcher
+            prot/orderless-initialism-dispatcher))
+    :bind (:map minibuffer-local-completion-map
+                ("SPC" . nil)))       ; Space should never complete: use
+                                      ; it for `orderless' groups.
+
+  (setq completion-styles
+        '(orderless partial-completion))
+  (setq completion-category-defaults nil)
+  (setq completion-cycle-threshold 3)
+  (setq completion-flex-nospace nil)
+  (setq completion-pcm-complete-word-inserts-delimiters t)
+  (setq completion-pcm-word-delimiters "-_./:| ")
+  (setq completion-show-help nil)
+  (setq completion-ignore-case t)
+  (setq read-buffer-completion-ignore-case t)
+  (setq read-file-name-completion-ignore-case t)
+  (setq completions-format 'vertical)   ; *Completions* buffer
+  (setq enable-recursive-minibuffers t)
+  (setq read-answer-short t)
+  (setq resize-mini-windows t)
+
+  (file-name-shadow-mode 1)
+  (minibuffer-depth-indicate-mode 1)
+  (minibuffer-electric-default-mode 1)
+
+;;; General minibuffer functions
+  (defun prot/focus-minibuffer ()
+    "Focus the active minibuffer.
+
+Bind this to `completion-list-mode-map' to M-v to easily jump
+between the list of candidates present in the \\*Completions\\*
+buffer and the minibuffer (because by default M-v switches to the
+completions if invoked from inside the minibuffer."
+    (interactive)
+    (let ((mini (active-minibuffer-window)))
+      (when mini
+        (select-window mini))))
+
+  (defun prot/focus-minibuffer-or-completions ()
+    "Focus the active minibuffer or the \\*Completions\\*.
+
+If both the minibuffer and the Completions are present, this
+command will first move per invocation to the former, then the
+latter, and then continue to switch between the two.
+
+The continuous switch is essentially the same as running
+`prot/focus-minibuffer' and `switch-to-completions' in
+succession."
+    (interactive)
+    (let* ((mini (active-minibuffer-window))
+           (completions (get-buffer-window "*Completions*")))
+      (cond ((and mini
+                  (not (minibufferp)))
+             (select-window mini nil))
+            ((and completions
+                  (not (eq (selected-window)
+                           completions)))
+             (select-window completions nil)))))
+
+;;; Completions' buffer actions
+  ;; NOTE In practice I only use those while inspecting a long list
+  ;; produced by C-h {f,o,v}.  To pop the Completions buffer, use
+  ;; `minibuffer-completion-help', by default bound to ? from inside the
+  ;; minibuffer.
+
+  (defun prot/completions-kill-save-symbol ()
+    "Add symbol-at-point to the kill ring.
+
+Intended for use in the \\*Completions\\* buffer.  Bind this to a
+key in `completion-list-mode-map'."
+    (interactive)
+    (kill-new (thing-at-point 'symbol)))
+
+  (defmacro prot/completions-buffer-act (name doc &rest body)
+    `(defun ,name ()
+       ,doc
+       (interactive)
+       (let ((completions-window (get-buffer-window "*Completions*"))
+             (completions-buffer (get-buffer "*Completions*"))
+             (symbol (thing-at-point 'symbol)))
+         (if (window-live-p completions-window)
+             (with-current-buffer completions-buffer
+               ,@body)
+           (user-error "No live window with Completions")))))
+
+  (prot/completions-buffer-act
+   prot/completions-kill-symbol-at-point
+   "Add \"Completions\" buffer symbol-at-point to the kill ring."
+   (kill-new `,symbol)
+   (message "Copied %s to kill-ring"
+            (propertize `,symbol 'face 'success)))
+
+  (prot/completions-buffer-act
+   prot/completions-insert-symbol-at-point
+   "Add \"Completions\" buffer symbol-at-point to active window."
+   (let ((window (window-buffer (get-mru-window))))
+     (with-current-buffer window
+       (insert `,symbol)
+       (message "Inserted %s"
+                (propertize `,symbol 'face 'success)))))
+
+  (prot/completions-buffer-act
+   prot/completions-insert-symbol-at-point-exit
+   "Like `prot/completions-insert-symbol-at-point' plus exit."
+   (prot/completions-insert-symbol-at-point)
+   (top-level))
+
+;;; Miscellaneous functions and key bindings
+
+  ;; Technically, this is not specific to the minibuffer, but I define
+  ;; it here so that you can see how it is also used from inside the
+  ;; "Completions" buffer
+  (defun prot/describe-symbol-at-point (&optional arg)
+    "Get help (documentation) for the symbol at point.
+
+With a prefix argument, switch to the *Help* window.  If that is
+already focused, switch to the most recently used window
+instead."
+    (interactive "P")
+    (let ((symbol (symbol-at-point)))
+      (when symbol
+        (describe-symbol symbol)))
+    (when arg
+      (let ((help (get-buffer-window "*Help*")))
+        (when help
+          (if (not (eq (selected-window) help))
+              (select-window help)
+            (select-window (get-mru-window)))))))
+  
+  (setq haskell-indentation-mode -1)
+
+  ;; Defines, among others, aliases for common minibuffer commands to
+  ;; Super-KEY.  Normally these should go in individual package
+  ;; declarations, but their grouping here makes things easier to
+  ;; understand.  Besides, they are related to the minibuffer.
+  :bind (("s-f" . find-file)
+         ("s-F" . find-file-other-window)
+         ("s-d" . dired)
+         ("s-D" . dired-other-window)
+         ("s-b" . switch-to-buffer)
+         ("s-B" . switch-to-buffer-other-window)
+         ("s-v" . prot/focus-minibuffer-or-completions)
+         ("s-h" . prot/describe-symbol-at-point)
+         ("s-H" . (lambda ()
+                    (interactive)
+                    (prot/describe-symbol-at-point '(4))))
+         :map minibuffer-local-completion-map
+         ("<return>" . minibuffer-force-complete-and-exit) ; exit with completion
+         ("C-j" . exit-minibuffer)      ; force input unconditionally
+         :map completion-list-mode-map
+         ("h" . prot/describe-symbol-at-point)
+         ("w" . prot/completions-kill-symbol-at-point)
+         ("i" . prot/completions-insert-symbol-at-point)
+         ("j" . prot/completions-insert-symbol-at-point-exit)
+         ("n" . next-line)
+         ("p" . previous-line)
+         ("f" . next-completion)
+         ("b" . previous-completion)
+         ("M-v" . prot/focus-minibuffer)))
+
 (use-package py-autopep8 :ensure)
 
 (use-package elpy
