@@ -135,7 +135,6 @@
 (require 'setup-hugo)
 (require 'setup-hydra)
 (require 'setup-perspective)
-(require 'setup-python)
 (require 'setup-rcirc)
 (require 'setup-yasnippet)
 (require 'setup-slime)
@@ -4528,9 +4527,6 @@ _h_   _l_   _o_k        _y_ank
                                   (exwm-workspace-switch ,ws-num))))))
 
 
-
-
-
 (add-to-list 'display-buffer-alist
              `(,(rx bos " *async command*")
                (display-buffer-no-window)))
@@ -7171,16 +7167,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
 
 ;;; setup-perspective.el ends here
 #+END_SRC
-** setup-python.el
-#+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-python.el
-;;; setup-python.el
 
-
-
-(provide 'setup-python)
-
-;;; setup-python.el ends here
-#+END_SRC
 ** setup-rcirc.el
 #+BEGIN_SRC emacs-lisp :tangle ~/.emacs.d/settings/setup-rcirc.el
 ;;; setup-rcirc.el
