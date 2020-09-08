@@ -6558,6 +6558,15 @@ This is an `:around' advice for `yas--make-control-overlay'."
 (use-package writegood-mode :ensure)
 (use-package org-pomodoro :ensure)
 
+(use-package ol
+  :config
+  (setq org-link-keep-stored-after-insertion t)
+  :bind (:map org-mode-map
+              ("C-c l" . org-store-link)
+              ("C-c S-l" . org-toggle-link-display)
+
+              ("C-c C-S-l" . org-insert-last-stored-link)))
+
 (use-package org
   :ensure
   :hook (org-mode . writegood-mode)
