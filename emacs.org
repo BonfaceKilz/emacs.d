@@ -139,10 +139,6 @@
 (require 'setup-slime)
 (require 'setup-helm)
 
-;; Assuming the Guix checkout is in ~/guix.
-(with-eval-after-load 'geiser-guile
-  (add-to-list 'geiser-guile-load-path "~/guix"))
-
 (eval-after-load 'org '(require 'setup-org))
 (eval-after-load 'magit '(require
                           'setup-magit))
@@ -2314,6 +2310,8 @@ With \\[universal-argument] toggle the display of the window."
                   (if (boundp 'helm-alive-p)
                       (symbol-value 'helm-alive-p))))
   (golden-ratio-mode -1))
+
+(use-package guix :ensure)
 
 ;; show emojis
 (use-package emojify
