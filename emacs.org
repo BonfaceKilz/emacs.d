@@ -2646,10 +2646,6 @@ instead."
   (setq uniquify-buffer-name-style 'forward
         uniquify-separator ":"))
 
-(use-package undo-tree
-  :ensure
-  :config
-  (global-undo-tree-mode))
 (provide 'sane-defaults)
 ;;; sane-defaults.el ends here
 #+END_SRC
