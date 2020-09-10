@@ -7468,6 +7468,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
                (flyspell-mode t)
                (local-set-key (kbd "TAB") 'ebdb-complete-mail)))
 
+  (add-hook 'message-send-hook 'mml-secure-message-sign-pgpmime)
 
   (setq gnus-ignored-newsgroups "^to\\.\\|^[0-9. ]+\\( \\|$\\)\\|^[\"]\"[#'()]")
   (eval-after-load 'gnus-topic
