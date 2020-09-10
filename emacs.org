@@ -7445,6 +7445,12 @@ This is an `:around' advice for `yas--make-control-overlay'."
 (use-package gnus
   :ensure
   :config
+  (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+  ;; Let Gnus know Gmail search syntax
+  (add-to-list 'nnir-imap-search-arguments '("gmail" . "X-GM-RAW"))
+  ;; `gnus-group-make-nnir-group' use Gmail search syntax *by default*.
+  ;; You can press `G G` instead `C-u G G` instead.
+  (setq nnir-imap-default-search-key "gmail")
   (defun my-gnus-group-list-subscribed-groups ()
     "List all subscribed groups with or without un-read messages"
     (interactive)
