@@ -2272,7 +2272,7 @@ With \\[universal-argument] toggle the display of the window."
   (setq ispell-personal-dictionary "~/.emacs.d/.aspell.en.pws")
   (setq ispell-silently-savep t)
   (setq-default ispell-list-command "list")
-  (setq-default ispell-program-name "/home/bonface/.guix/bin/aspell")
+  (setq-default ispell-program-name "/home/bonface/.guix-profile/bin/aspell")
   :hook ((prog-mode . flyspell-prog-mode-hook)
          (text-mode . flyspell-mode-hook)
          (org-mode . flyspell-mode-hook)
