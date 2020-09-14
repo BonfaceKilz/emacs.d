@@ -2212,6 +2212,19 @@ With \\[universal-argument] toggle the display of the window."
   (setq guide-key/popup-window-position 'bottom)
   (guide-key-mode 1))
 
+(use-package emmet-mode
+  :ensure
+  :hook
+  ((emmet-mode . web-mode-hook)))
+
+(use-package web-mode
+  :mode ("\\.html$" . web-mode)
+  :ensure
+  :hook
+  ((visual-line-mode . web-mode-hook)
+   (visual-fill-column-mode . web-mode-hook)))
+
+
 (use-package web-beautify
   :ensure
   :config
