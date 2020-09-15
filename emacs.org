@@ -3907,9 +3907,9 @@ _h_   _l_   _o_k        _y_ank
 ** setup-keybindings.el
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-keybindings.el
 ;;; setup-keybindings.el
-(use-package key-seq :ensure)
-
-(key-chord-mode 1)
+(use-package key-seq :ensure
+  :config
+  (key-chord-mode 1))
 
 (key-seq-define-global ",g" 'counsel-git)
 
