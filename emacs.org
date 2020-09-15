@@ -2646,6 +2646,8 @@ instead."
          ("b" . previous-completion)
          ("M-v" . prot/focus-minibuffer)))
 
+(use-package pylint :ensure)
+
 (use-package py-autopep8 :ensure)
 
 (use-package elpy
