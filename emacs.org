@@ -7244,7 +7244,11 @@ This is an `:around' advice for `yas--make-control-overlay'."
   :config
   (setq message-default-charset 'utf-8)
   (add-to-list 'mm-body-charset-encoding-alist '(utf-8 . base64))
-  :hook ((message-setup-hook . message-sort-headers)))
+  :hook ((message-setup-hook . message-sort-headers)
+         (message-mode-hook . (lambda ()
+                                (progn
+                                 (setq-local writegood-mode 1)
+                                 (setq-local fill-column 50))))))
 
 (use-package w3m :ensure)
 (use-package notmuch :ensure)
@@ -7365,7 +7369,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
           "^X-Mailer:"))
   (setq gnus-sorted-header-list gnus-visible-headers)
   :hook (gnus-article-mode-hook . (lambda ()
-                                    (setq-local fill-column 70)))
+                                    (setq-local fill-column 50)))
   :bind (:map gnus-article-mode-map
               ("i" . gnus-article-show-images)
               ("s" . gnus-mime-save-part)
