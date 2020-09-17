@@ -2212,6 +2212,8 @@ With \\[universal-argument] toggle the display of the window."
   (setq guide-key/popup-window-position 'bottom)
   (guide-key-mode 1))
 
+(use-package password-generator :ensure)
+
 (use-package pdf-tools
   :ensure
   :load-path "site-lisp/pdf-tools/lisp"
