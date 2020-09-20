@@ -2429,7 +2429,7 @@ With \\[universal-argument] toggle the display of the window."
   (setq ediff-window-setup-function 'ediff-setup-windows-plain)
   (setq enable-recursive-minibuffers t)
   (setq epa-pinentry-mode 'loopback)
-  (setq fill-column 70)
+  (setq fill-column 50)
   (setq gc-cons-threshold 20000000)
   (setq geiser-default-implementation 'racket)
   (setq geiser-racket-binary "/home/bonface/.guix-profile/bin/racket")
