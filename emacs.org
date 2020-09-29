@@ -2437,6 +2437,7 @@ With \\[universal-argument] toggle the display of the window."
   (set-default 'indent-tabs-mode nil)
   (setq auto-revert-verbose nil)
   (setq column-number-mode t)
+  (setq dired-listing-switches "-alh")
   (setq custom-safe-themes t)
   (setq delete-by-moving-to-trash t)
   (setq display-time-day-and-date t)
