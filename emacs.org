@@ -2144,6 +2144,8 @@ This is an `:around' advice for `yas--make-control-overlay'."
 
 (use-package dash :ensure)
 
+(use-package debbugs :ensure)
+
 (use-package diminish
   :ensure
   :after use-package
