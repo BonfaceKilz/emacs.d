@@ -2230,7 +2230,7 @@ With \\[universal-argument] toggle the display of the window."
   ((emmet-mode . web-mode-hook)))
 
 (use-package web-mode
-  :mode ("\\.html$" . web-mode)
+  :mode ("\\.html\\'" . web-mode)
   :ensure
   :hook
   ((visual-line-mode . web-mode-hook)
@@ -2354,7 +2354,7 @@ With \\[universal-argument] toggle the display of the window."
 ;; open epubs
 ;; (use-package justify-kp)
 (use-package nov
-  :mode ("\\.epub$" . nov-mode)
+  :mode ("\\.epub\\'" . nov-mode)
   :ensure
   :config
   (setq nov-text-width 80)
