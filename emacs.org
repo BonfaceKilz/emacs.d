@@ -3,7 +3,6 @@
 - [[Defuns][Defuns]]
   - [[lisp-defuns][lisp-defuns]]
   - [[misc-defuns][misc-defuns]]
-  - [[settings][settings]]
   - [[appearance.el][appearance.el]]
   - [[sane-defaults.el][sane-defaults.el]]
   - [[setup-eshell.el][setup-eshell.el]]
@@ -1619,10 +1618,6 @@ abort completely with `C-g'."
 
 ;;; misc-defuns.el ends here
 #+END_SRC
-** settings
-:PROPERTIES:
-:header-args: :mkdirp yes :dir ~/.emacs.d/settings
-:END:
 ** appearance.el
 #+begin_src emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/appearance.el
 ;;; appearance.el
