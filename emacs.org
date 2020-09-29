@@ -2373,6 +2373,10 @@ With \\[universal-argument] toggle the display of the window."
   ((visual-line-mode . nov-mode-hook)
    (visual-fill-column-mode . nov-mode-hook)))
 
+(use-package yaml-mode
+  :mode ("\\.yml\\'" . nov-mode)
+  :ensure)
+
 (use-package emacs
   :init
   (auto-compression-mode 1)
