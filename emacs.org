@@ -2244,6 +2244,8 @@ With \\[universal-argument] toggle the display of the window."
   ((visual-line-mode . web-mode-hook)
    (visual-fill-column-mode . web-mode-hook)))
 
+(use-package haskell-mode
+  :mode ("\\.hs\\'" . haskell-mode))
 
 (use-package web-beautify
   :ensure
