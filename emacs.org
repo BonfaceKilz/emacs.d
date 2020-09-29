@@ -2170,6 +2170,8 @@ This is an `:around' advice for `yas--make-control-overlay'."
   :bind
   (("M-i" . imenu)))
 
+(use-package org-make-toc :ensure)
+
 (use-package imenu-list
   :ensure
   :after imenu
