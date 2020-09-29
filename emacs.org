@@ -2385,6 +2385,7 @@ With \\[universal-argument] toggle the display of the window."
   (tool-bar-mode -1)
   (transient-mark-mode 1)
   (winner-mode 1) ; Undo/redo window configuration with C-c <left>/<right>
+  (doom-modeline-mode)
   (pdf-tools-install :no-query)
   :config
   (defun keyboard-quit-strong ()
