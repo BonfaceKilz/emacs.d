@@ -2217,10 +2217,12 @@ With \\[universal-argument] toggle the display of the window."
 (use-package pdf-tools
   :ensure
   :load-path "site-lisp/pdf-tools/lisp"
+  :mode ("\\.pdf\\'" . pdf-view-mode)
   :magic ("%PDF" . pdf-view-mode)
   :requires tablist
   :config
-  (pdf-tools-install :no-query))
+  (pdf-tools-install :no-query)
+  (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer))
 
 (use-package emmet-mode
   :ensure
@@ -2383,6 +2385,7 @@ With \\[universal-argument] toggle the display of the window."
   (tool-bar-mode -1)
   (transient-mark-mode 1)
   (winner-mode 1) ; Undo/redo window configuration with C-c <left>/<right>
+  (pdf-tools-install :no-query)
   :config
   (defun keyboard-quit-strong ()
     "Run `keyboard-quit' to return emacs to a more responsive state.
