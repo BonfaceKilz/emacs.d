@@ -2882,6 +2882,20 @@ instead."
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-helm.el
 ;;; setup-helm.el
 (use-package helm-ag :ensure)
+
+(use-package helm-tramp
+  :ensure
+  :config
+  (setq tramp-default-method "ssh")
+  (define-key global-map (kbd "C-c s") 'helm-tramp)
+  (add-hook 'helm-tramp-pre-command-hook
+            '(lambda ()
+               (global-company-mode 0)
+	       (projectile-mode 0)))
+  (add-hook 'helm-tramp-quit-hook
+            '(lambda ()
+               (projectile-mode 1))))
+
 (use-package helm :ensure
   :config
   (setq helm-split-window-in-side-P           t ; open helm buffer inside current window, not occupy whole other window
