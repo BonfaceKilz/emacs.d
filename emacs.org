@@ -2167,6 +2167,12 @@ This is an `:around' advice for `yas--make-control-overlay'."
   (("M-i" . imenu)))
 
 (use-package visual-fill-column :ensure)
+
+(defun bonz/set-50-char ()
+    (set-fill-column 50)
+    (visual-line-mode)
+    (visual-fill-column-mode))
+
 (use-package shrface
   :ensure
   :defer t
