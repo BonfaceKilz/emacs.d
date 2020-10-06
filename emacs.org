@@ -2273,8 +2273,7 @@ With \\[universal-argument] toggle the display of the window."
   :mode ("\\.html\\'" . web-mode)
   :ensure
   :hook
-  ((visual-line-mode . web-mode-hook)
-   (visual-fill-column-mode . web-mode-hook)))
+  ((web-mode-hook .visual-line-mode)))
 
 (use-package haskell-mode
   :mode ("\\.hs\\'" . haskell-mode))
