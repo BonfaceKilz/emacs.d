@@ -2181,6 +2181,27 @@ This is an `:around' advice for `yas--make-control-overlay'."
   (shrface-trial)
   (setq shrface-href-versatile t))
 
+(use-package eww
+  :defer t
+  :init
+  (add-hook 'eww-after-render-hook #'shrface-mode)
+  :config
+  (require 'shrface)
+  :hook ((eww-mode-hook . bonz/set-50-char)))
+
+;; open epubs
+(use-package nov :ensure
+  :mode ("\\.epub\\'" . nov-mode)
+  :init
+  (setq nov-text-width t)
+  (add-hook 'nov-mode-hook #'shrface-mode)
+  :config
+  (setq visual-fill-column-center-text t)
+  (require 'shrface)
+  (setq nov-shr-rendering-functions '((img . nov-render-img) (title . nov-render-title)))
+  (setq nov-shr-rendering-functions (append nov-shr-rendering-functions shr-external-rendering-functions))
+  :hook ((nov-mode-hook . bonz/set-50-char)))
+
 (use-package org-make-toc :ensure)
 
 (use-package markdown-mode+
