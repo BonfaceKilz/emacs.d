@@ -2392,20 +2392,8 @@ With \\[universal-argument] toggle the display of the window."
   (when (memq window-system '(mac ns x))
     (exec-path-from-shell-initialize)))
 
-;; open epubs
-;; (use-package justify-kp)
-(use-package nov
-  :mode ("\\.epub\\'" . nov-mode)
-  :ensure
-  :config
-  (setq nov-text-width 80)
-  (setq visual-fill-column-center-text t)
-  :hook
-  ((visual-line-mode . nov-mode-hook)
-   (visual-fill-column-mode . nov-mode-hook)))
-
 (use-package yaml-mode
-  :mode ("\\.yml\\'" . nov-mode)
+  :mode ("\\.yml\\'" . yaml-mode)
   :ensure)
 
 (use-package emacs
@@ -2490,7 +2478,6 @@ With \\[universal-argument] toggle the display of the window."
   (setq jump-char-lazy-highlight-face -1)
   (setq line-number-mode t)
   (setq make-backup-files -1)
-  (setq nov-text-width 80)
   (setq org-src-fontify-natively t)
   (setq recentf-max-menu-items 25)
   (setq recentf-max-saved-items 100)
@@ -4922,11 +4909,6 @@ prepended to the element after the #+HEADER: tag."
     (if (or (region-active-p) (looking-back "^"))
         (hydra-org-template/body)
       (self-insert-command 1))))
-
-(eval-after-load "org"
-  '(cl-pushnew
-    '("not" . "note")
-    org-structure-template-alist))
 
 (defhydra hydra-dired (:hint nil :color pink)
   "
