@@ -2166,6 +2166,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
   :bind
   (("M-i" . imenu)))
 
+(use-package visual-fill-column :ensure)
 (use-package org-make-toc :ensure)
 
 (use-package markdown-mode+
