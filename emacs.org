@@ -3950,6 +3950,8 @@ _h_   _l_   _o_k        _y_ank
            "#+Title: Persistent Scratch Buffer"
            "\n#\n # Welcome! This’ a place for trying things out. \n"))))
 
+(use-package cl-lib :ensure)
+
 ;; Emacs server
 (use-package server
   :config
