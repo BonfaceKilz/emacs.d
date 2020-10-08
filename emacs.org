@@ -2497,6 +2497,7 @@ With \\[universal-argument] toggle the display of the window."
   (setq use-dialog-box nil)
   (setq use-file-dialog nil)
   (setq visible-bell t)
+  (setq w3m-fill-column 50)
   (setq x-select-enable-clipboard t)
   (setq-default indicate-empty-lines t)
   :hook
