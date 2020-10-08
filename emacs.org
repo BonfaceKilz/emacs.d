@@ -2483,6 +2483,7 @@ With \\[universal-argument] toggle the display of the window."
   (setq jump-char-lazy-highlight-face -1)
   (setq line-number-mode t)
   (setq make-backup-files -1)
+  (setq org-image-actual-width nil)
   (setq org-src-fontify-natively t)
   (setq recentf-max-menu-items 25)
   (setq recentf-max-saved-items 100)
