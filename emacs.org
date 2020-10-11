@@ -2844,7 +2844,6 @@ instead."
   (exwm-input-set-key (kbd "s-s") 'exwm-workspace-next)
   (exwm-input-set-key (kbd "s-j") 'exwm-workspace-next)
   (push ?\s-j exwm-input-prefix-keys)
-
   (exwm-input-set-key (kbd "s-o") 'other-window)
   (exwm-input-set-key (kbd "s-k") 'other-window)
 
@@ -2903,9 +2902,20 @@ instead."
 ;; (setq exwm-systemtray-height 16)
 ;; (exwm-systemtray-enable)
 ;; (exwm-switch-to-workspace-key 1)
+(defmacro define-run-or-rise-command (prog)
+  (let ((Prog (capitalize prog)))
+    `(defun ,(intern (format "run-or-rise-%s" prog)) ()
+       ,(format "Run or rise %s" Prog)
+       (interactive)
+       (if (string= (buffer-name) ,Prog)
+           (bury-buffer)
+         (if (get-buffer ,Prog)
+             (exwm-workspace-switch-to-buffer ,Prog)
+           (start-process ,prog nil ,prog))))))
+
+(define-run-or-rise-command "firefox")
 
 (provide 'setup-exwm)
-
 ;;; setup-exwm.el ends here
 #+END_SRC
 
