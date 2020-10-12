@@ -3028,8 +3028,8 @@ instead."
 	 ("M-n" . hledger/next-entry))
   :init
 
-  (setq hledger-jfile "~/Self/finances/hledger.journal"
-	tab-width 4)
+  (setq hledger-jfile "~/Self/finances/2020.journal")
+  (setq tab-width 4)
   ;; Expanded account balances in the overall monthly report are
   ;; mostly noise for me and do not convey any meaningful information.
   (setq hledger-show-expanded-report nil)
