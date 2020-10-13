@@ -6950,6 +6950,11 @@ This is an `:around' advice for `yas--make-control-overlay'."
 
 ;; letter class, for formal letters
 
+(use-package org-edna :ensure t
+  :after (org-mode)
+  :config
+  (org-edna-mode)
+  (setq org-edna-finder-use-cache t))
 
 
 (provide 'setup-org)
