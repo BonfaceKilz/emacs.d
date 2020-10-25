@@ -5838,7 +5838,7 @@ _h_   _l_   _o_k        _y_ank
   :config
 
   ;; Turn on Company everywhere.
-  (global-company-mode 1)
+  (global-company-mode 0)
 
   ;; Show completions instantly, rather than after half a second.
   (setq company-idle-delay 0)
