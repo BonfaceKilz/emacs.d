@@ -7297,6 +7297,14 @@ This is an `:around' advice for `yas--make-control-overlay'."
                                   (nnfolder-active-file "~/Mail/archive/active")
                                   (nnfolder-get-new-mail nil)
                                   (nnfolder-inhibit-expiry t))))))
+  (setq gnus-extra-headers
+        '(To Newsgroups))
+  (setq nnmail-extra-headers gnus-extra-headers)
+  (setq gnus-summary-line-format
+        "%U%R%z%I%(%[%4L: %-23,23f%]%) %s\n")
+  (setq gnus-ignored-from-addresses
+        "Bonface M. K.")
+
   ;; accounts
   (setq gnus-select-method
         '(nnimap "gmail"
@@ -7360,7 +7368,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
   (setq gnus-treat-display-smileys nil)
   (setq gnus-article-mode-line-format "%G %S %m")
   (setq gnus-visible-headers
-        '("^From:" "^Subject:" "^To:" "^Cc:" "^Newsgroups:" "^Date:"
+        '("^From:" "^Subject:" "^To:" "^Cc:" "^Date:"
           "Followup-To:" "Reply-To:" "^Organization:" "^X-Newsreader:"
           "^X-Mailer:"))
   (setq gnus-sorted-header-list gnus-visible-headers)
