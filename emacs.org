@@ -2270,14 +2270,18 @@ With \\[universal-argument] toggle the display of the window."
 
 (use-package emmet-mode
   :ensure
-  :hook
-  ((emmet-mode . web-mode-hook)))
+  :config
+  (add-hook 'sgml-mode-hook 'emmet-mode) ;; Auto-start on any markup modes
+  (add-hook 'web-mode-hook 'emmet-mode) ;; Auto-start on any markup modes
+  (add-hook 'css-mode-hook  'emmet-mode) ;; enable Emmet's css abbreviation.
+  )
 
 (use-package web-mode
   :mode ("\\.html\\'" . web-mode)
   :ensure
-  :hook
-  ((web-mode-hook .visual-line-mode)))
+  :config
+  (add-hook 'web-mode-hook 'visual-line-mode))
+
 
 (use-package haskell-mode
   :mode ("\\.hs\\'" . haskell-mode))
