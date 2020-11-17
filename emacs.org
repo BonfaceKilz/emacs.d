@@ -7263,9 +7263,9 @@ This is an `:around' advice for `yas--make-control-overlay'."
   :ensure
   :config
   (setq mm-discouraged-alternatives
-      '("text/html" "text/richtext")
-      mm-automatic-display
-      (remove "text/html" mm-automatic-display))
+        '("text/html" "text/richtext")
+        mm-automatic-display
+        (remove "text/html" mm-automatic-display))
   (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
   ;; Let Gnus know Gmail search syntax
   (add-to-list 'nnir-imap-search-arguments '("gmail" . "X-GM-RAW"))
@@ -7306,7 +7306,8 @@ This is an `:around' advice for `yas--make-control-overlay'."
         "%U%R%z%I%(%[%4L: %-23,23f%]%) %s\n")
   (setq gnus-ignored-from-addresses
         "Bonface M. K.")
-
+  (setq gnu-parameters
+        `(gcc-self . '(,(format-time-string "sent.%Y") t)))
   ;; accounts
   (setq gnus-select-method
         '(nnimap "gmail"
@@ -7322,6 +7323,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
   (setq gnus-gcc-mark-as-read t)
   (setq gnus-agent t)
   (setq gnus-novice-user t)
+  ;; (setq gnus-refer-thread-use-nnir t)
   ;; checking sources
   (setq gnus-check-new-newsgroups 'ask-server)
   (setq gnus-read-active-file 'some)
