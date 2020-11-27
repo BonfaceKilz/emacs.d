@@ -6497,6 +6497,8 @@ This is an `:around' advice for `yas--make-control-overlay'."
 
               ("C-c C-S-l" . org-insert-last-stored-link)))
 
+(use-package orgit :ensure)
+
 (use-package org
   :ensure
   :hook (org-mode . writegood-mode)
