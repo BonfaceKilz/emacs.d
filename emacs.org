@@ -3939,6 +3939,22 @@ _h_   _l_   _o_k        _y_ank
     ("l" dumb-jump-quick-look "Quick look")
     ("b" dumb-jump-back "Back"))
 
+(global-set-key (kbd "C-c d")
+                (defhydra hydra-draw-box (:color pink)
+                  "Draw box with IBM single line box characters (ESC to Quit)."
+                  ("ESC" nil :color blue) ;; Esc to exit.
+                  ("q" (lambda () (interactive) (insert "┌")) "top left ┌")
+                  ("w" (lambda () (interactive) (insert "┬")) "top ┬")
+                  ("e" (lambda () (interactive) (insert "┐")) "top right ┐")
+                  ("a" (lambda () (interactive) (insert "├")) "left ├")
+                  ("s" (lambda () (interactive) (insert "┼")) "center ┼")
+                  ("d" (lambda () (interactive) (insert "┤")) "right ┤")
+                  ("z" (lambda () (interactive) (insert "└")) "bottom left └")
+                  ("x" (lambda () (interactive) (insert "┴")) "bottom ┴")
+                  ("c" (lambda () (interactive) (insert "┘")) "bottom right ┘")
+                  ("r" (lambda () (interactive) (insert "─")) "horizontal ─")
+                  ("v" (lambda () (interactive) (insert "│")) "vertical │")))
+
 (provide 'setup-hydra)
 ;;; setup-hydra.el ends here
 #+end_src
