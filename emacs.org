@@ -2166,6 +2166,8 @@ This is an `:around' advice for `yas--make-control-overlay'."
   :bind
   (("M-i" . imenu)))
 
+(use-package isgd :ensure)
+
 ;; Example usage: (insert "\n" (unicode-enbox "testing"))
 (use-package unicode-enbox :ensure)
 
