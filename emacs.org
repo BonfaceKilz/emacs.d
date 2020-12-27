@@ -7229,8 +7229,8 @@ This is an `:around' advice for `yas--make-control-overlay'."
   :ensure
   :config
   (setq auth-sources '("~/.authinfo.gpg"))
-  (setq user-full-name "Bonface M. K.")
-  (setq user-mail-address "bonfacemunyoki@gmail.com")
+  (setq user-full-name "Bonface Munyoki K.")
+  (setq user-mail-address "me@bonfacemunyoki.com")
 
   (defun bonz/auth-get-field (host prop)
     "Find PROP in `auth-sources' for HOST entry."
@@ -7268,8 +7268,6 @@ This is an `:around' advice for `yas--make-control-overlay'."
                                  (setq-local writegood-mode 1)
                                  (setq-local fill-column 50))))))
 
-(use-package w3m :ensure)
-(use-package notmuch :ensure)
 (defun w3m-copy-url-at-point ()
     (interactive)
     (let ((url (w3m-anchor)))
@@ -7283,6 +7281,17 @@ This is an `:around' advice for `yas--make-control-overlay'."
 
 (setq mm-text-html-renderer 'w3m) ; OPTIONAL  
 
+(defun bonz-common-auth-get-field (host prop)
+  "Find PROP in `auth-sources' for HOST entry."
+  (let* ((source (auth-source-search :host host))
+         (field (plist-get
+                 (flatten-list source)
+                 prop)))
+    (if source
+        field
+      (user-error "No entry in auth sources"))))
+
+
 (use-package gnus
   :ensure
   :config
@@ -7293,9 +7302,27 @@ This is an `:around' advice for `yas--make-control-overlay'."
   (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
   ;; Let Gnus know Gmail search syntax
   (add-to-list 'nnir-imap-search-arguments '("gmail" . "X-GM-RAW"))
-  ;; `gnus-group-make-nnir-group' use Gmail search syntax *by default*.
-  ;; You can press `G G` instead `C-u G G` instead.
-  (setq nnir-imap-default-search-key "gmail")
+  (setq gnus-parameters
+        '((".*"                         ; fallback option
+           (gcc "nnmaildir+fastmail:Sent")
+           (posting-style
+            (From
+             (format "%s <%s>" user-full-name
+                     (bonz-common-auth-get-field "fastmail" :user)))))
+          (".*gmail.*"
+           (posting-style
+            (gcc "nnmaildir+gmail:Sent")
+            (From
+             (format "%s <%s>" user-full-name
+                     (bonz-common-auth-get-field "gmail" :user)))))
+          (".*juza.*"
+           (posting-style               ; Uses default name+mail
+            (gcc "nnmaildir+juza:Sent")
+            (signature "SWE |  Juza School\nWebsite: www.juzaschool.com")
+            (From
+             (format "%s <%s>" user-full-name
+                     "bonface.munyoki@juzaafrica.org"))))))
+
   (defun my-gnus-group-list-subscribed-groups ()
     "List all subscribed groups with or without un-read messages"
     (interactive)
@@ -7316,34 +7343,20 @@ This is an `:around' advice for `yas--make-control-overlay'."
   (add-hook 'message-send-hook 'mml-secure-message-sign-pgpmime)
 
   (setq gnus-ignored-newsgroups "^to\\.\\|^[0-9. ]+\\( \\|$\\)\\|^[\"]\"[#'()]")
-  (eval-after-load 'gnus-topic
-    '(progn
-       (setq gnus-message-archive-group '((format-time-string "sent.%Y")))
-       (setq gnus-server-alist '(("archive" nnfolder "archive" (nnfolder-directory "~/Mail/archive")
-                                  (nnfolder-active-file "~/Mail/archive/active")
-                                  (nnfolder-get-new-mail nil)
-                                  (nnfolder-inhibit-expiry t))))))
   (setq gnus-extra-headers
         '(To Newsgroups))
   (setq nnmail-extra-headers gnus-extra-headers)
   (setq gnus-summary-line-format
         "%U%R%z%I%(%[%4L: %-23,23f%]%) %s\n")
-  (setq gnus-ignored-from-addresses
-        "Bonface M. K.")
   (setq gnu-parameters
         `(gcc-self . '(,(format-time-string "sent.%Y") t)))
   ;; accounts
-  (setq gnus-select-method
-        '(nnimap "gmail"
-                 (nnimap-address "imap.gmail.com")
-                 (nnimap-server-port "imaps")
-                 (nnimap-stream ssl)))
+  (setq gnus-select-method '(nnnil ""))
   (setq gnus-secondary-select-methods
         '((nntp "news.gwene.org")
-          ))
-  (setq nnir-method-default-engines
-        '((nnmaildir . notmuch)))
-    
+          (nnmaildir "fastmail" (directory "~/.mail/fastmail/"))
+          (nnmaildir "gmail" (directory "~/.mail/gmail/"))
+          (nnmaildir "juza" (directory "~/.mail/juza/"))))
   (setq gnus-gcc-mark-as-read t)
   (setq gnus-agent t)
   (setq gnus-novice-user t)
@@ -7534,22 +7547,17 @@ EXPERIMENTAL"
 (use-package smtpmail
   :ensure
   :init
-  (setq smtpmail-default-smtp-server "smtp.gmail.com")
+  (setq smtpmail-default-smtp-server "smtp.fastmail.com")
   :config
   (setq message-send-mail-function 'smtpmail-send-it
-        smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil))
-        smtpmail-auth-credentials '(("smtp.gmail.com" 587
-                                     "bonfacemunyoki@gmail.com" nil))
-        smtpmail-default-smtp-server "smtp.gmail.com"
-        smtpmail-smtp-server "smtp.gmail.com"
+        smtpmail-starttls-credentials '(("smtp.fastmail.com" 587 nil nil))
+        smtpmail-auth-credentials '(("smtp.fastmail.com" 578
+                                     "me@bonfacemunyoki.com" nil))
+        smtpmail-default-smtp-server "smtp.fastmail.com"
+        smtpmail-smtp-server "smtp.fastmail.com"
         smtpmail-smtp-service 587
         gnus-ignored-newsgroups "^to\\.\\|^[0-9. ]+\\( \\|$\\)\\|^[\"]\"[#'()]"))
 
-;; (use-package smtpmail-async
-;;   :after smtpmail
-;;   :config
-;;   (setq send-mail-function 'async-smtpmail-send-it)
-;;   (setq message-send-mail-function 'async-smtpmail-send-it))
 
 (use-package ebdb
   :ensure
