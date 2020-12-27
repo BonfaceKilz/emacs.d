@@ -7704,6 +7704,32 @@ Unit=mbsync.service
 [Install]
 WantedBy=timers.target
 #+END_SRC
+
+** authinfo                                                          :crypt:
+-----BEGIN PGP MESSAGE-----
+
+hQIMA7yEhhvnouawAQ/+KS0l/pxsAUzPBld/xtsJ9D0YXsz95BZM3emfxkYln0l0
+IEdIk337TqGXZ2W7ieis/iOPcdVwpIWq3Wp5VuGXGsLRYZNZcrOJFF+QCRdVmAkc
+qAQdfbZW9+2E2bL6qO9EYyBCIfb4Bt+buPerua7g3n948PzRLdfDXq7mBbxqgTkD
+BN1ehEHCRTfS8p0r/UkkolbpYPqajRF7nwTBZi8WpPEEzGGDFcBMdA7NkVkk5678
+mVbnGXTJyMDkzZ6Qk2Pf5ZzvmlpTXOOJpReBP0I279ScR8XBQ67ULdCR3KQEOxiG
+dNAHosahFgK9Fm7w7ioPiK5okxQjCKhe/m3mnb+r/HZGUo0Jfua+z5jOi1inbfOE
+oRAOx/3tZ3bqFPp+jA+SG80mNI3+S8petIFXE6A6CmscagaGIcKkBEEa+CIsShdL
+EY0bPJxBgZD38Cnx6+FD7XDwWvBOWfSCbQSsZ2gVUiXg3WQTpdXb2JfH5E0I9g2N
+u4l7SDyABoyih6aTNocYJLc9DcuQOnpMerP5Qbi/c9RSmJNdSV+UluW+rjvc2LVF
+67ohE1ejfuw4KXjo3xI+XoHsb7fHM5tQ9PWMtDlvLzjduKbPeg81QWeVyN+gNech
+prKLrnh6ehLViHTii7cxKAs57t786PJIQT2W56HDxYRrnwT/V/1ff1ITH2G5WLfS
+wMoB+WErO46PR0PDfJl6y5ZAEWD26gsoIa+fzF8CjnuRMxEeyIndWIIWCSpAn1XY
+6KspuaekYAMIfERfVOaSPrrHX6zrmEfyP/ufoLBefF2nAnevrSuAHA3Mo5qif2Bj
+WDBRot7FrdiuDcpK0r++1cKr8OWaUPWGvOK3KeNgOkzlCnyE1kXNLGgpkUx/8HwV
+rIQFRPcz1QYV6vVAMAN2CzGMuqunvvnJn+YZ/9ZuOplfzyBvcqd8CoSJFyHseK69
+yx/cBjTCuv51arbfyM5eYY95HOk2B3/MMBwRRp+i9rhBuAymTgkjDHLL2EdgiGJV
+m5hh6XKIL1Ovfjo7X5Y2PwpohOMS/oKGPqgFpyHK8kJmeA7XyVpedz9Yx3qEStnx
+P26aMboDK2sfpsB/VEYGdpTO5UyE2XUu3yztoMbhcZWyGGgdX1fM6fn5rQ68MFD8
+pzk+0D+mVlEMYcOPBzOBaVHMuV4d3dteEwqSycSBuDUF3yvIR5ws3vH+D1QeNblq
+PkISzhWrsgVW6dOk
+=VfaJ
+-----END PGP MESSAGE-----
 * site-lisp
 #+begin_src emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/site-lisp/frame-cmds.el
   ;;; frame-cmds.el --- Frame and window commands (interactive functions).
