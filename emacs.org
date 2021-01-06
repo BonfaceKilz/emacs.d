@@ -6832,12 +6832,13 @@ This is an `:around' advice for `yas--make-control-overlay'."
 
 (setq prettify-symbols-unprettify-at-point 'right-edge)
 
-;; src: https://bzg.fr/en/some-emacs-org-mode-features-you-may-not-know.html/
+;; src: https://bzg.fr/en/some-emacs-org-mode-features-you-may-not-know.html/1
 (setq org-tag-alist
       '((:startgroup)
-        ("HandsOn" . ?o) ;; The grouping tag
+        ("Handson" . ?o)
         (:grouptags)
-        ("Write" . ?w) ("Code" . ?c) ("Mail" . ?@) ("Homechow" . ?h)
+        ("genenetwork" . ?g) ("wazinsure" . ?w) ("juza" . ?j)
+        ("Code" . ?c) ("Blog" . ?b) ("Mail" . ?@)
         (:endgroup)
         (:startgroup)
         ("Handsoff" . ?f) ;; The grouping tag
