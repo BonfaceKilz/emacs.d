@@ -6904,7 +6904,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
   :config
   (setq org-roam-graph-exclude-matcher '("archive" "report" "work_log"))
   (setq org-roam-completion-system 'helm)
-  :bind (:map org-roam-mode-map
+  :bind (:map org-mode-map
               (("C-c n l" . org-roam)
                ("C-c n f" . org-roam-find-file)
                ("C-c n j" . org-roam-jump-to-index)
@@ -6912,7 +6912,6 @@ This is an `:around' advice for `yas--make-control-overlay'."
                ("C-c n d" . deft)
                ("C-c n j" . org-journal-new-entry)
                ("C-c n g" . org-roam-graph))
-              :map org-mode-map
               (("C-c n i" . org-roam-insert))))
 
 (require 'time-stamp)
