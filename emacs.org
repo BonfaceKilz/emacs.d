@@ -6552,13 +6552,15 @@ This is an `:around' advice for `yas--make-control-overlay'."
                 :empty-lines 1))
   (setq alert-default-style 'libnotify)
   (setq epa-pinentry-mode 'loopback)
-  (setq org-agenda-files '("/home/bonface/Self/org/journal.org" "/home/bonface/Self/org/notes.org"))
+  (setq org-agenda-files
+        (directory-files-recursively "~/Self/org/"
+                                     (rx (or (and "org" eot)
+                                             (and "org_archive" eot)))))
   (setq org-agenda-ndays 7)
   (setq org-agenda-show-all-dates t)
   (setq org-agenda-skip-deadline-if-done t)
   (setq org-agenda-skip-scheduled-if-done t)
   (setq org-agenda-start-on-weekday nil)
-  (setq org-agenda-text-search-extra-files (quote (agenda-archives)))
   (setq org-archive-location "%s_archive::* Archived Tasks")
   (setq org-catch-invisible-edits 'show)
   (setq org-clock-history-length 23)
