@@ -6613,7 +6613,9 @@ This is an `:around' advice for `yas--make-control-overlay'."
                                        ("CANCELLED" :foreground "red" :weight bold))))
   (setq org-capture-templates
         `(
-          ,(my/make/org-capture-template "t" "Tasks, Getting Things Done")
+          ,(my/make/org-capture-template "g" "Tasks, Genenetwork")
+          ,(my/make/org-capture-template "x" "Tasks, Guix")
+          ,(my/make/org-capture-template "t" "Tasks, (Other)")
           ,(my/make/org-capture-template "r" "Research")
           ,(my/make/org-capture-template "m" "Email")
           ,(my/make/org-capture-template "e" "Emacs (•̀ᴗ•́)و")
