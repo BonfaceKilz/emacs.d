@@ -2512,6 +2512,7 @@ With \\[universal-argument] toggle the display of the window."
   (setq shr-width 50)
   (setq sp-autoescape-string-quote nil)
   (setq tramp-default-method "ssh")
+  (setq tramp-chunksize 500)
   (setq undo-tree-mode-lighter "")
   (setq use-dialog-box nil)
   (setq use-file-dialog nil)
@@ -2948,6 +2949,8 @@ instead."
   :ensure
   :config
   (setq tramp-default-method "ssh")
+  (setq make-backup-files nil)
+  (setq create-lockfiles nil)
   (define-key global-map (kbd "C-c s") 'helm-tramp)
   (add-hook 'helm-tramp-pre-command-hook
             '(lambda ()
