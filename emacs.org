@@ -6505,6 +6505,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
 
 (use-package ob-async :ensure)
 (use-package ob-elm :ensure)
+(use-package ob-rust :ensure)
 (use-package ob-go :ensure)
 (use-package  ob-restclient :ensure)
 (use-package toc-org
@@ -6648,6 +6649,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
      (go .t )
      (plantuml . t)
      (ruby . t)
+     (rust . t)
      (js . t)
      (python . t)
      (restclient . t)
