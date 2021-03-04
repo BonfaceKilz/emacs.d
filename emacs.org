@@ -1948,7 +1948,7 @@ Avoids opening a browser window."
   (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
   (custom-set-faces
    '(aw-leading-char-face
-     ((t (:inherit ace-jump-face-foreground :height 1.0)))))
+     ((t (:inherit ace-jump-face-foreground :height 2.0)))))
   (ace-window-display-mode 1)
   :bind (("C-x o" . ace-window)))
 
@@ -6681,6 +6681,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
   (require 'org-crypt)
   (org-crypt-use-before-save-magic)
   (setenv "GPG_AGENT_INFO" nil)
+
 
   (add-to-list 'org-agenda-custom-commands
                '("c" todo "DONE|ON_HOLD|CANCELLED" nil))
