@@ -128,6 +128,7 @@
 (require 'setup-exwm)
 (require 'setup-eshell)
 (require 'setup-paredit)
+(require 'setup-engine)
 (require 'setup-hledger)
 (require 'setup-org)
 (require 'setup-hugo)
@@ -2723,7 +2724,7 @@ instead."
   :init
   (elpy-enable)
   :config
-  (setq python-shell-interpreter "python")
+  (setq python-shell-interpreter "/usr/bin/python")
   (setq python-shell-interpreter-args "-i"))
 
 (use-package django-mode :ensure)
@@ -2805,6 +2806,145 @@ instead."
 (provide 'setup-eshell)
 ;;; setup-eshell.el ends here
 #+END_SRC
+** setup-engine.el
+#+begin_src emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-engine.el
+;;; Engine mode
+(use-package engine-mode :ensure)
+(engine-mode)
+(require 'eww)
+
+(defun ambrevar/engine-eww-function (url &optional _)
+  (interactive)
+  (eww url))
+
+(defengine arch-aur
+  "https://aur.archlinux.org/packages.php?O=0&K=%s&do_Search=Go"
+  :keybinding "aa")
+
+(defengine arch-packages
+  "https://www.archlinux.org/packages/?sort=&q=%s&maintainer=&flagged="
+  :keybinding "ap")
+
+(defengine arch-wiki
+  "http://wiki.archlinux.org/index.php?title=Special%%3ASearch&search=%s&go=Go"
+  :keybinding "aw"
+  :browser 'ambrevar/engine-eww-function)
+
+(defengine cookbook
+  "https://en.wikibooks.org/wiki/Special:Search?search=%s&prefix=Cookbook%3A&fulltext=Search+Cookbook&fulltext=Search&ns0=1&ns4=1&ns102=1&ns110=1&ns112=1"
+  :keybinding "cb")
+
+(defengine ctan
+  "http://www.ctan.org/search?phrase=%s"
+  :keybinding "c")
+
+(defengine devdocs
+  "http://devdocs.io/#q=%s"
+  :keybinding "dd")
+
+(defengine duckduckgo
+  "https://duckduckgo.com/?q=%s"
+  :keybinding "dg")
+
+(defengine emacs-debbugs
+  "https://debbugs.gnu.org/cgi/pkgreport.cgi?package=emacs;include=subject%3A%s;repeatmerged=on;archive=both"
+  :keybinding "eb"
+  :browser 'ambrevar/engine-eww-function)
+
+(defengine emacs-devel
+  "https://lists.gnu.org/archive/cgi-bin/namazu.cgi?idxname=emacs-devel&submit=Search&query=%s"
+  :keybinding "ed"
+  :browser 'ambrevar/engine-eww-function)
+
+(defengine emms-help
+  "https://lists.gnu.org/archive/cgi-bin/namazu.cgi?idxname=emms-help&submit=Search!&query=%s"
+  :keybinding "ee"
+  :browser 'ambrevar/engine-eww-function)
+
+(defengine gentoo
+  "https://wiki.gentoo.org/index.php?title=Special%3ASearch&search=%s&go=Go"
+  :keybinding "ge")
+
+(defengine github
+  "https://github.com/search?ref=simplesearch&q=%s"
+  :keybinding "gh")
+
+(defengine goodreads
+  "https://www.goodreads.com/search?q=%s"
+  :keybinding "gr")
+
+(defengine google-maps
+  "https://maps.google.com/maps?q=%s"
+  :keybinding "gm")
+
+(defengine guix-devel
+  "https://lists.gnu.org/archive/cgi-bin/namazu.cgi?idxname=guix-devel&submit=Search&query=%s"
+  :keybinding "gud"
+  :browser 'ambrevar/engine-eww-function)
+
+(defengine guix-help
+  "https://lists.gnu.org/archive/cgi-bin/namazu.cgi?idxname=help-guix&submit=Search!&query=%s"
+  :keybinding "guh"
+  :browser 'ambrevar/engine-eww-function)
+
+(defengine guix-issues
+  "https://issues.guix.info/search?query=%s"
+  :keybinding "gui")
+
+(defengine guix-packages
+  "http://data.guix.gnu.org/repository/1/branch/master/package/%s"
+  :keybinding "gup")
+
+(defengine imdb
+  "http://www.imdb.com/find?q=%s&s=all"
+  :keybinding "i")
+
+(defengine musicbrainz-artists
+  "http://musicbrainz.org/search?query=%s&type=artist&method=indexed"
+  :keybinding "mba")
+
+(defengine musicbrainz-releases
+  "http://musicbrainz.org/search?query=%s&type=release&method=indexed"
+  :keybinding "mbr")
+
+(defengine nyxt
+  "https://github.com/atlas-engineer/nyxt/issues?q=%s"
+  :keybinding "nyxt")
+
+(defengine openstreetmap
+  "https://www.openstreetmap.org/search?query=%s"
+  :keybinding "osm")
+
+(defengine stackoverflow
+  "http://stackoverflow.com/search?q=%s"
+  :keybinding "s")
+
+(defengine wikipedia
+  "http://www.wikipedia.org/search-redirect.php?language=en&go=Go&search=%s"
+  :keybinding "wp"
+  :docstring "Search Wikipedia!")
+
+(defengine wikibooks
+  "http://en.wikibooks.org/wiki/Special:Search?search=%s"
+  :keybinding "wb")
+
+(defengine wiktionary
+  "http://en.wiktionary.org/wiki/Special:Search?search=%s"
+  :keybinding "wk")
+
+(defengine wine-appdb
+  "http://www.winehq.org/search/?q=%s"
+  :keybinding "wa")
+
+(defengine youtube
+  "http://www.youtube.com/results?search_query=%s"
+  :keybinding "yt")
+
+(load (expand-file-name "bookmarks/engines.el" (getenv "PERSONAL")) t)
+
+(provide 'setup-engine)
+
+#+end_src
 ** setup-exwm.el
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-exwm.el
 ;;; setup-exwm.el
@@ -2939,7 +3079,6 @@ instead."
 (provide 'setup-exwm)
 ;;; setup-exwm.el ends here
 #+END_SRC
-
 ** setup-helm.el
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-helm.el
 ;;; setup-helm.el
