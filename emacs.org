@@ -2161,6 +2161,11 @@ This is an `:around' advice for `yas--make-control-overlay'."
   (diminish 'isearch-mode "?")
   (diminish 'flyspell-mode))
 
+(use-package flyspell-correct-helm
+  :ensure
+  :config
+  (define-key flyspell-mode-map (kbd "C-;") #'flyspell-correct-wrapper))
+
 (use-package imenu
   :config
   (setq imenu-use-markers t)
