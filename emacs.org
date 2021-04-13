@@ -4404,7 +4404,7 @@ _h_   _l_   _o_k        _y_ank
 (setq-default js2-show-parse-errors nil)
 (setq-default js2-strict-missing-semi-warning nil)
 (setq-default js2-strict-trailing-comma-warning t) ;; jshint does not warn about this now for some reason
-(use-package flycheck)
+(use-package flycheck :ensure)
 (add-hook 'js2-mode-hook (lambda () (flycheck-mode 1)))
 
 (use-package js2-refactor)
