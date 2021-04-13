@@ -4593,94 +4593,6 @@ _h_   _l_   _o_k        _y_ank
 
 ;;; setup-js2-mode.el ends here
 #+END_SRC
-** setup-magit.el
-#+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-magit.el
-;;; setup-magit.el
-
-;; move cursor into position when entering commit message
-(use-package diff-hl :ensure)
-
-(defun magit-status-fullscreen (prefix)
-  (interactive "P")
-  (magit-status)
-  (unless prefix
-    (delete-other-windows)))
-
-(use-package magit-todos
-  :ensure
-  :after magit
-  :after hl-todo)
-
-(use-package hl-todo
-  :ensure
-  :config
-  ;; Adding a new keyword: TEST.
-  (add-to-list 'hl-todo-keyword-faces '("TEST" . "#dc8cc3"))
-  :init
-  (add-hook 'text-mode-hook (lambda () (hl-todo-mode t))))
-
-
-;; full screen magit-status
-;; Efficient version control.
-(use-package magit
-  :ensure
-  :preface
-  (defun bonz/magit-cursor-fix ()
-    (beginning-of-buffer)
-    (when (looking-at "#")
-      (forward-line 2)))
-  :config
-  (global-set-key (kbd "C-x g") 'magit-status)
-  (global-set-key (kbd "C-x M-g") 'magit-dispatch)
-  (add-hook 'git-commit-mode-hook 'bonz/magit-cursor-fix)
-  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
-  ;; don't prompt me
-  (set-default 'magit-pushq-always-verify nil)
-  ;; (set-default 'magit-revert-buffers 'silent)
-  (set-default 'magit-no-confirm '(stage-all-changes
-                                   unstage-all-changes))
-  (set-default 'magit-diff-refine-hunk t)
-  ;; update diff-hl
-  (global-diff-hl-mode)
-   :bind-keymap
-  ("C-c f" . magit-file-dispatch))
-
-
-(require 'magit-git)
-(defun my/magit-check-file-and-popup ()
-  "If the file is version controlled with git
-  and has uncommitted changes, open the magit status popup."
-  (let ((file (buffer-file-name)))
-    (when (and file (magit-anything-modified-p t file))
-      (message "This file has uncommited changes!")
-      (when nil ;; Became annoying after some time.
-        (split-window-below)
-        (other-window 1)
-        (magit-status)))))
-
-;; I usually have local variables, so I want the message to show
-;; after the locals have been loaded.
-(add-hook 'find-file-hook
-          '(lambda ()
-             (add-hook 'hack-local-variables-hook 'my/magit-check-file-and-popup)))
-
-;; (use-package forge
-;;   :after magit
-;;   :config
-;;   (setq forge-topic-list-columns
-;;         '(("#" 4
-;;            (lambda (a b)
-;;              (> (car a) (car b)))
-;;            (:right-align t) number nil)
-;;           ("Title" 35 t nil title  nil)
-;;           ("Milestone" 9 t nil milestone nil)
-;;           ("State" 6 t nil state nil)
-;;           ("Updated" 10 t nill updated nil))))
-
-(add-hook 'server-switch-hook 'magit-commit-diff)
-(provide 'setup-magit)
-;;; setup-magit.el ends here
-#+END_SRC
 ** setup-markdown.el
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-markdown.el
 ;;; setup-markdown.el
@@ -6433,9 +6345,6 @@ This is an `:around' advice for `yas--make-control-overlay'."
   (set-default 'magit-diff-refine-hunk t)
   ;; update diff-hl
   (global-diff-hl-mode))
-
-(define-key magit-file-mode-map
-  (kbd "C-c g") 'magit-file-dispatch)
 
 (require 'magit-git)
 (defun my/magit-check-file-and-popup ()
