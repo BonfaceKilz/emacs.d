@@ -6421,6 +6421,42 @@ This is an `:around' advice for `yas--make-control-overlay'."
 
 ;; Org-mode
 
+(defun sjm/org-add-note (func &rest args)
+  "Advisor function to go around `org-add-note'.  Takes optional
+  count (c-u) and sets sjm/org-log-into-drawer to be used by
+  `sjm/org-store-log-note'.
+
+  The usage is thus:
+
+  (advice-add 'org-log-into-drawer :around #'sjm/org-log-into-drawer)
+  (advice-add 'org-add-note :around #'sjm/org-add-note)
+
+  When you do not want to log note into a draw use C-u C-c C-z.
+  Otherwise use C-c C-z as normal and it should log note as per
+  standard `org-log-into-drawer'.
+  "
+  (interactive "P")
+  (setq sjm/org-log-into-drawer (car args))
+  (funcall func))
+
+(defun sjm/org-log-into-drawer (func)
+  "Advisor function to go around `org-log-into-drawer'.
+  Reads value of sjm/org-log-into-drawer, as set by
+  `sjm/org-add-note', and if set returns nil meaning do not log
+  into drawer.  Otherwise returns value from call to
+  `org-log-into-draw'.  Before returning resets
+  sjm/org-log-into-drawer for subsequent calls."
+  (let ((ret
+         (if (not sjm/org-log-into-drawer)
+             (funcall func)
+           nil)))
+    (setq sjm/org-log-into-drawer nil)
+    ret))
+
+(setq sjm/org-log-into-drawer nil)
+(advice-add 'org-log-into-drawer :around #'sjm/org-log-into-drawer)
+(advice-add 'org-add-note :around #'sjm/org-add-note)
+
 (defun org-clock-select-task (&optional prompt)
   "Select a task that was recently associated with clocking.
   If `org-select-task-completing', use a completing-read to select.
