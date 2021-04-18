@@ -6420,7 +6420,6 @@ This is an `:around' advice for `yas--make-control-overlay'."
 ;;; setup-org.el
 
 ;; Org-mode
-
 (defun sjm/org-add-note (func &rest args)
   "Advisor function to go around `org-add-note'.  Takes optional
   count (c-u) and sets sjm/org-log-into-drawer to be used by
@@ -7095,6 +7094,12 @@ This is an `:around' advice for `yas--make-control-overlay'."
   :config
   (org-edna-mode)
   (setq org-edna-finder-use-cache t))
+
+(setq org-fontify-done-headline t)
+(set-face-attribute 'org-done nil :strike-through t)
+(set-face-attribute 'org-headline-done nil
+                    :strike-through t
+                    :foreground "light gray")
 
 
 (provide 'setup-org)
