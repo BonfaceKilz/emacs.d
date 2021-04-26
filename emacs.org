@@ -2766,7 +2766,8 @@ instead."
   (setq python-shell-interpreter "/usr/bin/python")
   (setq python-shell-interpreter-args "-i"))
 
-(use-package django-mode :ensure)
+;; I've never used django
+;; (use-package django-mode :ensure)
 
 (use-package smooth-scrolling :ensure)
 
