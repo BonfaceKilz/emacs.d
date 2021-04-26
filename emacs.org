@@ -69,7 +69,7 @@
 
 (let ((file-name (expand-file-name "custom.el" user-emacs-directory)))
   (when (not (file-exists-p file-name))
-  (write-region "" nil file-name)))
+    (write-region "" nil file-name)))
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file)
 
@@ -80,7 +80,7 @@
     (make-directory dir-name)))
 
 (create-directory-if-nonexistent
-  (expand-file-name "settings" user-emacs-directory))
+ (expand-file-name "settings" user-emacs-directory))
 (setq settings-dir
       (expand-file-name "settings" user-emacs-directory))
 (add-to-list 'load-path settings-dir)
