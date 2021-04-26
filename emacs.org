@@ -216,9 +216,11 @@
               (add-to-list 'term-bind-key-alist '("M-[" . multi-term-prev))
               (add-to-list 'term-bind-key-alist '("M-]" . multi-term-next)))))
 
-(use-package dumb-jump :ensure)
-(add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
-  ;;; init.el ends here
+(use-package dumb-jump :ensure
+  :config
+  (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
+
+;;; init.el ends here
 #+END_SRC
 * Defuns
 - Most of this defuns were lifted online over time
