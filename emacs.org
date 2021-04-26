@@ -7048,7 +7048,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
 
 (require 'time-stamp)
 
-(setq org-pomodoro-length 45)
+(setq org-pomodoro-length 30)
 (add-hook 'write-file-functions 'time-stamp)
 
 
