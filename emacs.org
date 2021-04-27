@@ -2108,6 +2108,8 @@ In that case, insert the number."
                          (require 'lsp-pyright)
                          (lsp))))  ; or lsp-deferred
 
+(use-package lsp-treemacs :ensure)
+
 ;; Example usage: (insert "\n" (unicode-enbox "testing"))
 (use-package unicode-enbox :ensure)
 
