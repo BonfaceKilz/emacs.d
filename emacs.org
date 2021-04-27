@@ -2047,6 +2047,12 @@ In that case, insert the number."
   :ensure
   :hook (company-mode . company-quickhelp-local-mode))
 
+(use-package company-prescient
+  :ensure
+  :after company
+  :config
+  (company-prescient-mode))
+
 (use-package dash :ensure)
 
 (use-package debbugs :ensure)
