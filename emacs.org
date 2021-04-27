@@ -2681,6 +2681,13 @@ instead."
 	 (scheme-mode . lispy-mode)
 	 (sly-mrepl-mode . lispy-mode)))
 
+(use-package geiser
+  :ensure
+  :defer run-geiser
+  :config
+  ;; I have to use the guile2.2 binary because of Fedora
+  (setq geiser-guile-binary "guile"))
+
 (provide 'sane-defaults)
 ;;; sane-defaults.el ends here
 #+END_SRC
