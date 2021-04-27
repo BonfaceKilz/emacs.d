@@ -2093,11 +2093,18 @@ In that case, insert the number."
 
 (use-package lsp-mode
   :ensure
-  :config (setq lsp-diagnostic-package :flymake)
+  :config
+  (setq lsp-diagnostic-package :flymake
+        lsp-auto-guess-root t
+        lsp-log-io t
+        lsp-enable-indentation t
+        lsp-enable-imenu t
+        lsp-file-watch-threshold 500)
   :hook
   ((c++-mode . lsp)
    (c-mode . lsp)
    (js-mode . lsp)
+   (elpy-mode . lsp)
    (python-mode . lsp)))
 
 (use-package lsp-haskell :ensure)
