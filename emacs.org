@@ -1720,7 +1720,7 @@ when that buffer was created) URL
 (use-package all-the-icons :ensure)
 (use-package doom-modeline
   :ensure
-  :hook (after-init . doom-modeline-mode)
+  :hook (after-init-hook . doom-modeline-mode)
   :config
   (setq doom-modeline-height 25)
 
@@ -2007,9 +2007,9 @@ Avoids opening a browser window."
   :bind (:map company-active-map
 	      ("C-n" . 'company-select-next)
 	      ("C-p" . 'company-select-previous))
-  :hook ((emacs-lisp-mode . company-mode)
-	 (lisp-mode . company-mode)
-	 (sly-mrepl-mode . company-mode))
+  :hook ((emacs-lisp-mode-hook . company-mode)
+	 (lisp-mode-hook . company-mode)
+	 (sly-mrepl-mode-hook . company-mode))
   :config
   (setq company-idle-delay 0)
 
@@ -2043,7 +2043,7 @@ In that case, insert the number."
 
 (use-package company-quickhelp
   :ensure
-  :hook (company-mode . company-quickhelp-local-mode))
+  :hook (company-mode-hook . company-quickhelp-local-mode))
 
 (use-package company-prescient
   :ensure
@@ -2099,12 +2099,10 @@ In that case, insert the number."
         lsp-enable-imenu t
         lsp-file-watch-threshold 500)
   :hook
-  ((c++-mode . lsp)
-   (c-mode . lsp)
-   (js-mode . lsp)
-   (elpy-mode . lsp)
-   (python-mode . lsp))
-  :commands lsp)
+  ((c++-mode-hook . lsp)
+   (c-mode-hook . lsp)
+   (js-mode-hook . lsp)
+   (python-mode-hook . lsp)))
 
 (use-package lsp-haskell :ensure)
 
@@ -2305,13 +2303,13 @@ With \\[universal-argument] toggle the display of the window."
   (setq ispell-silently-savep t)
   (setq-default ispell-list-command "list")
   (setq-default ispell-program-name "/home/bonface/.guix-profile/bin/aspell")
-  :hook ((prog-mode . flyspell-prog-mode-hook)
-         (text-mode . flyspell-mode-hook)
-         (org-mode . flyspell-mode-hook)
-         (c-mode . flyspell-prog-mode-hook)
-         (python-mode . flyspell-prog-mode-hook)
-         (web-mode . flyspell-prog-mode-hook)
-         (emacs-lisp-mode . flyspell-prog-mode-hook)))
+  :hook ((prog-mode-hook . flyspell-prog-mode)
+         (text-mode-hook . flyspell-mode)
+         (org-mode-hook . flyspell-mode)
+         (c-mode-hook . flyspell-prog-mode)
+         (python-mode-hook . flyspell-prog-mode)
+         (web-mode-hook . flyspell-prog-mode)
+         (emacs-lisp-mode-hook . flyspell-prog-mode)))
 
 ;; Avoid unwanted repetition
 (use-package synosaurus
@@ -2696,11 +2694,11 @@ instead."
 
 (use-package lispy
   :ensure
-  :hook ((emacs-lisp-mode . lispy-mode)
-	 (lisp-mode . lispy-mode)
-	 (clojure-mode . lispy-mode)
-	 (scheme-mode . lispy-mode)
-	 (sly-mrepl-mode . lispy-mode)))
+  :hook ((emacs-lisp-mode-hook . lispy-mode)
+	 (lisp-mode-hook . lispy-mode)
+	 (clojure-mode-hook . lispy-mode)
+	 (scheme-mode-hook . lispy-mode)
+	 (sly-mrepl-mode-hook . lispy-mode)))
 
 (use-package geiser
   :ensure
@@ -4949,9 +4947,9 @@ _h_   _l_   _o_k        _y_ank
   :config
   (setq company-mode t)
   (setq hledger-file "/home/bonface/Self/finances/hledger.journal")
-  :hook ((hl-line-mode . hledger-view-mode-hook)
-         (center-text-for-reading . hledger-view-mode-hook)
-         (bonz/ledger-with-timer . hledger-view-mode-hook)))
+  :hook ((hl-line-mode-hook . hledger-view-mode-hook)
+         (center-text-for-reading-hook . hledger-view-mode-hook)
+         (bonz/ledger-with-timer-hook . hledger-view-mode-hook)))
 
 (use-package hledger-input
   :pin manual
@@ -4972,9 +4970,9 @@ _h_   _l_   _o_k        _y_ank
 	      (setq-local company-idle-delay 0.1))
   :config
   (setq hledger-input-buffer-height 20)
-  :hook ((hledger-show-new-balances . hledger-input-post-commit-hook)
-        (auto-fill-mode . hledger-input-mode-hook)
-        (bonz/make-company-delay . hledger-input-mode-hook)))
+  :hook ((hledger-show-new-balances-hook . hledger-input-post-commit-hook)
+        (auto-fill-mode-hook . hledger-input-mode-hook)
+        (bonz/make-company-delay-hook . hledger-input-mode-hook)))
 
 (provide 'setup-hledger)
 
@@ -6650,7 +6648,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
 
 (use-package org
   :ensure
-  :hook (org-mode . writegood-mode)
+  :hook (org-mode-hook . writegood-mode)
   :config
   ;; (require 'ox-extra)
   ;; (require 'ob)
@@ -6836,7 +6834,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
 
 
 (use-package org-tanglesync
-  :hook (org-mode . org-tanglesync-mode)
+  :hook (org-mode-hook . org-tanglesync-mode)
   :bind
   (( "C-c M-i" . org-tanglesync-process-buffer-interactive))
   ( "C-c M-a" . org-tanglesync-process-buffer-automatic))
@@ -7224,7 +7222,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
 (use-package persp-mode :ensure
   :config
   (setq persp-autokill-buffer-on-remove 'kill-weak)
-  ;; :hook after-init  ;; <--- offending line
+  ;; :hook after-init-hook  ;; <--- offending line
   ;; :bind-keymap
   ;; ("C-c p" . persp-key-map)
   )
