@@ -2102,11 +2102,12 @@ In that case, insert the number."
 
 (use-package lsp-haskell :ensure)
 
-(use-package lsp-pyright
+(use-package lsp-jedi
   :ensure t
-  :hook (python-mode . (lambda ()
-                         (require 'lsp-pyright)
-                         (lsp))))  ; or lsp-deferred
+  :config
+  (with-eval-after-load "lsp-mode"
+    (add-to-list 'lsp-disabled-clients 'pyls)
+    (add-to-list 'lsp-enabled-clients 'jedi)))
 
 (use-package lsp-treemacs :ensure)
 
