@@ -2100,6 +2100,7 @@ In that case, insert the number."
    (js-mode . lsp)
    (python-mode . lsp)))
 
+(use-package lsp-haskell :ensure)
 ;; Example usage: (insert "\n" (unicode-enbox "testing"))
 (use-package unicode-enbox :ensure)
 
