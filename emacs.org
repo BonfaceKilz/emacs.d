@@ -2103,7 +2103,8 @@ In that case, insert the number."
    (c-mode . lsp)
    (js-mode . lsp)
    (elpy-mode . lsp)
-   (python-mode . lsp)))
+   (python-mode . lsp))
+  :commands lsp)
 
 (use-package lsp-haskell :ensure)
 
@@ -2114,9 +2115,11 @@ In that case, insert the number."
     (add-to-list 'lsp-disabled-clients 'pyls)
     (add-to-list 'lsp-enabled-clients 'jedi)))
 
-(use-package lsp-treemacs :ensure)
+(use-package lsp-treemacs :ensure
+  :commands lsp-treemacs-errors-list)
 
-(use-package lsp-ui :ensure)
+(use-package lsp-ui :ensure
+  :commands lsp-ui-mode)
 
 ;; Example usage: (insert "\n" (unicode-enbox "testing"))
 (use-package unicode-enbox :ensure)
