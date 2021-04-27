@@ -3245,6 +3245,21 @@ instead."
   ("M-r" lsp-restart-workspace)
   ("S" lsp-shutdown-workspace))
 
+(defhydra hydra-roam (:color teal
+			     :hint nil)
+  "
+  _f_:ind file  _i_:nsert  _I_:ndex  _g_:raph
+  _c_:apture  _s_:erver
+  "
+  ("q" nil "quit")
+  ("f" org-roam-find-file)
+  ("i" org-roam-insert)
+  ("I" org-roam-jump-to-index)
+  ("g" org-roam-graph)
+  ("c" org-roam-capture)
+  ("s" org-roam-server-mode))
+
+(global-set-key (kbd "C-c r") 'hydra-roam/body)
 (defhydra hydra-org-template (:color blue :hint nil)
   "
  _c_enter    _q_uote     _e_macs-lisp    _L_aTeX:
