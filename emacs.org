@@ -3131,13 +3131,7 @@ instead."
     "Move to last entry and pulse."
     (interactive)
     (hledger-backward-entry)
-    (hledger-pulse-momentary-current-entry))
-
-  :bind (("C-c j" . hledger-run-command)
-	 :map hledger-mode-map
-	 ("C-c e" . hledger-jentry)
-	 ("M-p" . hledger/prev-entry)
-	 ("M-n" . hledger/next-entry))
+    (hledger-pulse-momentary-current-entry)))
   :init
 
   (setq hledger-jfile "~/Self/finances/2020.journal")
