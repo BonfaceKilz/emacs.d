@@ -2434,7 +2434,8 @@ With \\[universal-argument] toggle the display of the window."
   (setq enable-recursive-minibuffers t)
   (setq epa-pinentry-mode 'loopback)
   (setq fill-column 50)
-  (setq gc-cons-threshold 20000000)
+  (setq gc-cons-threshold 100000000)
+  (setq read-process-output-max (* 1024 1024)) ;; 1mb
   (setq geiser-default-implementation 'racket)
   (setq geiser-racket-binary "/home/bonface/.guix-profile/bin/racket")
   (setq global-auto-revert-non-file-buffers t)
@@ -2443,6 +2444,8 @@ With \\[universal-argument] toggle the display of the window."
   (setq history-length 100)
   (setq ibuffer-show-empty-filter-groups -1)
   (setq inhibit-splash-screen t)
+  (setq python-indent 4)
+  (setq use-short-answers t)
   (setq jump-char-lazy-highlight-face -1)
   (setq line-number-mode t)
   (setq make-backup-files -1)
