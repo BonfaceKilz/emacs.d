@@ -3271,6 +3271,15 @@ instead."
   ("s" org-roam-server-mode))
 
 (global-set-key (kbd "C-c r") 'hydra-roam/body)
+
+(defhydra hydra-ide (:color teal
+			    :hint nil)
+  ("q" nil "quit")
+  ("l" hydra-lsp/body "lsp" :column "IDE features")
+  ("d" hydra-dumb-jump/body "dumb-jump"))
+
+(global-set-key (kbd "C-c e") 'hydra-ide/body)
+
 (defhydra hydra-org-template (:color blue :hint nil)
   "
  _c_enter    _q_uote     _e_macs-lisp    _L_aTeX:
