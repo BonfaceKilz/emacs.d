@@ -2673,6 +2673,14 @@ instead."
   :ensure
   :defer t)
 
+(use-package lispy
+  :ensure
+  :hook ((emacs-lisp-mode . lispy-mode)
+	 (lisp-mode . lispy-mode)
+	 (clojure-mode . lispy-mode)
+	 (scheme-mode . lispy-mode)
+	 (sly-mrepl-mode . lispy-mode)))
+
 (provide 'sane-defaults)
 ;;; sane-defaults.el ends here
 #+END_SRC
