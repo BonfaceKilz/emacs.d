@@ -3307,6 +3307,17 @@ instead."
 #+begin_src emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-hydra.el
 (use-package hydra :ensure)
 
+(global-set-key
+ (kbd "C-x m")
+ (defhydra hydra-bookmarks (:color teal
+				   :hint nil)
+   ("m" bookmark-set "set")
+   ("b" bookmark-jump "jump")
+   ("l" list-bookmarks "list")
+   ("s" bookmark-save "save")
+   ("q" nil "quit")))
+
+
 (defhydra hydra-org-template (:color blue :hint nil)
   "
  _c_enter    _q_uote     _e_macs-lisp    _L_aTeX:
