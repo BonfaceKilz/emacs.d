@@ -2101,6 +2101,13 @@ In that case, insert the number."
    (python-mode . lsp)))
 
 (use-package lsp-haskell :ensure)
+
+(use-package lsp-pyright
+  :ensure t
+  :hook (python-mode . (lambda ()
+                         (require 'lsp-pyright)
+                         (lsp))))  ; or lsp-deferred
+
 ;; Example usage: (insert "\n" (unicode-enbox "testing"))
 (use-package unicode-enbox :ensure)
 
