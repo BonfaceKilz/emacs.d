@@ -2043,6 +2043,9 @@ In that case, insert the number."
 	  (self-insert-command 1)
 	(company-complete-number (string-to-number k))))))
 
+(use-package company-quickhelp
+  :ensure
+  :hook (company-mode . company-quickhelp-local-mode))
 
 (use-package dash :ensure)
 
