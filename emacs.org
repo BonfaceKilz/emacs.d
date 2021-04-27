@@ -2091,6 +2091,7 @@ In that case, insert the number."
 
 (use-package lsp-mode
   :ensure
+  :commands lsp
   :config
   (setq lsp-diagnostic-package :flymake
         lsp-auto-guess-root t
