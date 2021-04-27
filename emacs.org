@@ -2663,6 +2663,11 @@ instead."
   (setq uniquify-buffer-name-style 'forward
         uniquify-separator ":"))
 
+(use-package sly
+  :ensure
+  :defer t
+  :config
+  (setq inferior-lisp-program "sbcl"))
 (provide 'sane-defaults)
 ;;; sane-defaults.el ends here
 #+END_SRC
