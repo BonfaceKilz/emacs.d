@@ -2668,6 +2668,11 @@ instead."
   :defer t
   :config
   (setq inferior-lisp-program "sbcl"))
+
+(use-package suggest
+  :ensure
+  :defer t)
+
 (provide 'sane-defaults)
 ;;; sane-defaults.el ends here
 #+END_SRC
