@@ -2110,6 +2110,8 @@ In that case, insert the number."
 
 (use-package lsp-treemacs :ensure)
 
+(use-package lsp-ui :ensure)
+
 ;; Example usage: (insert "\n" (unicode-enbox "testing"))
 (use-package unicode-enbox :ensure)
 
