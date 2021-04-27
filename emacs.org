@@ -2091,6 +2091,15 @@ In that case, insert the number."
 
 (use-package isgd :ensure)
 
+(use-package lsp-mode
+  :ensure
+  :config (setq lsp-diagnostic-package :flymake)
+  :hook
+  ((c++-mode . lsp)
+   (c-mode . lsp)
+   (js-mode . lsp)
+   (python-mode . lsp)))
+
 ;; Example usage: (insert "\n" (unicode-enbox "testing"))
 (use-package unicode-enbox :ensure)
 
