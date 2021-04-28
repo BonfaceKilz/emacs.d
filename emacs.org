@@ -3168,21 +3168,7 @@ instead."
 
   :config
   (setq company-mode t)
-  (add-to-list 'auto-mode-alist '("\\.journal\\'" . hledger-mode))
-  ;;(add-to-list 'company-backends 'hledger-company)
-  (add-hook 'hledger-view-mode-hook #'hl-line-mode)
-  (add-hook 'hledger-view-mode-hook #'center-text-for-reading)
-  (add-hook 'hledger-view-mode-hook
-            (lambda ()
-              (run-with-timer 1
-                              nil
-                              (lambda ()
-                                (when (equal hledger-last-run-command
-                                             "balancesheet")
-                                  ;; highlight frequently changing accounts
-                                  (highlight-regexp "^.*\\(Ksh\\|Expense\\).*$")
-                                  (highlight-regexp "^.*Liability*$"
-                                                    'hledger-warning-face)))))))
+  (add-to-list 'auto-mode-alist '("\\.journal\\'" . hledger-mode)))
 
 (use-package hledger-input
   :pin manual
