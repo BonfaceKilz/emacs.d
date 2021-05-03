@@ -1923,6 +1923,15 @@ when that buffer was created) URL
                    (float-time (time-subtract (current-time)
                                               before-init-time))))))
 
+(use-package vterm
+  :custom (vterm-install t))
+
+(use-package vterm-toggle
+  :ensure
+  :config
+  (global-set-key [f2] 'vterm-toggle)
+  (global-set-key [C-f2] 'vterm-toggle-cd))
+
 (defun untabify-buffer ()
   (interactive)
   (untabify (point-min) (point-max)))
