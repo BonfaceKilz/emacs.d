@@ -2668,8 +2668,9 @@ instead."
 
 (use-package elpy
   :ensure
+  :defer t
   :init
-  (elpy-enable)
+  (advice-add 'python-mode :before 'elpy-enable)
   :config
   (setq python-shell-interpreter "/usr/bin/python")
   (setq python-shell-interpreter-args "-i"))
