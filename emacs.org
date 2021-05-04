@@ -4875,9 +4875,10 @@ _h_   _l_   _o_k        _y_ank
   :config
   (setq company-mode t)
   (setq hledger-file "/home/bonface/Self/finances/hledger.journal")
-  :hook ((hl-line-mode-hook . hledger-view-mode-hook)
-         (center-text-for-reading-hook . hledger-view-mode-hook)
-         (bonz/ledger-with-timer-hook . hledger-view-mode-hook)))
+  :hook (
+         ;; (hl-line-mode-hook . hledger-view-mode)
+         ;; (center-text-for-reading-hook . hledger-view-mode)
+         (bonz/ledger-with-timer-hook . hledger-view-mode)))
 
 (use-package hledger-input
   :pin manual
