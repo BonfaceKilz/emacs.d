@@ -7361,6 +7361,13 @@ This is an `:around' advice for `yas--make-control-overlay'."
 (use-package gnus
   :ensure
   :config
+  (defun bonz/message-insert-citation-line ()
+    "Insert a simple citation line."
+    (when message-reply-headers
+      (insert (mail-header-from message-reply-headers) " anaandika:")
+      (newline)
+      (newline)))
+  (setq message-citation-line-function 'bonz/message-insert-citation-line)
   (setq mm-discouraged-alternatives
         '("text/html" "text/richtext")
         mm-automatic-display
