@@ -3139,7 +3139,8 @@ instead."
 (use-package helm-pass :ensure)
 (use-package pass :ensure)
 ;;; setup-helm.el ends here
-#+END_SR
+#+END_SRC
+
 ** setup-hugo.el
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-hugo.el
 ;;; setup-hugo.el
