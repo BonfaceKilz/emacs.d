@@ -3132,6 +3132,9 @@ instead."
 (use-package helm-exwm :ensure)
 (provide 'setup-helm)
 
+;; Set up pass
+(use-package helm-pass :ensure)
+(use-package pass :ensure)
 ;;; setup-helm.el ends here
 #+END_SRC
 ** setup-hledger.el
