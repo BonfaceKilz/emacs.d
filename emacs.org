@@ -9,7 +9,6 @@
   - [[#setup-engineel][setup-engine.el]]
   - [[#setup-exwmel][setup-exwm.el]]
   - [[#setup-helmel][setup-helm.el]]
-  - [[#setup-hledgerel][setup-hledger.el]]
   - [[#setup-hugoel][setup-hugo.el]]
   - [[#setup-hydrael][setup-hydra.el]]
   - [[#setup-initel][setup-init.el]]
@@ -19,7 +18,7 @@
   - [[#setup-elfeedel][setup-elfeed.el]]
   - [[#setup-eshellel-1][setup-eshell.el]]
   - [[#setup-exwmel-1][setup-exwm.el]]
-  - [[#setup-hledgerel-1][setup-hledger.el]]
+  - [[#setup-hledgerel][setup-hledger.el]]
   - [[#setup-hugoel-1][setup-hugo.el]]
   - [[#setup-hydrael-1][setup-hydra.el]]
   - [[#setup-initel-1][setup-init.el]]
@@ -3136,81 +3135,7 @@ instead."
 (use-package helm-pass :ensure)
 (use-package pass :ensure)
 ;;; setup-helm.el ends here
-#+END_SRC
-** setup-hledger.el
-#+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-hledger.el
-;;; setup-hledger.el
-
-;; I've used `use-package` declarations
-
-(use-package hledger-mode :ensure t
-  :after htmlize
-  :mode ("\\.journal\\'" "\\.hledger\\'")
-  :commands hledger-enable-reporting
-  :preface
-  (defun hledger/next-entry ()
-    "Move to next entry and pulse."
-    (interactive)
-    (hledger-next-or-new-entry)
-    (hledger-pulse-momentary-current-entry))
-
-  (defface hledger-warning-face
-    '((((background dark))
-       :background "Red" :foreground "White")
-      (((background light))
-       :background "Red" :foreground "White")
-      (t :inverse-video t))
-    "Face for warning"
-    :group 'hledger)
-
-  (defun hledger/prev-entry ()
-    "Move to last entry and pulse."
-    (interactive)
-    (hledger-backward-entry)
-    (hledger-pulse-momentary-current-entry))
-  :init
-
-  (setq hledger-jfile "~/Self/finances/2020.journal")
-  (setq tab-width 4)
-  ;; Expanded account balances in the overall monthly report are
-  ;; mostly noise for me and do not convey any meaningful information.
-  (setq hledger-show-expanded-report nil)
-  (when (boundp 'my-hledger-service-fetch-url)
-    (setq hledger-service-fetch-url
-	  my-hledger-service-fetch-url))
-
-  :config
-  (setq company-mode t)
-  (add-to-list 'auto-mode-alist '("\\.journal\\'" . hledger-mode)))
-
-(use-package hledger-input
-  :pin manual
-  :load-path "packages/rest/hledger-mode/"
-  :bind (("C-c e" . hledger-capture)
-	 :map hledger-input-mode-map
-	 ("C-c C-b" . popup-balance-at-point))
-  :preface
-  (defun popup-balance-at-point ()
-    "Show balance for account at point in a popup."
-    (interactive)
-    (if-let ((account (thing-at-point 'hledger-account)))
-	(message (hledger-shell-command-to-string (format " balance -N %s "
-							  account)))
-      (message "No account at point")))
-
-  :config
-  (setq hledger-input-buffer-height 20)
-  (add-hook 'hledger-input-post-commit-hook #'hledger-show-new-balances)
-  (add-hook 'hledger-input-mode-hook #'auto-fill-mode)
-  (add-hook 'hledger-input-mode-hook
-	    (lambda ()
-	      (make-local-variable 'company-idle-delay)
-	      (setq-local company-idle-delay 0.1))))
-
-(provide 'setup-hledger)
-
-;;; setup-hledger.el ends here
-#+END_SRC
+#+END_SR
 ** setup-hugo.el
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-hugo.el
 ;;; setup-hugo.el
