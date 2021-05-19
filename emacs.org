@@ -7394,6 +7394,12 @@ This is an `:around' advice for `yas--make-control-overlay'."
             (From
              (format "%s <%s>" user-full-name
                      (bonz-common-auth-get-field "gmail" :user)))))
+          (".*strathmore.*"
+           (posting-style
+            (gcc "nnmaildir+gmail:Sent")
+            (From
+             (format "%s <%s>" user-full-name
+                     "bonface.kilyungi@strathmore.edu"))))
           (".*juza.*"
            (posting-style               ; Uses default name+mail
             (gcc "nnmaildir+juza:Sent")
@@ -7434,6 +7440,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
   (setq gnus-secondary-select-methods
         '((nntp "news.gwene.org")
           (nnmaildir "fastmail" (directory "~/.mail/fastmail/"))
+          (nnmaildir "strathmore" (directory "~/.mail/strathmore/"))
           (nnmaildir "gmail" (directory "~/.mail/gmail/"))
           (nnmaildir "juza" (directory "~/.mail/juza/"))))
   (setq gnus-gcc-mark-as-read t)
