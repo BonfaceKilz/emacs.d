@@ -7767,6 +7767,29 @@ Slave :juza-local:
 Patterns *
 Create Both
 SyncState *
+
+# Strathmore Gmail account
+IMAPAccount strathmore
+Host imap.gmail.com
+User bonface.kilyungi@strathmore.edu
+PassCmd "gpg2 -q --for-your-eyes-only --decrypt ~/.authinfo.gpg | awk -F ' ' '/strathmore/ { print $6; exit; }'"
+SSLType IMAPS
+CertificateFile /home/bonface/.guix-profile/etc/ssl/certs/ca-certificates.crt
+
+IMAPStore strathmore-remote
+Account strathmore
+
+MaildirStore strathmore-local
+Subfolders verbatim
+Path ~/.mail/strathmore/
+Inbox ~/.mail/strathmore/Inbox
+
+Channel strathmore
+Master :strathmore-remote:
+Slave :strathmore-local:
+Patterns *
+Create Both
+SyncState *
 #+END_SRC
 
 #+BEGIN_SRC text :tangle ~/.config/systemd/user/mbsync.service :noweb yes :mkdirp yes
