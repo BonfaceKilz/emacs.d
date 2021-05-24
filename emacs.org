@@ -4907,8 +4907,8 @@ _h_   _l_   _o_k        _y_ank
   (setq hledger-input-buffer-height 20)
   ;; :hook ((hledger-show-new-balances-hook . hledger-input-post-commit-hook)
   ;;       (auto-fill-mode-hook . hledger-input-mode-hook)
-  ;;       (bonz/make-company-delay-hook . hledger-input-mode-hook)
-))
+  ;;       (bonz/make-company-delay-hook . hledger-input-mode-hook))
+  )
 
 (provide 'setup-hledger)
 
