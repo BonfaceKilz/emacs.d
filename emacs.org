@@ -4831,7 +4831,7 @@ _h_   _l_   _o_k        _y_ank
 ;;; setup-hledger.el
 
 (use-package hledger-mode
- :ensure
+  :ensure
   :mode ("\\.journal\\'" "\\.hledger\\'")
   :preface
   (defun hledger/next-entry ()
@@ -4857,26 +4857,26 @@ _h_   _l_   _o_k        _y_ank
 
   (defun bonz/ledger-with-timer ()
     (run-with-timer 1
-		    nil
-		    (lambda ()
-		      (when (equal hledger-last-run-command
-				   "balancesheet")
-			;; highlight frequently changing accounts
-			(highlight-regexp "^.*\\(Ksh\\|Expense\\).*$")
-			(highlight-regexp "^.*Liability*$"
-					  'hledger-warning-face)))))
+                    nil
+                    (lambda ()
+                      (when (equal hledger-last-run-command
+                                   "balancesheet")
+                        ;; highlight frequently changing accounts
+                        (highlight-regexp "^.*\\(Ksh\\|Expense\\).*$")
+                        (highlight-regexp "^.*Liability*$"
+                                          'hledger-warning-face)))))
   :bind (("C-c j" . hledger-run-command)
-	 :map hledger-mode-map
-	 ("C-c e" . hledger-jentry)
-	 ("M-p" . hledger/prev-entry)
-	 ("M-n" . hledger/next-entry))
+         :map hledger-mode-map
+         ("C-c e" . hledger-jentry)
+         ("M-p" . hledger/prev-entry)
+         ("M-n" . hledger/next-entry))
   :init
   ;; Expanded account balances in the overall monthly report are
   ;; mostly noise for me and do not convey any meaningful information.
   (setq hledger-show-expanded-report nil)
   (when (boundp 'my-hledger-service-fetch-url)
     (setq hledger-service-fetch-url
-	  my-hledger-service-fetch-url))
+          my-hledger-service-fetch-url))
 
   :config
   (setq company-mode t)
@@ -4890,19 +4890,19 @@ _h_   _l_   _o_k        _y_ank
   :pin manual
   :load-path "packages/rest/hledger-mode/"
   :bind (("C-c e" . hledger-capture)
-	 :map hledger-input-mode-map
-	 ("C-c C-b" . popup-balance-at-point))
+         :map hledger-input-mode-map
+         ("C-c C-b" . popup-balance-at-point))
   :preface
   (defun popup-balance-at-point ()
     "Show balance for account at point in a popup."
     (interactive)
     (if-let ((account (thing-at-point 'hledger-account)))
-	(message (hledger-shell-command-to-string (format " balance -N %s "
-							  account)))
+        (message (hledger-shell-command-to-string (format " balance -N %s "
+                                                          account)))
       (message "No account at point")))
   (defun bonz/make-company-delay ()
-	      (make-local-variable 'company-idle-delay)
-	      (setq-local company-idle-delay 0.1))
+    (make-local-variable 'company-idle-delay)
+    (setq-local company-idle-delay 0.1))
   :config
   (setq hledger-input-buffer-height 20)
   ;; :hook ((hledger-show-new-balances-hook . hledger-input-post-commit-hook)
