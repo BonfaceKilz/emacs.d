@@ -6628,7 +6628,6 @@ This is an `:around' advice for `yas--make-control-overlay'."
   (setq org-agenda-skip-deadline-if-done t)
   (setq org-agenda-skip-scheduled-if-done t)
   (setq org-agenda-start-on-weekday nil)
-  (setq org-archive-location "%s_archive::* Archived Tasks")
   (setq org-catch-invisible-edits 'show)
   (setq org-clock-history-length 23)
   (setq org-clock-in-resume t)
