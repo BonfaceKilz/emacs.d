@@ -6980,8 +6980,6 @@ This is an `:around' advice for `yas--make-control-overlay'."
               (("C-c n i" . org-roam-insert))))
 
 (require 'time-stamp)
-
-(setq org-pomodoro-length 30)
 (add-hook 'write-file-functions 'time-stamp)
 
 
