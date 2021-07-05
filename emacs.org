@@ -7498,6 +7498,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
   (setq gnus-html-frame-width 80)
   (setq gnus-html-image-automatic-caching t)
   (setq gnus-inhibit-images t)
+  (setq mm-inline-large-images "resize")
   (setq gnus-max-image-proportion 0.7)
   (setq gnus-treat-display-smileys nil)
   (setq gnus-article-mode-line-format "%G %S %m")
