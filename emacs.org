@@ -6614,7 +6614,9 @@ This is an `:around' advice for `yas--make-control-overlay'."
       "
     `(,shortcut ,description entry
                 (file+headline org-default-notes-file
-                               ,(concat heading "\n#+CATEGORY: " category))
+                               ,(concat heading "")
+                               ;; ,(concat heading "\n#+CATEGORY: " category)
+                               )
                 , (concat "*" (unless no-todo " TODO") " %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n\n")
                 :empty-lines 1))
   (setq alert-default-style 'libnotify)
