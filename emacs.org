@@ -6874,6 +6874,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
         `(
           ,(my/make/org-capture-template "g" "Tasks, Genenetwork")
           ,(my/make/org-capture-template "s" "Tasks, Strathmore")
+          ,(my/make/org-capture-template "d" "Daily Programmer(Algorithms)")
           ,(my/make/org-capture-template "x" "Tasks, Guix")
           ,(my/make/org-capture-template "r" "Research")
           ,(my/make/org-capture-template "m" "Email")
