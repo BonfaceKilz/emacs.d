@@ -6941,6 +6941,10 @@ This is an `:around' advice for `yas--make-control-overlay'."
 
   (add-to-list 'org-agenda-custom-commands
                '("c" todo "DONE|ON_HOLD|CANCELLED" nil))
+
+  (add-to-list 'org-agenda-custom-commands
+               '("u" "unscheduled tasks" tags "-SCHEDULED={.+}/!+TODO|+STARTED|+WAITING"))
+
   (add-to-list 'org-agenda-custom-commands
                '("%" "Appointments" agenda* "Today's appointments"
                  ((org-agenda-span 1)
