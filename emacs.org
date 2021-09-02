@@ -6966,7 +6966,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
          ("C-c l" . org-store-link)
          ("C-c a" . org-agenda)
          ("C-c b" . org-switchb)
-         ("C-c c" . org-capture);; Tasks get a 25 minute count down timer
+         ("C-c c" . org-capture) ;; Tasks get a 25 minute count down timer
          :map org-mode-map
          ("C-c C-m" . helm-org-rifle)
          ("C-;" . avy-goto-char)
