@@ -7087,7 +7087,6 @@ This is an `:around' advice for `yas--make-control-overlay'."
 
 (use-package deft
   :ensure
-  :after org
   :custom
   (deft-recursive t)
   (deft-use-filter-string-for-filename t)
@@ -7126,8 +7125,6 @@ This is an `:around' advice for `yas--make-control-overlay'."
 
 (use-package org-roam
   :ensure
-  :hook
-  (after-init . org-roam-mode)
   :custom
   (org-roam-directory "~/Self/org-roam/")
   :config
