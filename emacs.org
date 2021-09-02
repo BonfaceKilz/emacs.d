@@ -6479,6 +6479,11 @@ This is an `:around' advice for `yas--make-control-overlay'."
   ;; update diff-hl
   (global-diff-hl-mode))
 
+(use-package magit-patch-changelog :ensure)
+
+(with-eval-after-load 'magit
+    (require 'magit-patch-changelog))
+
 (require 'magit-git)
 (defun my/magit-check-file-and-popup ()
   "If the file is version controlled with git
