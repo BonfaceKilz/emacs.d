@@ -7193,7 +7193,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
 
 
 ;; allow for export=>beamer by placing
-
+(require 'ox-beamer)
 ;; #+LaTeX_CLASS: beamer in org files
 (unless (boundp 'org-export-latex-classes)
   (setq org-export-latex-classes nil))
