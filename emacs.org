@@ -3365,22 +3365,6 @@ instead."
   ("b" dumb-jump-back "Back")
   ("x" dumb-jump-go-prefer-external-other-window "Go external other window"))
 
-(defhydra hydra-roam (:color teal
-			     :hint nil)
-  "
-  _f_:ind file  _i_:nsert  _I_:ndex  _g_:raph
-  _c_:apture  _s_:erver
-  "
-  ("q" nil "quit")
-  ("f" org-roam-find-file)
-  ("i" org-roam-insert)
-  ("I" org-roam-jump-to-index)
-  ("g" org-roam-graph)
-  ("c" org-roam-capture)
-  ("s" org-roam-server-mode))
-
-(global-set-key (kbd "C-c r") 'hydra-roam/body)
-
 (defhydra hydra-ide (:color teal
 			    :hint nil)
   ("q" nil "quit")
@@ -7084,28 +7068,6 @@ This is an `:around' advice for `yas--make-control-overlay'."
 
 (use-package el-patch :ensure)
 
-(use-package deft
-  :ensure
-  :custom
-  (deft-recursive t)
-  (deft-use-filter-string-for-filename t)
-  (deft-default-extension "org")
-  (deft-directory "~/Self/org-roam/")
-  :config/el-patch
-  (defun deft-parse-title (file contents)
-    "Parse the given FILE and CONTENTS and determine the title.
-  If `deft-use-filename-as-title' is nil, the title is taken to
-  be the first non-empty line of the FILE.  Else the base name of the FILE is
-  used as title."
-    (el-patch-swap (if deft-use-filename-as-title
-                       (deft-base-filename file)
-                     (let ((begin (string-match "^.+$" contents)))
-                       (if begin
-                           (funcall deft-parse-title-function
-                                    (substring contents begin (match-end 0))))))
-                   (org-roam--get-title-or-slug file))))
-
-
 (use-package org-download
   :after org
   :bind
@@ -7113,13 +7075,6 @@ This is an `:around' advice for `yas--make-control-overlay'."
         (("s-Y" . org-download-screenshot)
          ("s-y" . org-download-yank))))
 
-(use-package org-fc
-  :ensure
-  :straight (org-fc :type git :host github :repo "l3kn/org-fc")
-  :custom
-  (org-fc-directories '("~/Self/org-roam/")))
-
-(global-set-key (kbd "C-c f") 'org-fc-hydra/body)
 (setq org-journal-dir "/home/bonface/Self/org/journal/")
 
 (use-package org-roam
