@@ -7802,6 +7802,19 @@ EXPERIMENTAL"
   (setq ebdb-mail-avoid-redundancy nil)
   (setq ebdb-complete-mail-allow-cycling 3))
 
+(setq gnus-message-archive-method '(nnml ""))
+(setq gnus-message-archive-group
+      '((lambda (x)
+          (cond
+           ;; Store personal mail messages in the same group I started out in
+           ((string-match "nnmaildir*" group) group)
+           ;; I receive a copy of all messages I send to a list, so
+           ;; there's no need to archive
+           ((string-match "nntp*" group) nil)
+           ;; Store everything else in misc until I can sort it out
+           (t "mail.misc")))))
+(add-hook 'message-sent-hook 'gnus-score-followup-thread)
+
 (provide 'setup-email)
 #+END_SRC
 ** Password                                                           :crypt:
