@@ -7514,7 +7514,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
   (add-to-list 'nnir-imap-search-arguments '("gmail" . "X-GM-RAW"))
   (setq gnus-parameters
         '((".*"                         ; fallback option
-           (gcc "nnmaildir+fastmail:Sent")
+           (gcc "nnmaildir+fastmail:Sent, nnmaildir+fastmail:Inbox")
            (posting-style
             (From
              (format "%s <%s>" user-full-name
@@ -7527,13 +7527,13 @@ This is an `:around' advice for `yas--make-control-overlay'."
                      (bonz-common-auth-get-field "gmail" :user)))))
           (".*strathmore.*"
            (posting-style
-            (gcc "nnmaildir+gmail:Sent")
+            (gcc "nnmaildir+strathmore:Sent, nnmaildir+strathmore:Inbox")
             (From
              (format "%s <%s>" user-full-name
                      "bonface.kilyungi@strathmore.edu"))))
           (".*juza.*"
            (posting-style               ; Uses default name+mail
-            (gcc "nnmaildir+juza:Sent")
+            (gcc "nnmaildir+juza:Sent, nnmaildir+juza:Inbox")
             (signature "SWE |  Juza School\nWebsite: www.juzaschool.com")
             (From
              (format "%s <%s>" user-full-name
