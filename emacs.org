@@ -7802,7 +7802,12 @@ EXPERIMENTAL"
   (setq ebdb-mail-avoid-redundancy nil)
   (setq ebdb-complete-mail-allow-cycling 3))
 
-(setq gnus-message-archive-method '(nnml ""))
+(setq gnus-message-archive-method
+      '(nnfolder "archive"
+                 (nnfolder-inhibit-expiry t)
+                 (nnfolder-active-file "~/.mail/sent-mail/active")
+                 (nnfolder-directory "~/.mail/sent-mail/")))
+
 (setq gnus-message-archive-group
       '((lambda (x)
           (cond
