@@ -6703,7 +6703,10 @@ This is an `:around' advice for `yas--make-control-overlay'."
 (use-package ob-elm :ensure)
 (use-package ob-rust :ensure)
 (use-package ob-go :ensure)
-(use-package ox-gemini :ensure)
+(use-package ox-gemini :ensure
+  :config
+  (eval-after-load "org"
+    '(require 'ox-gemini nil t)))
 (use-package  ob-restclient :ensure)
 (use-package toc-org
   :ensure
