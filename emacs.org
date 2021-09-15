@@ -2504,6 +2504,7 @@ With \\[universal-argument] toggle the display of the window."
   (scroll-bar-mode -1)
   (show-paren-mode 1)
   (tool-bar-mode -1)
+  (tab-bar-mode 1)
   (transient-mark-mode 1)
   (winner-mode 1) ; Undo/redo window configuration with C-c <left>/<right>
   (doom-modeline-mode)
