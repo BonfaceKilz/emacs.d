@@ -4291,7 +4291,6 @@ _h_   _l_   _o_k        _y_ank
 ;;;;;;;;;;;;;;;;
 ;; Appearance ;;
 ;;;;;;;;;;;;;;;;
-(global-set-key (kbd "C-x t") 'my/toggle-theme)
 (global-set-key (kbd "C-+") 'text-scale-increase)
 (global-set-key (kbd "C--") 'text-scale-decrease)
 
