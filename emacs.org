@@ -6862,7 +6862,6 @@ This is an `:around' advice for `yas--make-control-overlay'."
   (add-hook 'org-mode-hook '(lambda ()
                               (local-set-key (kbd "<return>") 'org-return-indent))
             (local-set-key (kbd "C-M-<return>") 'electric-indent-just-newline))
-  (add-hook 'org-clock-in-hook 'org-pomodoro)
   (eval-after-load "org-present"
     '(progn
        (add-hook 'org-present-mode-hook
