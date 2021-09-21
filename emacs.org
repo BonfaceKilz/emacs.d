@@ -1879,7 +1879,8 @@ when that buffer was created) URL
 
 (use-package vterm)
 
-(use-package racket-mode :ensure t)
+(use-package racket-mode :ensure t
+  :hook ((racket-xp-hook . racket-mode)))
 
 (use-package vterm-toggle
   :ensure
