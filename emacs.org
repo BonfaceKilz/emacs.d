@@ -2594,6 +2594,14 @@ With \\[universal-argument] toggle the display of the window."
   (setq w3m-fill-column 50)
   (setq w3m-search-default-engine "duckduckgo")
   (setq x-select-enable-clipboard t)
+  (setq world-clock-list
+        '(("CET-1CDT" "Amsterdam/ Paris")
+          ("CDT+5" "Memphis")
+          ("EST5EDT" "New York/ Miami")
+          ("GMT0BST" "London")
+          ("IST-5:30" "Bangalore")
+          ("PST8PDT" "Seattle")
+          ("JST-9" "Tokyo")))
   (setq-default indicate-empty-lines t)
   :hook
   (;;(geiser-mode . scheme-mode-hook)
