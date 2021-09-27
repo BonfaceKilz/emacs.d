@@ -2846,6 +2846,8 @@ instead."
   ;; I have to use the guile2.2 binary because of Fedora
   (setq geiser-guile-binary "guile"))
 
+(use-package writeroom-mode :ensure t)
+
 ;; Aliases
 (defalias 'yes-or-no-p 'y-or-n-p) ; y or n is enough
 (defalias 'list-buffers 'ibuffer) ; always use ibuffer
