@@ -4726,6 +4726,7 @@ _h_   _l_   _o_k        _y_ank
           ("https://blog.aaronbieber.com/posts/index.xml")
           ("https://www.arp242.net/feed.xml")
           ("https://blog.khinsen.net/feeds/all.rss.xml")
+          ("https://drewdevault.com/blog/index.xml")
           ("https://jao.io/blog/rss.xml" emacs)
           ("https://emacsredux.com/atom.xml" emacs)
           ("http://emacsrocks.com/atom.xml" emacs)
