@@ -2548,6 +2548,7 @@ With \\[universal-argument] toggle the display of the window."
   
   (define-key ac-mode-map (kbd "M-TAB") 'auto-complete)
   (set-default 'indent-tabs-mode nil)
+  (setq default-input-method 'TeX)
   (setq auto-revert-verbose nil)
   (setq column-number-mode t)
   (setq size-indication-mode t)
