@@ -4754,7 +4754,6 @@ _h_   _l_   _o_k        _y_ank
           ("https://www.foxtrot.com/feed/" comic)
           ("http://feeds.feedburner.com/PoorlyDrawnLines" comic)
           ("https://www.youtube.com/feeds/videos.xml?channel_id=UC0uTPqBCFIpZxlz_Lv1tk_g" emacs)
-          "http://feeds.feedburner.com/HighScalability"))
   (defun actuator-elfeed-show-all ()
     (interactive)
     (bookmark-maybe-load-default-file)
