@@ -7822,7 +7822,6 @@ EXPERIMENTAL"
 
 (use-package ebdb
   :ensure
-  :pin gnu                              ; Prefer ELPA version
   :config
   (use-package ebdb-gnus)
   (use-package ebdb-message)
