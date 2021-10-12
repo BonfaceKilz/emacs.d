@@ -4754,6 +4754,27 @@ _h_   _l_   _o_k        _y_ank
           ("https://www.foxtrot.com/feed/" comic)
           ("http://feeds.feedburner.com/PoorlyDrawnLines" comic)
           ("https://www.youtube.com/feeds/videos.xml?channel_id=UC0uTPqBCFIpZxlz_Lv1tk_g" emacs)
+          ;; Coding Tech
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCtxCXg-UvSnTKPOzLH4wJaQ")
+          ;; Colors
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UC2Qw1dzXDBAZPwS7zm37g8g")
+          ;; John Kitchin
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCQp2VLAOlvq142YN3JO3y8w")
+          ;; Jambu Kize
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCR3DTCpk9b-EoMzCicyAfLg")
+          ;; Arjan codes
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCVhQ2NnY5Rskt6UjCUkJ_DA")
+          ;; Soviet Reliable
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UC3Lhz4sPFPbH2TDtTxmNiQg")
+          ;; The Futur
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UC-b3c7kxa5vU-bnmaROgvog")
+          ;; System crafters
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCAiiOTio8Yu69c3XnR7nQBQ")
+          ;; Psych2go
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCkJEpR7JmS36tajD34Gp4VA")
+          ;; Last week tonight
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UC3XTzVzaHQEd30rQbuvCtTQ")
+          ))
   (defun actuator-elfeed-show-all ()
     (interactive)
     (bookmark-maybe-load-default-file)
