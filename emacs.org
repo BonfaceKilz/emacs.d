@@ -7217,8 +7217,8 @@ This is an `:around' advice for `yas--make-control-overlay'."
 (require 'package)
 
 ;; Internet repos for new packages
-(setq package-archives '(("org"       . "https://orgmode.org/elpa/")
-                         ("gnu"       . "http://elpa.gnu.org/packages/")
+(setq package-archives '(("nongnu"    . "https://elpa.nongnu.org/nongnu/")
+                         ("elpa"      . "http://elpa.gnu.org/packages/")
                          ("melpa"     . "https://melpa.org/packages/")))
 ;; Initialise the packages, avoiding a re-initialisation.
 (unless (bound-and-true-p package--initialized)
