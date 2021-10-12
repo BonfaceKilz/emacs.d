@@ -7580,14 +7580,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
             (gcc "nnmaildir+strathmore:Sent, nnmaildir+strathmore:Inbox")
             (From
              (format "%s <%s>" user-full-name
-                     "bonface.kilyungi@strathmore.edu"))))
-          (".*juza.*"
-           (posting-style               ; Uses default name+mail
-            (gcc "nnmaildir+juza:Sent, nnmaildir+juza:Inbox")
-            (signature "SWE |  Juza School\nWebsite: www.juzaschool.com")
-            (From
-             (format "%s <%s>" user-full-name
-                     "bonface.munyoki@juzaafrica.org"))))))
+                     "bonface.kilyungi@strathmore.edu"))))))
 
   (defun my-gnus-group-list-subscribed-groups ()
     "List all subscribed groups with or without un-read messages"
@@ -7622,8 +7615,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
         '((nntp "news.gwene.org")
           (nnmaildir "fastmail" (directory "~/.mail/fastmail/"))
           (nnmaildir "strathmore" (directory "~/.mail/strathmore/"))
-          (nnmaildir "gmail" (directory "~/.mail/gmail/"))
-          (nnmaildir "juza" (directory "~/.mail/juza/"))))
+          (nnmaildir "gmail" (directory "~/.mail/gmail/"))))
   (setq gnus-gcc-mark-as-read t)
   (setq gnus-agent t)
   (setq gnus-novice-user t)
