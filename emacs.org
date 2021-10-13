@@ -4733,6 +4733,8 @@ _h_   _l_   _o_k        _y_ank
           ("https://eli.thegreenplace.net/feeds/all.atom.xml")
           ("https://emacsair.me/feed.xml")
           ("https://lwn.net/headlines/rss")
+          ("https://upbookclub.com/latest.rss")
+          ("https://blog.tecosaur.com/tmio/rss.xml")
           ("https://changelog.com/podcast/feed" podcast)
           ("https://xkcd.com/atom.xml" comic)
           ("https://jao.io/blog/rss.xml" emacs)
