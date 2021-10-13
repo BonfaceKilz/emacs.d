@@ -2222,9 +2222,6 @@ In that case, insert the number."
               (setq lsp-ui-doc-border (face-foreground 'font-lock-comment-face nil t))
               (set-face-background 'lsp-ui-doc-background (face-background 'tooltip nil t)))))
 
-
-(use-package lsp-haskell :ensure)
-
 (use-package lsp-jedi
   :ensure t
   :config
