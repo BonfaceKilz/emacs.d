@@ -3581,7 +3581,6 @@ T - tag prefix
   ("/" ibuffer-filter-disable "disable")
   ("b" hydra-ibuffer-main/body "back" :color blue))
 
-(define-key ibuffer-mode-map "." 'hydra-ibuffer-main/body)
 
 
 (define-key Info-mode-map (kbd "?") #'hydra-info/body)
