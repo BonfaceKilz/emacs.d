@@ -2278,12 +2278,6 @@ In that case, insert the number."
   (setq nov-shr-rendering-functions (append nov-shr-rendering-functions shr-external-rendering-functions))
   :hook ((nov-mode-hook . bonz/set-50-char)))
 
-(use-package leetcode :ensure
-  :config
-  (setq leetcode-prefer-language "python3")
-  (setq leetcode-save-solutions t)
-  (setq leetcode-directory "~/leetcode"))
-
 (use-package org-make-toc :ensure)
 
 (use-package markdown-mode+
