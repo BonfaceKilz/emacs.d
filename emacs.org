@@ -2793,14 +2793,11 @@ instead."
 
 (use-package py-autopep8 :ensure)
 
-(use-package elpy
-  :ensure
-  :defer t
-  :init
-  (advice-add 'python-mode :before 'elpy-enable)
-  :config
-  (setq python-shell-interpreter "/usr/bin/python")
-  (setq python-shell-interpreter-args "-i"))
+;; (use-package elpy
+;;   :ensure
+;;   :config
+;;   (setq python-shell-interpreter "/home/bonface/.guix-profile/bin/python")
+;;   (setq python-shell-interpreter-args "-i"))
 
 ;; I've never used django
 ;; (use-package django-mode :ensure)
@@ -6508,11 +6505,11 @@ This is an `:around' advice for `yas--make-control-overlay'."
 ;;; setup-slime.el
 ;; Set your lisp system and, optionally, some contribs
 ;; (setq inferior-lisp-program "/usr/bin/sbcl")
-(use-package slime :ensure
-  :config
-  (setq inferior-lisp-program "clisp")
-  (setq slime-contribs '(slime-fancy))
-  (slime-setup))
+;; (use-package slime :ensure
+;;   :config
+;;   (setq inferior-lisp-program "clisp")
+;;   (setq slime-contribs '(slime-fancy))
+;;   (slime-setup))
 
 (provide 'setup-slime)
 
