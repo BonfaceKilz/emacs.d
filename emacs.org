@@ -5916,6 +5916,11 @@ This is an `:around' advice for `yas--make-control-overlay'."
   :hook
   ((toc-org-mode . org-mode-hook)))
 
+(use-package org-books
+  :ensure
+  :config
+  (setq org-books-file "/home/bonface/Self/org/books.org"))
+
 (use-package magit-org-todos
   :ensure
   :config
