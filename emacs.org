@@ -4721,6 +4721,7 @@ _h_   _l_   _o_k        _y_ank
           ("https://lwn.net/headlines/rss")
           ("https://upbookclub.com/latest.rss")
           ("https://blog.tecosaur.com/tmio/rss.xml")
+          ("https://danluu.com/atom.xml")
           ("https://changelog.com/podcast/feed" podcast)
           ("https://xkcd.com/atom.xml" comic)
           ("https://jao.io/blog/rss.xml" emacs)
