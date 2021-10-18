@@ -4747,25 +4747,25 @@ _h_   _l_   _o_k        _y_ank
           ("http://feeds.feedburner.com/PoorlyDrawnLines" comic)
           ("https://www.youtube.com/feeds/videos.xml?channel_id=UC0uTPqBCFIpZxlz_Lv1tk_g" emacs)
           ;; Coding Tech
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCtxCXg-UvSnTKPOzLH4wJaQ")
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCtxCXg-UvSnTKPOzLH4wJaQ" youtube)
           ;; Colors
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UC2Qw1dzXDBAZPwS7zm37g8g")
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UC2Qw1dzXDBAZPwS7zm37g8g" youtube)
           ;; John Kitchin
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCQp2VLAOlvq142YN3JO3y8w")
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCQp2VLAOlvq142YN3JO3y8w" youtube)
           ;; Jambu Kize
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCR3DTCpk9b-EoMzCicyAfLg")
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCR3DTCpk9b-EoMzCicyAfLg" youtube)
           ;; Arjan codes
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCVhQ2NnY5Rskt6UjCUkJ_DA")
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCVhQ2NnY5Rskt6UjCUkJ_DA" youtube)
           ;; Soviet Reliable
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UC3Lhz4sPFPbH2TDtTxmNiQg")
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UC3Lhz4sPFPbH2TDtTxmNiQg" youtube)
           ;; The Futur
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UC-b3c7kxa5vU-bnmaROgvog")
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UC-b3c7kxa5vU-bnmaROgvog" youtube)
           ;; System crafters
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCAiiOTio8Yu69c3XnR7nQBQ")
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCAiiOTio8Yu69c3XnR7nQBQ" youtube)
           ;; Psych2go
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCkJEpR7JmS36tajD34Gp4VA")
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCkJEpR7JmS36tajD34Gp4VA" youtube)
           ;; Last week tonight
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UC3XTzVzaHQEd30rQbuvCtTQ")
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UC3XTzVzaHQEd30rQbuvCtTQ" youtube)
           ))
   (defun actuator-elfeed-show-all ()
     (interactive)
