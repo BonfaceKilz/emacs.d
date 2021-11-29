@@ -2605,7 +2605,8 @@ With \\[universal-argument] toggle the display of the window."
    (nolim . web-mode-hook)
    (php-enable-psr2-coding-style . php-mode-hook)
    (php-refactor-mode . php-mode-hook))
-  :bind (("C-g" . keyboard-quit-strong)))
+  :bind (("C-g" . keyboard-quit-strong)
+         ("s-n" . rename-buffer)))
 
 (use-package minibuffer
   :config
