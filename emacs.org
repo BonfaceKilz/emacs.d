@@ -2888,6 +2888,8 @@ instead."
 (defalias 'vlm 'visual-line-mode)
 (defalias 'ln 'global-display-line-numbers-mode)
 
+(setq org-latex-pdf-process (list "latexmk -f -pdf -interaction=nonstopmode -output-directory=%o %f"))
+
 (provide 'sane-defaults)
 ;;; sane-defaults.el ends here
 #+END_SRC
