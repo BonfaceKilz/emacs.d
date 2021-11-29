@@ -6280,10 +6280,13 @@ This is an `:around' advice for `yas--make-control-overlay'."
                 (in-mode . "gnus-article-mode")
                 (in-mode . "message-mode")))))
   (add-to-list 'org-capture-templates
-               '("B" "Book" entry (file "/home/bonface/Self/org/books.org")
+               '("f" "Elfeed" entry (file "/home/bonface/Self/org/elfeed.org")
+                 "* %a\n%U" :empty-lines 1))
+  (add-to-list 'org-capture-templates
+               '("K" "Book" entry (file "/home/bonface/Self/org/books.org")
                  "* %^{TITLE}\n:PROPERTIES:\n:ADDED: %<[%Y-%02m-%02d]>\n:END:%^{AUTHOR}p\n%?" :empty-lines 1))
   (add-to-list 'org-capture-templates
-               '("b" "Book log" item (function org-books-visit-book-log)
+               '("k" "Book log" item (function org-books-visit-book-log)
                  "- %U %?" :prepend t))
   (org-clock-persistence-insinuate)
   (org-babel-do-load-languages
