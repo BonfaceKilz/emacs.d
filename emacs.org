@@ -6306,6 +6306,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
      (js . t)
      (python . t)
      (restclient . t)
+     (R . t)
      (sql . t)
      (C . t)))
 
