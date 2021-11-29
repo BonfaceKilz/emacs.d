@@ -4953,6 +4953,97 @@ _h_   _l_   _o_k        _y_ank
   :custom
   (elfeed-search-filter "@1-week-ago +unread "))
 
+(require 'elfeed)
+
+(defface newsletter-elfeed-entry
+  '((t :foreground "thistle1"))
+  "Marks a newsletter Elfeed entry."
+  :group 'bonz-elfeed)
+
+(push '(newsletter newsletter-elfeed-entry)
+      elfeed-search-face-alist)
+
+(defface misc-elfeed-entry
+  '((t :foreground "tan1"))
+  "Marks a misc Elfeed entry."
+  :group 'bonz-elfeed)
+
+(push '(misc misc-elfeed-entry)
+      elfeed-search-face-alist)
+
+(defface blog-elfeed-entry
+  '((t :foreground "khaki"))
+  "Marks a blog Elfeed entry."
+  :group 'bonz-elfeed)
+
+(push '(blog blog-elfeed-entry)
+      elfeed-search-face-alist)
+
+(defface news-elfeed-entry
+  '((t :foreground "DarkOrange1"))
+  "Marks a news Elfeed entry."
+  :group 'bonz-elfeed)
+
+(push '(news news-elfeed-entry)
+      elfeed-search-face-alist)
+
+(defface github-elfeed-entry
+  '((t :foreground "DeepSkyBlue"))
+  "Marks a github Elfeed entry."
+  :group 'bonz-elfeed)
+
+(push '(github github-elfeed-entry)
+      elfeed-search-face-alist)
+
+(defface python-elfeed-entry
+  '((t :foreground "LawnGreen"))
+  "Marks a python Elfeed entry."
+  :group 'bonz-elfeed)
+
+(push '(python python-elfeed-entry)
+      elfeed-search-face-alist)
+
+(defface emacs-elfeed-entry
+  '((t :foreground "NavajoWhite2"))
+  "Marks an Emacs Elfeed entry."
+  :group 'bonz-elfeed)
+
+(push '(emacs emacs-elfeed-entry)
+      elfeed-search-face-alist)
+
+(defface youtube-elfeed-entry
+  '((t :foreground "red1"))
+  "Marks a YouTube Elfeed entry."
+  :group 'bonz-elfeed)
+
+(push '(youtube youtube-elfeed-entry)
+      elfeed-search-face-alist)
+
+(defface reddit-elfeed-entry
+  '((t :foreground "IndianRed1"))
+  "Marks a Reddit Elfeed entry."
+  :group 'bonz-elfeed)
+
+(push '(reddit reddit-elfeed-entry)
+      elfeed-search-face-alist)
+
+
+;; From http://pragmaticemacs.com/emacs/star-and-unstar-articles-in-elfeed/
+(defalias 'elfeed-toggle-star
+  (elfeed-expose #'elfeed-search-toggle-all 'star))
+
+(eval-after-load 'elfeed-search
+  '(define-key elfeed-search-mode-map (kbd "m") 'elfeed-toggle-star))
+
+;; face for starred articles
+(defface elfeed-search-star-title-face
+  '((t :foreground "magenta"))
+  "Marks a starred Elfeed entry.")
+
+(push '(star elfeed-search-star-title-face) elfeed-search-face-alist)
+
+(run-at-time 180 1800 (lambda () (unless elfeed-waiting (elfeed-update))))
+
 (provide 'setup-elfeed)
 
   ;;; end setup-elfeed.el
