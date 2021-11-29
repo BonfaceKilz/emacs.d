@@ -4859,6 +4859,8 @@ _h_   _l_   _o_k        _y_ank
     (interactive)
     (mark-whole-buffer)
     (elfeed-search-untag-all-unread))
+  (setq elfeed-search-title-max-width 150)
+  (setq elfeed-search-trailing-width 30)
 
   :bind
   (("C-x w" . actuator-elfeed-load-db-and-open)
