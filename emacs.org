@@ -4854,6 +4854,7 @@ _h_   _l_   _o_k        _y_ank
     (quit-window)
     (garbage-collect)
     (jump-to-register :elfeed-fullscreen))
+
   (defun actuator-elfeed-mark-all-as-read ()
     "Mark all feeds in search as read. Taken from Mike Zamansky"
     (interactive)
@@ -4862,12 +4863,92 @@ _h_   _l_   _o_k        _y_ank
   (setq elfeed-search-title-max-width 150)
   (setq elfeed-search-trailing-width 30)
 
+  (defun email-elfeed-entry ()
+    "Capture the elfeed entry and put it in an email."
+    (interactive)
+    (let* ((title (elfeed-entry-title elfeed-show-entry))
+           (url (elfeed-entry-link elfeed-show-entry))
+           (content (elfeed-entry-content elfeed-show-entry))
+           (entry-id (elfeed-entry-id elfeed-show-entry))
+           (entry-link (elfeed-entry-link elfeed-show-entry))
+           (entry-id-str (concat (car entry-id)
+                                 "|"
+                                 (cdr entry-id)
+                                 "|"
+                                 url)))
+      (compose-mail)
+      (message-goto-subject)
+      (insert title)
+      (message-goto-body)
+      (insert (format "You may find this interesting:
+%s\n\n" url))
+      (insert (elfeed-deref content))
+
+      (message-goto-body)
+      (while (re-search-forward "<br>" nil t)
+        (replace-match "\n\n"))
+
+      (message-goto-body)
+      (while (re-search-forward "<.*?>" nil t)
+        (replace-match ""))
+
+      (message-goto-body)
+      (fill-region (point) (point-max))
+
+      (message-goto-to)))
+
+  (defun org-elfeed-open (path)
+    "Open an elfeed link to PATH."
+    (cond
+     ((string-match "^entry-id:\\(.+\\)" path)
+      (let* ((entry-id-str (substring-no-properties (match-string 1 path)))
+             (parts (split-string entry-id-str "|"))
+             (feed-id-str (car parts))
+             (entry-part-str (cadr parts))
+             (entry-id (cons feed-id-str entry-part-str))
+             (entry (elfeed-db-get-entry entry-id)))
+        (elfeed-show-entry entry)))
+     (t (error "%s %s" "elfeed: Unrecognised link type - " path))))
+
+  (defun org-elfeed-store-link ()
+    "Store a link to an elfeed entry."
+    (interactive)
+    (cond
+     ((eq major-mode 'elfeed-show-mode)
+      (let* ((title (elfeed-entry-title elfeed-show-entry))
+             (url (elfeed-entry-link elfeed-show-entry))
+             (entry-id (elfeed-entry-id elfeed-show-entry))
+             (entry-id-str (concat (car entry-id)
+                                   "|"
+                                   (cdr entry-id)
+                                   "|"
+                                   url))
+             (org-link (concat "elfeed:entry-id:" entry-id-str)))
+        (org-link-store-props
+         :description title
+         :type "elfeed"
+         :link org-link
+         :url url
+         :entry-id entry-id)
+        org-link))
+     (t nil)))
+
+  (org-link-set-parameters
+   "elfeed"
+   :follow 'org-elfeed-open
+   :store 'org-elfeed-store-link)
+
+  (add-hook 'org-store-link-functions
+            'org-elfeed-entry-store-link)
   :bind
   (("C-x w" . actuator-elfeed-load-db-and-open)
+   :map elfeed-show-mode-map
+   ("c" .  (lambda () (interactive) (org-capture nil "f")))
    :map elfeed-search-mode-map
    ("A" . actuator-elfeed-show-all)
    ("U" . actuator-elfeed-show-unread)
    ("q" . actuator-elfeed-save-db-and-bury)
+   ("M" . email-elfeed-entry)
    ("R" . actuator-elfeed-mark-all-as-read))
   :custom
   (elfeed-search-filter "@1-week-ago +unread "))
