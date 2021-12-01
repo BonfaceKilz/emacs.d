@@ -4759,7 +4759,6 @@ _h_   _l_   _o_k        _y_ank
           ("http://rss.slashdot.org/slashdot/eqWf" news)
           ("https://hnrss.org/frontpage" news)
           ("https://lwn.net/headlines/rss" news)
-          ("https://www.bogleheads.org/rss/" news)
           ;; github
           ("https://github.com/genenetwork/genenetwork2/commits.atom" github)
           ("https://github.com/genenetwork/genenetwork3/commits.atom" github)
