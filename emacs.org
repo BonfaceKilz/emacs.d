@@ -6001,7 +6001,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
   (call-interactively 'clone-indirect-buffer)
   (org-narrow-to-element))
 
-(defun bh/is-project-p ()
+(defun bonz/is-project-p ()
   "Any task with a todo keyword subtask"
   (save-restriction
     (widen)
@@ -6017,7 +6017,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
             (setq has-subtask t))))
       (and is-a-task has-subtask))))
 
-(defun bh/is-task-p ()
+(defun bonz/is-task-p ()
   "Any task with a todo keyword and no subtask"
   (save-restriction
     (widen)
@@ -6040,10 +6040,10 @@ This is an `:around' advice for `yas--make-control-overlay'."
   (when (not (and (boundp 'org-capture-mode) org-capture-mode))
     (cond
      ((and (member (org-get-todo-state) (list "TODO" "WAITING" "ON_HOLD"))
-           (bh/is-task-p))
+           (bonz/is-task-p))
       "STARTED")
      ((and (member (org-get-todo-state) (list "TODO" "WAITING" "ON_HOLD"))
-           (bh/is-project-p))
+           (bonz/is-project-p))
       "STARTED"))))
 
 (defun pinentry-emacs (desc prompt ok error)
