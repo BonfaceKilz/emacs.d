@@ -6293,6 +6293,71 @@ This is an `:around' advice for `yas--make-control-overlay'."
          :map org-src-mode-map
          ("s-e" . org-edit-src-block)))
 
+(add-to-list 'org-agenda-custom-commands
+             '("R" . "Review" ))
+
+;; Common settings for all reviews
+(setq bonz/org-agenda-review-settings
+      '((org-agenda-show-all-dates t)
+        (org-agenda-start-with-log-mode t)
+        (org-agenda-start-with-clockreport-mode t)
+        (org-agenda-archives-mode t)
+        ;; I don't care if an entry was archived
+        (org-agenda-hide-tags-regexp
+         (concat org-agenda-hide-tags-regexp
+                 "\\|ARCHIVE"))))
+
+;; Common settings for all reviews
+(setq bonz/org-agenda-review-settings
+      '((org-agenda-show-all-dates t)
+        (org-agenda-start-with-log-mode t)
+        (org-agenda-start-with-clockreport-mode t)
+        (org-agenda-archives-mode t)
+        ;; I don't care if an entry was archived
+        (org-agenda-hide-tags-regexp
+         (concat org-agenda-hide-tags-regexp
+                 "\\|ARCHIVE"))
+      ))
+;; Show the agenda with the log turn on, the clock table show and
+;; archived entries shown.  These commands are all the same except for
+;; the time period.
+(add-to-list 'org-agenda-custom-commands
+             `("Rw" "Week in review"
+                agenda ""
+                ;; agenda settings
+                ,(append
+                  bonz/org-agenda-review-settings
+                  '((org-agenda-span 'week)
+                    (org-agenda-start-on-weekday 0)
+                    (org-agenda-overriding-header "Week in Review"))
+                  );; journal.org
+                ("/home/bonface/Self/org/review/week.html")))
+
+
+(add-to-list 'org-agenda-custom-commands
+             `("Rd" "Day in review"
+                agenda ""
+                ;; agenda settings
+                ,(append
+                  bonz/org-agenda-review-settings
+                  '((org-agenda-span 'day)
+                    (org-agenda-overriding-header "Day in Review"))
+                  )
+                ("/home/bonface/Self/org/review/day.html")))
+
+(add-to-list 'org-agenda-custom-commands
+             `("Rm" "Month in review"
+                agenda ""
+                ;; agenda settings
+                ,(append
+                  bonz/org-agenda-review-settings
+                  '((org-agenda-span 'month)
+                    (org-agenda-start-day "01")
+                    (org-read-date-prefer-future nil)
+                    (org-agenda-overriding-header "Month in Review"))
+                  )
+                ("/home/bonface/Self/org/review/month.html")))
+
 (use-package org-journal
   :bind (("C-c j" . org-journal-new-entry))
   :config
