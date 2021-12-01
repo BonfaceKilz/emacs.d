@@ -4712,6 +4712,8 @@ _h_   _l_   _o_k        _y_ank
   :config
   (setq elfeed-feeds
         '(;; Normal blogs
+          ("https://jnduli.co.ke/feeds/all.atom.xml" blog)
+          ("https://memo.barrucadu.co.uk/atom.xml" blog)
           ("https://castel.dev/rss.xml" blog)
           ("https://ambrevar.xyz/atom.xml" blog)
           ("http://feeds.feedburner.com/typepad/sethsmainblog" blog)
