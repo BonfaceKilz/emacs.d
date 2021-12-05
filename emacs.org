@@ -6213,7 +6213,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
         (:endgroup)
         ;; Off groups
         ("Print" . ?P) ("Buy" . ?B) ("Patch" . ?p) ("Bug" . ?b)))
-(setq org-agenda-compact-blocks t)
+(setq org-agenda-compact-blocks nil)
 
 ;; src: https://emacs.stackexchange.com/a/21128
 (defun my-org-confirm-babel-evaluate (lang body)
