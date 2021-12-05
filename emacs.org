@@ -6317,6 +6317,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
                     :strike-through t
                     :foreground "light gray")
 
+(require 'org-habit)
 
 (provide 'setup-org)
 ;;; setup-org.el ends here
