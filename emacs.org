@@ -6072,7 +6072,6 @@ This is an `:around' advice for `yas--make-control-overlay'."
          ("C-c c" . org-capture) ;; Tasks get a 25 minute count down timer
          :map org-mode-map
          ("C-c C-m" . helm-org-rifle)
-         ("C-;" . avy-goto-char)
          ("C-'" . avy-goto-char-timer)
          ("s-p" . org-babel-previous-src-block)
          ("s-n" . org-babel-next-src-block)
