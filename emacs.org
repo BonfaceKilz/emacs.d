@@ -5412,8 +5412,6 @@ This is an `:around' advice for `yas--make-control-overlay'."
 
 (define-key js2-mode-map (kbd "C-k") #'js2r-kill)
 
-(define-key js2-mode-map (kbd "M-j") (lambda (join-line -1)))
-
 (comment ;; avoid confusing shorthands
  ;; Use lambda for anonymous functions
  (font-lock-add-keywords
