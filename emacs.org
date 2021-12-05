@@ -2038,8 +2038,7 @@ In that case, insert the number."
 
 (use-package flyspell-correct
   :ensure
-  :after flyspell
-  :bind (:map flyspell-mode-map ("C-;" . flyspell-correct-wrapper)))
+  :after flyspell)
 
 (use-package flyspell-correct-helm
   :after flyspell-correct)
