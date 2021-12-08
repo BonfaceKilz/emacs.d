@@ -1063,24 +1063,6 @@ Position the cursor at its beginning, according to the current mode."
     (error (message "Invalid expression")
            (insert (current-kill 0)))))
 
-;;; Borrowed from: https://github.com/otijhuis/emacs.d/blob/master/config/custom-defuns.el
-(use-package avy-zap)
-(require 'avy-zap)
-
-(defun ot/avy-zap-to-char-save ()
-  "Zap to a character, but save instead of kill."
-  (interactive)
-  (save-excursion
-    (avy-zap-to-char)
-    (yank)))
-
-(defun ot/avy-zap-up-to-char-save ()
-  "Zap up to a character, but save instead of kill."
-  (interactive)
-  (save-excursion
-    (avy-zap-up-to-char)
-    (yank)))
-
 ;; Clojure
 (defun ot/reload-current-clj-ns (next-p)
   (interactive "P")
@@ -1211,126 +1193,6 @@ abort completely with `C-g'."
   (save-excursion
     (beginning-of-line)
     (looking-at-p "[^\\s\-]+\\s)")))
-
-;; Avy base movement macros/functions
-
-(defmacro ot/avy-here (pt command &rest body)
-  "Avy here"
-  (declare (indent 1)
-           (debug (form body)))
-  `(progn
-     (save-excursion
-       (goto-char ,pt)
-       (funcall ,command)
-       ,@body)
-     (yank)
-     (if (looking-at-p "[\\s_\|\\s(]")
-         (just-one-space))))
-
-(defun ot/avy-move-here (pt command)
-  "Move region from PT to PT after COMMAND to current location."
-  (ot/avy-here pt command
-               (kill-region pt (point))
-               (if (or (ot/current-line-empty-p)
-                       (ot/first-char-closing-pair-p))
-                   (join-line)
-                 (fixup-whitespace))))
-
-(defun ot/avy-copy-here (pt command)
-  "Copy region from PT to PT after COMMAND to current location"
-  (ot/avy-here pt command
-               (copy-region-as-kill pt (point))))
-
-(defvar ot/avy-selected-pt nil)
-
-;; Avy copy actions
-
-(defun ot/avy-action-copy-hydra (pt)
-  (setq ot/avy-selected-pt pt)
-  (hydra-avy-copy-actions/body))
-
-(defun ot/avy-action-copy-sexp-here (pt)
-  "Move sexp at PT to current location"
-  (ot/avy-copy-here pt 'forward-sexp))
-
-(defun ot/avy-action-copy-symbol-here (pt)
-  "Move symbol at PT to current location"
-  (ot/avy-copy-here pt (lambda () (forward-symbol 1))))
-
-(defun ot/avy-action-copy-surrounding-sexp-here (pt)
-  "Move surrounding sexp at PT to current location"
-  (let ((new-pt (save-excursion
-                  (goto-char pt)
-                  (paredit-backward-up)
-                  (point))))
-    (ot/avy-copy-here new-pt 'forward-sexp)))
-
-(defun ot/avy-action-copy-sexp-forward-here (pt)
-  "Move from PT to end of sexp to current location"
-  (ot/avy-copy-here pt (lambda ()
-                         (ot/step-out-forward)
-                         (backward-char))))
-
-(defun ot/avy-action-copy-sexp-backward-here (pt)
-  "Move from PT to beginning of sexp to current location"
-  (ot/avy-copy-here pt (lambda ()
-                         (paredit-backward-up)
-                         (forward-char))))
-
-;; Avy move actions
-
-(defun ot/avy-action-move-hydra (pt)
-  (setq ot/avy-selected-pt pt)
-  (hydra-avy-move-actions/body))
-
-(defun ot/avy-action-move-sexp-here (pt)
-  "Move sexp at PT to current location"
-  (ot/avy-move-here pt 'forward-sexp))
-
-(defun ot/avy-action-move-symbol-here (pt)
-  "Move symbol at PT to current location"
-  (ot/avy-move-here pt (lambda () (forward-symbol 1))))
-
-(defun ot/avy-action-move-surrounding-sexp-here (pt)
-  "Move surrounding sexp at PT to current location"
-  (let ((new-pt (save-excursion
-                  (goto-char pt)
-                  (paredit-backward-up)
-                  (point))))
-    (ot/avy-move-here new-pt 'forward-sexp)))
-
-(defun ot/avy-action-move-sexp-forward-here (pt)
-  "Move from PT to end of sexp to current location"
-  (ot/avy-move-here pt (lambda ()
-                         (ot/step-out-forward)
-                         (backward-char))))
-
-(defun ot/avy-action-move-sexp-backward-here (pt)
-  "Move from PT to beginning of sexp to current location"
-  (ot/avy-move-here pt (lambda ()
-                         (paredit-backward-up)
-                         (forward-char))))
-
-;; Avy goto commands
-
-(defun ot/avy-goto-sexp (arg)
-  (interactive "P")
-  (avy-with ot/avy-goto-sexp
-    (avy--generic-jump "\\s(\\|\\s\"[[:alnum:]]" arg avy-style)))
-
-(defun ot/avy-goto-word-0 (arg)
-  "avy-goto-word-0 with modified syntax table"
-  (interactive "P")
-  (let ((temp-syntax-table (make-syntax-table (syntax-table)))
-        (avy-goto-word-0-regexp "\\b\\sw"))
-    (modify-syntax-entry ?_ "w" temp-syntax-table)
-    (modify-syntax-entry ?: "w" temp-syntax-table)
-    (modify-syntax-entry ?- "w" temp-syntax-table)
-    (modify-syntax-entry ?/ "w" temp-syntax-table)
-    (modify-syntax-entry ?. "w" temp-syntax-table)
-    (with-syntax-table temp-syntax-table
-      (avy-with ot/avy-goto-word-0
-        (avy--generic-jump avy-goto-word-0-regexp arg avy-style)))))
 
 (defun copy-file-path (&optional @dir-path-only-p)
   "Copy the current buffer's file path or dired path to `kill-ring'.
@@ -1879,8 +1741,6 @@ when that buffer was created) URL
 
 (use-package vterm)
 
-(use-package nyan-mode :ensure t)
-
 (use-package racket-mode :ensure t
   :hook ((racket-xp-hook . racket-mode)))
 
@@ -1957,9 +1817,6 @@ Avoids opening a browser window."
   :ensure t
   :bind (("M-A" . marginalia-cycle)
          :map minibuffer-local-map
-         ("M-A" . marginalia-cycle))
-  :init
-  (marginalia-mode))
 
 (use-package embark
   :ensure t
@@ -2905,23 +2762,10 @@ instead."
 (use-package avy
   :ensure
   :config
-  (setq avy-keys '(?q ?e ?r ?y ?u ?o ?p
+  (setq avy-keys '(?q ?e ?r ?u ?o ?p
                       ?a ?s ?d ?f ?g ?h ?j
-                      ?k ?l ?' ?x ?c ?v ?b
+                      ?l ?' ?c ?v ?b
                       ?n ?, ?/))
-  (setq avy-dispatch-alist '((?X . avy-action-kill-move)
-                             (?x . avy-action-kill-stay)
-                             (?M . avy-action-mark)
-                             (?m . ot/avy-action-move-hydra)
-                             (?C . avy-action-copy)
-                             (?c . ot/avy-action-copy-hydra)
-                             (?i . avy-action-ispell)))
-  (setq avy-styles-alist '((avy-goto-word-0 . pre)
-                           (ot/avy-goto-word-0 . pre)
-                           (ot/avy-goto-sexp . pre)))
-  (setq avy-all-windows 'all-frames)
-  (setq avy-style 'at-full)
-  (setq avy-background nil)
   (setq avy-timeout-seconds 0.5))
 
 (defun avy-show-dispatch-help ()
@@ -3015,8 +2859,7 @@ instead."
 
 ;; Dictionary: define words
 ;; Replace your package manager or preferred dict package
-(use-package dictionary :ensure t)
-
+(package-install 'dictionary)
 (defun dictionary-search-dwim (&optional arg)
   "Search for definition of word at point. If region is active,
 search for contents of region instead. If called with a prefix
@@ -3044,7 +2887,7 @@ argument, query for word to search."
 
 ;; Get Elisp Help
 ;; Replace with your package manager or help library of choice
-(use-package helpful :ensure t)
+(package-install 'helpful)
 
 (defun avy-action-helpful (pt)
   (save-excursion
@@ -3094,6 +2937,8 @@ argument, query for word to search."
 
 (define-key global-map (kbd "C-M-s") 'isearch-forward-other-window)
 (define-key global-map (kbd "C-M-r") 'isearch-backward-other-window)
+
+(provide 'setup-avy)
 ;;; setup-avy.el ends here
 #+end_src
 ** setup-eshell.el
