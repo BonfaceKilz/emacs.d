@@ -6487,7 +6487,13 @@ This is an `:around' advice for `yas--make-control-overlay'."
 ;;; setup-perspective.el
 
 ;; Load Perspective
+(use-package perspective :ensure t
+  :ensure t
+  :bind-keymap
+  ("C-x x" . perspective-map)
+  :bind (("C-x k" . persp-kill-buffer*))
   :config
+  (persp-mode))
 
 (provide 'setup-perspective)
 
