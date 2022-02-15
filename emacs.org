@@ -6557,14 +6557,12 @@ This is an `:around' advice for `yas--make-control-overlay'."
 ** setup-slime.el
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-slime.el
 ;;; setup-slime.el
-;; Set your lisp system and, optionally, some contribs
-;; (setq inferior-lisp-program "/usr/bin/sbcl")
-;; (use-package slime :ensure
-;;   :config
-;;   (setq inferior-lisp-program "clisp")
-;;   (setq slime-contribs '(slime-fancy))
-;;   (slime-setup))
 
+;; See <https://lisp-lang.org/learn/getting-started/>
+(load (expand-file-name "~/.quicklisp/slime-helper.el"))
+(setq inferior-lisp-program "sbcl")
+(add-hook 'lisp-mode-hook (lambda () (slime-mode t)))
+(add-hook 'inferior-lisp-mode-hook (lambda () (inferior-slime-mode t)))
 (provide 'setup-slime)
 
 ;;; setup-slime.el ends here
