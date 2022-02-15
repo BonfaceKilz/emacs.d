@@ -2760,7 +2760,8 @@ instead."
 #+begin_src elisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-avy.el
 ;;; setup-avy.el
 (use-package avy
-  :ensure
+  :ensure t
+  :commands (avy-goto-word-1 avy-goto-char-2 avy-goto-char-timer)
   :config
   (setq avy-keys '(?q ?e ?r ?u ?o ?p
                       ?a ?s ?d ?f ?g ?h ?j
