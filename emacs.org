@@ -3272,7 +3272,7 @@ argument, query for word to search."
              (exwm-workspace-switch-to-buffer ,Prog)
            (start-process ,prog nil ,prog))))))
 
-(define-run-or-rise-command "firefox")
+(define-run-or-rise-command "nyxt")
 
 (provide 'setup-exwm)
 ;;; setup-exwm.el ends here
