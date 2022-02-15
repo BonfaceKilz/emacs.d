@@ -2682,12 +2682,6 @@ instead."
   (setq uniquify-buffer-name-style 'forward
         uniquify-separator ":"))
 
-(use-package sly
-  :ensure
-  :defer t
-  :config
-  (setq inferior-lisp-program "sbcl"))
-
 (use-package suggest
   :ensure
   :defer t)
