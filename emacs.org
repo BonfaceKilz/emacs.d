@@ -1758,6 +1758,9 @@ when that buffer was created) URL
   (interactive)
   (untabify (point-min) (point-max)))
 
+(setq browse-url-browser-function 'browse-url-generic
+      browse-url-generic-program "nyxt")
+
 (defun indent-buffer ()
   (interactive)
   (indent-region (point-min) (point-max)))
