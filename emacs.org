@@ -6616,14 +6616,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
 
 #+NAME: gnus
 #+BEGIN_SRC elisp :tangle ~/.emacs.d/settings/setup-email.el
-(use-package auth-source
-  :ensure
-  :config
-  (setq auth-sources '("~/.authinfo.gpg"))
-  (setq user-full-name "Bonface Munyoki K.")
-  (setq user-mail-address "me@bonfacemunyoki.com")
-
-  (defun bonz/auth-get-field (host prop)
+(defun bonz/auth-get-field (host prop)
     "Find PROP in `auth-sources' for HOST entry."
     (let* ((source (auth-source-search :host host))
            (field (plist-get
@@ -6631,46 +6624,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
                    prop)))
       (if source
           field
-        (user-error "No entry in auth sources")))))
-
-(use-package mm-encode
-  :config
-  (setq mm-encrypt-option 'guided)
-  (setq mm-sign-option 'guided))
-
-(use-package mml-sec
-  :config
-  (setq mml-secure-openpgp-encrypt-to-self t)
-  (setq mml-secure-openpgp-sign-with-sender t)
-  (setq mml-secure-smime-encrypt-to-self t)
-  (setq mml-secure-smime-sign-with-sender t))
-
-(use-package epa-file
-  :config
-  (setq epa-file-cache-passphrase-for-symmetric-encryption nil))
-
-(use-package message
-  :config
-  (setq message-default-charset 'utf-8)
-  (add-to-list 'mm-body-charset-encoding-alist '(utf-8 . base64))
-  :hook ((message-setup-hook . message-sort-headers)
-         (message-mode-hook . (lambda ()
-                                (progn
-                                 (setq-local writegood-mode 1)
-                                 (setq-local fill-column 50))))))
-
-(defun w3m-copy-url-at-point ()
-    (interactive)
-    (let ((url (w3m-anchor)))
-      (if (w3m-url-valid url)
-          (kill-new (w3m-anchor))
-        (message "No URL at point!"))))
-
-(add-hook 'w3m-mode-hook
-            (lambda ()
-              (local-set-key "\M-W" 'w3m-copy-url-at-point)))
-
-(setq mm-text-html-renderer 'w3m) ; OPTIONAL  
+        (user-error "No entry in auth sources"))))
 
 (defun bonz-common-auth-get-field (host prop)
   "Find PROP in `auth-sources' for HOST entry."
@@ -6682,323 +6636,74 @@ This is an `:around' advice for `yas--make-control-overlay'."
         field
       (user-error "No entry in auth sources"))))
 
+(setq
+ ;; Auth sources
+ auth-sources '("~/authinfo.gpg")
+ user-full-name "Bonface M. K."
+ user-mail-address "me@bonfacemunyoki.com"
+ ;; mm-encode
+ mm-encrypt-option nil
+ mm-sign-option nil
+ ;; mml-sec
+ mml-secure-openpgp-encrypt-to-self t
+ mml-secure-openpgp-sign-with-sender t
+ mml-secure-smime-encrypt-to-self t
+ mml-secure-smime-sign-with-sender t
+ epa-file-cache-passphrase-for-symmetric-encryption nil
+ ;; Message
+ mail-user-agent 'message-user-agent
+ compose-mail-user-agent-warnings nil
+ message-mail-user-agent t
+ message-confirm-send nil
+ message-kill-buffer-on-exit t
+ message-wide-reply-confirm-recipients t
+ notmuch-fcc-dirs "Sent")
 
-(use-package gnus
-  :ensure
-  :config
-  (defun bonz/message-insert-citation-line ()
+(add-to-list 'mm-body-charset-encoding-alist '(utf-8 . base64))
+(add-hook 'message-setup-hook #'message-sort-headers)
+(add-hook 'message-mode-hook  #'(lambda ()
+                                  (progn
+                                    (setq-local writegood-mode 1)
+                                    (setq-local fill-column 50))))
+
+(defun bonz/message-insert-citation-line ()
     "Insert a simple citation line."
     (when message-reply-headers
       (insert (mail-header-from message-reply-headers) " anaandika:")
       (newline)
       (newline)))
-  (setq message-citation-line-function 'bonz/message-insert-citation-line)
-  (setq mm-discouraged-alternatives
-        '("text/html" "text/richtext")
-        mm-automatic-display
-        (remove "text/html" mm-automatic-display))
-  (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
-  ;; Let Gnus know Gmail search syntax
-  (add-to-list 'nnir-imap-search-arguments '("gmail" . "X-GM-RAW"))
-  (setq gnus-parameters
-        '((".*"                         ; fallback option
-           (gcc "nnmaildir+fastmail:Sent, nnmaildir+fastmail:Inbox")
-           (posting-style
-            (From
-             (format "%s <%s>" user-full-name
-                     (bonz-common-auth-get-field "fastmail" :user)))))
-          (".*gmail.*"
-           (posting-style
-            (gcc "nnmaildir+gmail:Sent")
-            (From
-             (format "%s <%s>" user-full-name
-                     (bonz-common-auth-get-field "gmail" :user)))))
-          (".*strathmore.*"
-           (posting-style
-            (gcc "nnmaildir+strathmore:Sent, nnmaildir+strathmore:Inbox")
-            (From
-             (format "%s <%s>" user-full-name
-                     "bonface.kilyungi@strathmore.edu"))))))
 
-  (defun my-gnus-group-list-subscribed-groups ()
-    "List all subscribed groups with or without un-read messages"
-    (interactive)
-    (gnus-group-list-all-groups 7))
-  (define-key gnus-group-mode-map
-    ;; list all the subscribed groups even they contain zero un-read messages
-    (kbd "o") 'my-gnus-group-list-subscribed-groups)
+(setq message-citation-line-function 'bonz/message-insert-citation-line)
+(setq smtpmail-default-smtp-server "smtp.fastmail.com"
+      smtpmail-smtp-server "smtp.fastmail.com"
+      smtpmail-stream-type 'ssl
+      smtpmail-smtp-service 587
+      smtpmail-queue-mail nil
+      gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 
-  (add-hook
-   'gnus-summary-mode-hook
-   (lambda ()
-     (define-key gnus-summary-mode-map (kbd ";") 'ebdb-edit-field)))
-  (add-hook 'message-mode-hook
-            '(lambda ()
-               (flyspell-mode t)
-               (local-set-key (kbd "TAB") 'ebdb-complete-mail)))
+(setq mm-discouraged-alternatives
+      '("text/html" "text/richtext")
+      mm-automatic-display
+      (remove "text/html" mm-automatic-display))
 
-  (add-hook 'message-send-hook 'mml-secure-message-sign-pgpmime)
+;; SMTP
+(setq send-mail-function 'sendmail-send-it
+      sendmail-program "/usr/bin/msmtp"
+      mail-specify-envelope-from t
+      message-sendmail-envelope-from 'header
+      mail-envelope-from 'header
+      message-kill-buffer-on-exit t
+      notmuch-search-oldest-first nil)
 
-  (setq gnus-ignored-newsgroups "^to\\.\\|^[0-9. ]+\\( \\|$\\)\\|^[\"]\"[#'()]")
-  (setq gnus-extra-headers
-        '(To Newsgroups))
-  (setq nnmail-extra-headers gnus-extra-headers)
-  (setq gnus-summary-line-format
-        "%U%R%z%I%(%[%4L: %-23,23f%]%) %s\n")
-  (setq gnu-parameters
-        `(gcc-self . '(,(format-time-string "sent.%Y") t)))
-  ;; accounts
-  (setq gnus-select-method '(nnnil ""))
-  (setq gnus-secondary-select-methods
-        '((nntp "news.gwene.org")
-          (nnmaildir "fastmail" (directory "~/.mail/fastmail/"))
-          (nnmaildir "strathmore" (directory "~/.mail/strathmore/"))
-          (nnmaildir "gmail" (directory "~/.mail/gmail/"))))
-  (setq gnus-gcc-mark-as-read t)
-  (setq gnus-agent t)
-  (setq gnus-novice-user t)
-  ;; (setq gnus-refer-thread-use-nnir t)
-  ;; checking sources
-  (setq gnus-check-new-newsgroups 'ask-server)
-  (setq gnus-read-active-file 'some)
-  ;; dribble
-  (setq gnus-use-dribble-file t)
-  (setq gnus-always-read-dribble-file t)
-  ;; demon
-  (gnus-demon-add-scanmail)
-  (gnus-demon-add-handler 'gnus-demon-scan-news nil 60)
-  :bind ("C-c m" . gnus))
+(setq gnus-select-method
+      '(nntp "localhost"
+             (gnus-search-engine gnus-search-notmuch
+                                 (remove-prefix "/home/bonface/var/mail/"))))
 
-(use-package nnmail
-  :config
-  (setq nnmail-expiry-wait 30))
+(add-hook 'message-send-hook 'mml-secure-message-sign-pgpmime)
 
-(use-package gnus-agent
-  :after gnus
-  :config
-  (setq gnus-agent-article-alist-save-format 1)  ; uncompressed
-  (setq gnus-agent-cache t)
-  (setq gnus-agent-confirmation-function 'y-or-n-p)
-  (setq gnus-agent-consider-all-articles nil)
-  (setq gnus-agent-directory "~/News/agent/")
-  (setq gnus-agent-enable-expiration 'ENABLE)
-  (setq gnus-agent-expire-all nil)
-  (setq gnus-agent-expire-days 30)
-  (setq gnus-agent-mark-unread-after-downloaded t)
-  (setq gnus-agent-queue-mail t)        ; queue if unplugged
-  (setq gnus-agent-synchronize-flags nil))
-
-(use-package gnus-art
-  :after gnus
-  :demand
-  :config
-  (setq gnus-article-browse-delete-temp 'ask)
-  (setq gnus-article-over-scroll nil)
-  (setq gnus-article-show-cursor t)
-  (setq gnus-article-sort-functions
-        '((not gnus-article-sort-by-number)
-          (not gnus-article-sort-by-date)))
-  (setq gnus-article-truncate-lines nil)
-  (setq gnus-html-frame-width 80)
-  (setq gnus-html-image-automatic-caching t)
-  (setq gnus-inhibit-images t)
-  (setq mm-inline-large-images "resize")
-  (setq gnus-max-image-proportion 0.7)
-  (setq gnus-treat-display-smileys nil)
-  (setq gnus-article-mode-line-format "%G %S %m")
-  (setq gnus-visible-headers
-        '("^From:" "^Subject:" "^To:" "^Cc:" "^Date:"
-          "Followup-To:" "Reply-To:" "^Organization:" "^X-Newsreader:"
-          "^X-Mailer:"))
-  (setq gnus-sorted-header-list gnus-visible-headers)
-  :hook (gnus-article-mode-hook . (lambda ()
-                                    (setq-local fill-column 50)))
-  :bind (:map gnus-article-mode-map
-              ("i" . gnus-article-show-images)
-              ("s" . gnus-mime-save-part)
-              ("o" . gnus-mime-copy-part)))
-
-(use-package gnus-async
-  :after gnus
-  :config
-  (setq gnus-asynchronous t)
-  (setq gnus-use-article-prefetch 15))
-
-(use-package gnus-group
-  :after gnus
-  :demand
-  :config
-  (setq gnus-level-subscribed 6)
-  (setq gnus-level-unsubscribed 7)
-  (setq gnus-level-zombie 8)
-  (setq gnus-activate-level 2)
-  (setq gnus-list-groups-with-ticked-articles nil)
-  (setq gnus-group-sort-function
-        '((gnus-group-sort-by-unread)
-          (gnus-group-sort-by-alphabet)
-          (gnus-group-sort-by-rank)))
-  (setq gnus-group-line-format "%M%p%P%5y:%B%(%g%)\n")
-  (setq gnus-group-mode-line-format "%%b")
-  :hook ((gnus-group-mode-hook . hl-line-mode)
-         (gnus-select-group-hook . gnus-group-set-timestamp))
-  :bind (:map gnus-group-mode-map
-              ("M-n" . gnus-topic-goto-next-topic)
-              ("M-p" . gnus-topic-goto-previous-topic)))
-
-(use-package gnus-topic
-  :after (gnus gnus-group)
-  :config
-  (setq gnus-topic-display-empty-topics t)
-  :hook (gnus-group-mode-hook . gnus-topic-mode))
-
-(use-package gnus-sum
-  :after (gnus gnus-group)
-  :demand
-  :config
-  (setq gnus-auto-select-first nil)
-  (setq gnus-summary-ignore-duplicates t)
-  (setq gnus-suppress-duplicates t)
-  (setq gnus-save-duplicate-list t)
-  (setq gnus-summary-goto-unread nil)
-  (setq gnus-summary-make-false-root 'adopt)
-  (setq gnus-summary-thread-gathering-function
-        'gnus-gather-threads-by-subject)
-  (setq gnus-summary-gather-subject-limit 'fuzzy)
-  (setq gnus-thread-sort-functions
-        '((not gnus-thread-sort-by-date)
-          (not gnus-thread-sort-by-number)))
-  (setq gnus-subthread-sort-functions
-        'gnus-thread-sort-by-date)
-  (setq gnus-thread-hide-subtree nil)
-  (setq gnus-thread-ignore-subject nil)
-  (setq gnus-user-date-format-alist
-        '(((gnus-seconds-today) . "Today at %R")
-          ((+ (* 60 60 24) (gnus-seconds-today)) . "Yesterday, %R")
-          (t . "%Y-%m-%d %R")))
-
-  ;; When the %f specifier in `gnus-summary-line-format' matches my
-  ;; name, this will use the contents of the "To:" field, prefixed by
-  ;; the string I specify.  Useful when checking your "Sent" summary.
-  (setq gnus-ignored-from-addresses "Bonface M. K.")
-  (setq gnus-summary-to-prefix "To: ")
-
-  (setq gnus-summary-line-format "%U%R  %-16,16&user-date;  %4L:%-25,25f  %B%s\n")
-  (setq gnus-summary-mode-line-format "%p")
-  (setq gnus-sum-thread-tree-false-root "─┬> ")
-  (setq gnus-sum-thread-tree-indent " ")
-  (setq gnus-sum-thread-tree-single-indent "")
-  (setq gnus-sum-thread-tree-leaf-with-other "├─> ")
-  (setq gnus-sum-thread-tree-root "")
-  (setq gnus-sum-thread-tree-single-leaf "└─> ")
-  (setq gnus-sum-thread-tree-vertical "│")
-
-  (defun bonz/gnus-summary-save-parts-all ()
-    "Save relevant message MIME parts to a desired directory.
-EXPERIMENTAL"
-    (interactive)
-    (let ((dir "~/Downloads/mail-attachments"))
-      (if major-mode 'gnus-summary-mode
-        (progn
-          (unless (file-directory-p dir)
-            (make-directory dir))
-          (gnus-summary-save-parts "text/.*" dir nil t))
-        (user-error "Not in a `gnus' summary buffer"))))
-
-  :hook (gnus-summary-mode-hook . hl-line-mode)
-  :bind (:map gnus-summary-mode-map
-              ("X x" . bonz/gnus-summary-save-parts-all)
-              ("<delete>" . gnus-summary-delete-article)
-              ("n" . gnus-summary-next-article)
-              ("p" . gnus-summary-prev-article)
-              ("N" . gnus-summary-next-unread-article)
-              ("P" . gnus-summary-prev-unread-article)
-              ("M-n" . gnus-summary-next-thread)
-              ("M-p" . gnus-summary-prev-thread)
-              ("C-M-n" . gnus-summary-next-group)
-              ("C-M-p" . gnus-summary-prev-group)
-              ("C-M-^" . gnus-summary-refer-thread)))
-
-(use-package gnus-srvr
-  :after gnus
-  :hook ((gnus-browse-mode-hook gnus-server-mode-hook) . hl-line-mode))
-
-(use-package gnus-win
-  :config
-  (gnus-add-configuration
-   '(article
-     (horizontal 1.0
-                 (vertical 40 (group 1.0))
-                 (vertical 1.0
-                           (summary 0.16 point)
-                           (article 1.0)))))
-
-  (gnus-add-configuration
-   '(summary
-     (horizontal 1.0
-                 (vertical 40 (group 1.0))
-                 (vertical 1.0 (summary 1.0 point))))))
-
-(use-package gnus-dired
-  :after (gnus dired)
-  :hook (dired-mode-hook . gnus-dired-mode))
-
-(use-package smtpmail
-  :ensure
-  :init
-  (setq smtpmail-default-smtp-server "smtp.fastmail.com")
-  :config
-  (setq message-send-mail-function 'smtpmail-send-it
-        smtpmail-starttls-credentials '(("smtp.fastmail.com" 587 nil nil))
-        smtpmail-auth-credentials '(("smtp.fastmail.com" 578
-                                     "me@bonfacemunyoki.com" nil))
-        smtpmail-default-smtp-server "smtp.fastmail.com"
-        smtpmail-smtp-server "smtp.fastmail.com"
-        smtpmail-smtp-service 587
-        gnus-ignored-newsgroups "^to\\.\\|^[0-9. ]+\\( \\|$\\)\\|^[\"]\"[#'()]"))
-
-
-(use-package ebdb
-  :ensure
-  :config
-  (use-package ebdb-gnus)
-  (use-package ebdb-message)
-  (setq ebdb-default-window-size 0.2)
-  (setq ebdb-mua-pop-up t)
-
-  (defun bonz/ebdb-auto-update ()
-    "Conditions for updating EBDB records."
-    (if (ebdb-mua-message-header "Newsgroups")
-        'query
-      'existing))
-
-  (setq ebdb-mua-auto-update-p #'bonz/ebdb-auto-update)
-  (setq ebdb-mua-sender-update-p #'bonz/ebdb-auto-update)
-  (setq ebdb-mua-reader-update-p #'bonz/ebdb-auto-update)
-  (setq ebdb-add-aka t)
-  (setq ebdb-add-name nil)
-  (setq ebdb-add-mails 'query)
-  (setq ebdb-complete-mail 'capf)
-  (setq ebdb-mail-avoid-redundancy nil)
-  (setq ebdb-complete-mail-allow-cycling 3))
-
-(setq gnus-message-archive-method
-      '(nnfolder "archive"
-                 (nnfolder-inhibit-expiry t)
-                 (nnfolder-active-file "~/.mail/sent-mail/active")
-                 (nnfolder-directory "~/.mail/sent-mail/")))
-
-(setq gnus-message-archive-group
-      '((lambda (x)
-          (cond
-           ;; Store personal mail messages in the same group I started out in
-           ((string-match "nnmaildir*" group) group)
-           ;; I receive a copy of all messages I send to a list, so
-           ;; there's no need to archive
-           ((string-match "nntp*" group) nil)
-           ;; Store everything else in misc until I can sort it out
-           (t "mail.misc")))))
-(add-hook 'message-sent-hook 'gnus-score-followup-thread)
-
+(require 'notmuch) ; loads notmuch package
+(package-install 'ol-notmuch)
 (provide 'setup-email)
 #+END_SRC
 ** Password                                                           :crypt:
