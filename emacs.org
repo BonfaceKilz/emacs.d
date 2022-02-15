@@ -1820,6 +1820,7 @@ Avoids opening a browser window."
   :ensure t
   :bind (("M-A" . marginalia-cycle)
          :map minibuffer-local-map
+         ("M-A" . marginalia-cycle)))
 
 (use-package embark
   :ensure t
