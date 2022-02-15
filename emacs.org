@@ -3202,8 +3202,6 @@ argument, query for word to search."
 		      (lambda (command)
 			(interactive (list (read-shell-command "$ ")))
 			(start-process-shell-command command nil command)))
-  (exwm-input-set-key (kbd "s-s") 'exwm-workspace-next)
-  (exwm-input-set-key (kbd "s-j") 'exwm-workspace-next)
   (push ?\s-j exwm-input-prefix-keys)
   (exwm-input-set-key (kbd "s-o") 'other-window)
   (exwm-input-set-key (kbd "s-k") 'other-window)
