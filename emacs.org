@@ -6487,32 +6487,7 @@ This is an `:around' advice for `yas--make-control-overlay'."
 ;;; setup-perspective.el
 
 ;; Load Perspective
-(use-package perspective :ensure)
-
-;; Enable perspective mode
-(use-package persp-mode :ensure
   :config
-  (setq persp-autokill-buffer-on-remove 'kill-weak)
-  ;; :hook after-init-hook  ;; <--- offending line
-  ;; :bind-keymap
-  ;; ("C-c p" . persp-key-map)
-  )
-
-
-(use-package persp-projectile :ensure)
-
-;; TODO: implement persp-last as before-advice on persp-switch (?)
-(defmacro custom-persp (name &rest body)
-  `(let ((initialize (not (gethash ,name (perspectives-hash))))
-         (current-perspective (persp-curr)))
-     (persp-switch ,name)
-     (when initialize ,@body)
-     (set-frame-parameter nil 'persp--last current-perspective)))
-
-;; Jump to last perspective
-(defun custom-persp-last ()
-  (interactive)
-  (persp-switch (persp-name persp-last)))
 
 (provide 'setup-perspective)
 
