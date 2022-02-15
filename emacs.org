@@ -1822,6 +1822,8 @@ Avoids opening a browser window."
          :map minibuffer-local-map
          ("M-A" . marginalia-cycle)))
 
+(package-install 'embark)
+
 (use-package embark
   :ensure t
   :bind
