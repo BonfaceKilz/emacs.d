@@ -6360,7 +6360,11 @@ This is an `:around' advice for `yas--make-control-overlay'."
 (set-face-attribute 'org-headline-done nil
                     :strike-through t
                     :foreground "light gray")
-
+(require 'oc-csl)
+(require 'oc-biblatex)
+(setq org-cite-export-processors
+      '((latex biblatex)
+        (t csl)))
 (require 'org-habit)
 
 (provide 'setup-org)
