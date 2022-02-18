@@ -5640,6 +5640,41 @@ This is an `:around' advice for `yas--make-control-overlay'."
 ;;; setup-org.el
 
 ;; Org-mode
+(require 'ol)
+
+(org-link-set-parameters "elpher"
+                         :follow #'org-elpher-open
+                         :store #'org-elpher-store-link)
+
+(defcustom org-elpher-command 'elpher
+  "The Emacs command to be used to display a gemini page."
+  :group 'org-link
+  :type '(choice (const gemini) (const gopher)))
+
+(defun org-elpher-open (path _)
+  "Visit the gemini/ gopher page on PATH.
+PATH should be a topic that can be thrown at the man command."
+  (funcall org-elpher-command path))
+
+(defun org-elpher-store-link ()
+  "Store a link to a man page."
+  (when (memq major-mode '(elpher-mode))
+    ;; This is a elpher page, we do make this link.
+    (let* ((page (elpher-copy-current-url))
+           (link (elpher-copy-current-url))
+           (description page))
+      (org-link-store-props
+       :type "elpher"
+       :link link
+       :description description))))
+
+(defun org-elpher-get-page-name ()
+  "Extract the page name from the buffer name."
+  (if (string-match " \\(\\S-+\\)\\*" (buffer-name))
+      (match-string 1 (buffer-name))
+    (error "Cannot create link to this man page")))
+
+
 (defun bonz/org-add-note (func &rest args)
   "Advisor function to go around `org-add-note'.  Takes optional
   count (c-u) and sets bonz/org-log-into-drawer to be used by
