@@ -3187,13 +3187,6 @@ argument, query for word to search."
   ;; Enable EXWM
   (exwm-enable)
   (exwm-randr-enable)
-
-  
-  (add-hook 'exwm-update-title-hook
-	    (lambda ()
-	      (when (or (string-prefix-p "sun-awt-X11-" exwm-instance-name)
-			(string= "gimp" exwm-instance-name))
-		(rename-buffer exwm-title t))))
   :bind (("C-x C-c" . exwm-logout)))
 
 (defun exwm-workspace-next ()
