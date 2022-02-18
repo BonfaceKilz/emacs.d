@@ -3153,22 +3153,13 @@ argument, query for word to search."
 	  ([?\C-v] . [next])
 	  ([?\C-d] . [delete])
 	  ([?\C-k] . [S-end delete])))
-  ;; Make class name the buffer name
-  (add-hook 'exwm-update-class-hook
-            (lambda ()
-              (exwm-workspace-rename-buffer exwm-class-name)))
-  ;; Add these hooks in a suitable place (e.g., as done in exwm-config-default)
-  (add-hook 'exwm-update-class-hook 'exwm-rename-buffer)
-  (add-hook 'exwm-update-title-hook 'exwm-rename-buffer)
   ;; Make gimp floating
   (add-hook 'exwm-update-class-hook
             (lambda ()
               (unless (or (string-prefix-p "sun-awt-X11-" exwm-instance-name)
         		  (string= "gimp" exwm-instance-name))
         	(rename-buffer exwm-class-name t))))
-  ;; ;; Add these hooks in a suitable place (e.g., as done in exwm-config-default)
-  (add-hook 'exwm-update-class-hook 'exwm-rename-buffer)
-  (add-hook 'exwm-update-title-hook 'exwm-rename-buffer)
+  ;; Add these hooks in a suitable place (e.g., as done in exwm-config-default)
   (exwm-input-set-key (kbd "s-r") #'exwm-reset)
   ;; 's-w': Switch workspace
   (exwm-input-set-key (kbd "s-w") #'exwm-workspace-switch)
@@ -3231,12 +3222,6 @@ argument, query for word to search."
   (interactive (list (read-shell-command "$ ")))
   (async-shell-command command (generate-new-buffer " *async command*")))
 
-(defun exwm-rename-buffer ()
-  (interactive)
-  (exwm-workspace-rename-buffer
-   (concat exwm-class-name ":"
-           (if (<= (length exwm-title) 7) exwm-title
-             (concat (substring exwm-title 0 6) "...")))))
 
 ;; (require 'exwm-systemtray)
 ;; (setq exwm-systemtray-height 16)
