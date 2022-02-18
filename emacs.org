@@ -3215,11 +3215,6 @@ argument, query for word to search."
   (interactive (list (read-shell-command "$ ")))
   (async-shell-command command (generate-new-buffer " *async command*")))
 
-
-;; (require 'exwm-systemtray)
-;; (setq exwm-systemtray-height 16)
-;; (exwm-systemtray-enable)
-;; (exwm-switch-to-workspace-key 1)
 (defmacro define-run-or-rise-command (prog)
   (let ((Prog (capitalize prog)))
     `(defun ,(intern (format "run-or-rise-%s" prog)) ()
