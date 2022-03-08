@@ -4340,7 +4340,14 @@ agenda."
 
 ;; Org-mode
 (setq org-time-budgets
-      '((:title "Genenetwork" :tags "+genenetwork" :budget "40:00" :blocks (workday week))))
+      '((:title "Genenetwork/ Weekday" :tags "+genenetwork+weekday" :budget "25:00" :blocks (workday week))
+        (:title "Genenetwork/ Weekend" :tags "+genenetwork+weekend" :budget "6:00" :blocks (day week))
+        (:title "Algorithms" :match "+algorithms" :budget "3:30" :blocks (day week))
+        (:title "Strathmore/ Weekday" :match "+strathmore+weekday" :budget "5:00" :blocks (workday week))
+        (:title "Strathmore/ Weekend" :match "+strathmore+weekend" :budget "4:00" :blocks (day week))
+        (:title "Guix" :match "+guix" :budget "5:00" :blocks (nil week))
+        (:title "Personal" :match "+personal" :budget "10:00" :blocks (nil week))))
+
 (setq org-agenda-custom-commands
       '(("a" "Agenda"
          ((agenda "" ((org-agenda-sorting-strategy '(habit-down time-up priority-down category-keep user-defined-up))))
