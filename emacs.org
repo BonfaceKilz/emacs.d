@@ -4658,9 +4658,14 @@ PATH should be a topic that can be thrown at the man command."
   (setq alert-default-style 'libnotify)
   (setq epa-pinentry-mode 'loopback)
   (setq org-agenda-files
-        (directory-files-recursively "~/Self/org/"
-                                     (rx (or (and "org" eot)
-                                             (and "org_archive" eot)))))
+        '("~/Self/org/journal.org"
+          "~/Self/org/archive/2022_personal.org_archive"
+          "~/Self/org/archive/2022_email.org_archive"
+          "~/Self/org/archive/2022_genenetwork.org_archive"
+          "~/Self/org/archive/2021_strathmore.org_archive"
+          "~/Self/org/archive/2022_reading.org_archive"
+          "~/Self/org/archive/2022_guix.org_archive"
+          "~/Self/org/archive/2022_blog.org_archive"))
   (setq org-agenda-ndays 7)
   (setq org-agenda-show-all-dates t)
   (setq org-agenda-skip-deadline-if-done t)
