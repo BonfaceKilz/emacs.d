@@ -4955,19 +4955,17 @@ PATH should be a topic that can be thrown at the man command."
 
 ;; src: https://bzg.fr/en/some-emacs-org-mode-features-you-may-not-know.html/1
 (setq org-tag-alist
-      '((:startgroup)
-        ("Handson" . ?o)
-        (:grouptags)
-        ("genenetwork" . ?g) ("strathmore" . ?s) ("wazinsure" . ?w) ("juza" . ?j)
-        ("Code" . ?c) ("Blog" . ?b) ("Mail" . ?@)
-        (:endgroup)
+      '(("algorithm" . ?a) ("guix" . ?G)
+        ("genenetwork" . ?g) ("strathmore" . ?s)
+        ("personal" . ?p)
         (:startgroup)
-        ("Handsoff" . ?f) ;; The grouping tag
+        ("Blog" . ?b)
         (:grouptags)
-        ("Read" . ?r) ("View" . ?v) ("Listen" . ?l)
+        ("life-tips" . ?l) ("life" . ?L)
+        ("how_to" . ?h) ("weekly_reviews" . ?w)
+        ("programming" . ?p)
         (:endgroup)
-        ;; Off groups
-        ("Print" . ?P) ("Buy" . ?B) ("Patch" . ?p) ("Bug" . ?b)))
+        ))
 (setq org-agenda-compact-blocks nil)
 
 ;; src: https://emacs.stackexchange.com/a/21128
