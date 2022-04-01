@@ -494,6 +494,15 @@ when that buffer was created) URL
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/sane-defaults.el
 ;;; sane-defaults.el
 
+;;; It is the opposite of fill-paragraph
+(defun unfill-paragraph ()
+  "Takes a multi-line paragraph and makes it into a single line of text."
+  (interactive)
+  (let ((fill-column (point-max)))
+    (fill-paragraph nil)))
+
+(define-key global-map "\M-Q" 'unfill-paragraph)
+
 (defun display-startup-echo-area-message ()
   "The message that is shown after ‘user-init-file’ is loaded."
   (message
