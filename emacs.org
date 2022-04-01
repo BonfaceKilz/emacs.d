@@ -5051,31 +5051,6 @@ Path ~/.mail/gmail/
 Inbox ~/.mail/gmail/Inbox
 
 Channel gmail
-Master :gmail-remote:
-Slave :gmail-local:
-Patterns *
-Create Both
-SyncState *
-
-# Juza Gmail account
-IMAPAccount juza
-Host imap.gmail.com
-User bonface.munyoki@juzaafrica.org
-PassCmd "gpg2 -q --for-your-eyes-only --decrypt ~/.authinfo.gpg | awk -F ' ' '/juza/ { print $6; exit; }'"
-SSLType IMAPS
-CertificateFile /home/bonface/.guix-profile/etc/ssl/certs/ca-certificates.crt
-
-IMAPStore juza-remote
-Account juza
-
-MaildirStore juza-local
-Subfolders verbatim
-Path ~/.mail/juza/
-Inbox ~/.mail/juza/Inbox
-
-Channel juza
-Master :juza-remote:
-Slave :juza-local:
 Patterns *
 Create Both
 SyncState *
