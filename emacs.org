@@ -5028,8 +5028,8 @@ Path ~/.mail/fastmail/
 Inbox ~/.mail/fastmail/Inbox
 
 Channel fastmail
-Master :fastmail-remote:
-Slave :fastmail-local:
+Far :fastmail-remote:
+Near :fastmail-local:
 Patterns *
 Create Both
 SyncState *
@@ -5051,6 +5051,8 @@ Path ~/.mail/gmail/
 Inbox ~/.mail/gmail/Inbox
 
 Channel gmail
+Far :gmail-remote:
+Near :gmail-local:
 Patterns *
 Create Both
 SyncState *
@@ -5072,8 +5074,8 @@ Path ~/.mail/strathmore/
 Inbox ~/.mail/strathmore/Inbox
 
 Channel strathmore
-Master :strathmore-remote:
-Slave :strathmore-local:
+Far :strathmore-remote:
+Near :strathmore-local:
 Patterns *
 Create Both
 SyncState *
