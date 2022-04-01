@@ -5018,6 +5018,7 @@ PassCmd "gpg2 -q --for-your-eyes-only --decrypt ~/.authinfo.gpg | awk -F ' ' '/f
 SSLType IMAPS
 SSLVersions TLSv1.2
 PipelineDepth 50
+CertificateFile ~/.guix-profile/etc/ssl/certs/ca-certificates.crt
 
 IMAPStore fastmail-remote
 Account fastmail
