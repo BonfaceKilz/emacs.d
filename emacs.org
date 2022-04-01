@@ -552,19 +552,6 @@ With C-u close opened terminal and shell process"
 (setq browse-url-browser-function 'browse-url-generic
       browse-url-generic-program "nyxt")
 
-
-(defun cleanup-buffer ()
-  "Perform a bunch of operations on the whitespace content of a buffer."
-  (interactive)
-  (indent-buffer)
-  (untabify-buffer)
-  (delete-trailing-whitespace))
-
-
-(use-package autopair
-  :config
-  (autopair-mode 1))
-
 (use-package marginalia
   :ensure t
   :bind (("M-A" . marginalia-cycle)
@@ -924,7 +911,6 @@ With \\[universal-argument] toggle the display of the window."
 (use-package yaml-mode
   :mode ("\\.yml\\'" . yaml-mode)
   :ensure)
-
 (use-package emacs
   :init
   (auto-compression-mode 1)
@@ -1056,215 +1042,13 @@ With \\[universal-argument] toggle the display of the window."
   :bind (("C-g" . keyboard-quit-strong)
          ("s-n" . rename-buffer)))
 
-(use-package minibuffer
-  :config
-;;; General minibuffer configurations
-  ;; Super-powerful completion style for out-of-order groups of matches
-  ;; using a comprehensive set of matching styles.
-  (use-package orderless
-    :ensure
-    :config
-    (setq orderless-regexp-separator "[/\s_-]+")
-    (setq orderless-matching-styles
-          '(orderless-flex
-            orderless-strict-leading-initialism
-            orderless-regexp
-            orderless-prefixes
-            orderless-literal))
-
-    (defun prot/orderless-literal-dispatcher (pattern _index _total)
-      (when (string-suffix-p "=" pattern)
-        `(orderless-literal . ,(substring pattern 0 -1))))
-
-    (defun prot/orderless-initialism-dispatcher (pattern _index _total)
-      (when (string-suffix-p "," pattern)
-        `(orderless-strict-leading-initialism . ,(substring pattern 0 -1))))
-
-    (setq orderless-style-dispatchers
-          '(prot/orderless-literal-dispatcher
-            prot/orderless-initialism-dispatcher))
-    :bind (:map minibuffer-local-completion-map
-                ("SPC" . nil)))       ; Space should never complete: use
-                                      ; it for `orderless' groups.
-
-  (setq completion-styles
-        '(orderless partial-completion))
-  (setq completion-category-defaults nil)
-  (setq completion-cycle-threshold 3)
-  (setq completion-flex-nospace nil)
-  (setq completion-pcm-complete-word-inserts-delimiters t)
-  (setq completion-pcm-word-delimiters "-_./:| ")
-  (setq completion-show-help nil)
-  (setq completion-ignore-case t)
-  (setq read-buffer-completion-ignore-case t)
-  (setq read-file-name-completion-ignore-case t)
-  (setq completions-format 'vertical)   ; *Completions* buffer
-  (setq enable-recursive-minibuffers t)
-  (setq read-answer-short t)
-  (setq resize-mini-windows t)
-
-  (file-name-shadow-mode 1)
-  (minibuffer-depth-indicate-mode 1)
-  (minibuffer-electric-default-mode 1)
-
-;;; General minibuffer functions
-  (defun prot/focus-minibuffer ()
-    "Focus the active minibuffer.
-
-Bind this to `completion-list-mode-map' to M-v to easily jump
-between the list of candidates present in the \\*Completions\\*
-buffer and the minibuffer (because by default M-v switches to the
-completions if invoked from inside the minibuffer."
-    (interactive)
-    (let ((mini (active-minibuffer-window)))
-      (when mini
-        (select-window mini))))
-
-  (defun prot/focus-minibuffer-or-completions ()
-    "Focus the active minibuffer or the \\*Completions\\*.
-
-If both the minibuffer and the Completions are present, this
-command will first move per invocation to the former, then the
-latter, and then continue to switch between the two.
-
-The continuous switch is essentially the same as running
-`prot/focus-minibuffer' and `switch-to-completions' in
-succession."
-    (interactive)
-    (let* ((mini (active-minibuffer-window))
-           (completions (get-buffer-window "*Completions*")))
-      (cond ((and mini
-                  (not (minibufferp)))
-             (select-window mini nil))
-            ((and completions
-                  (not (eq (selected-window)
-                           completions)))
-             (select-window completions nil)))))
-
-;;; Completions' buffer actions
-  ;; NOTE In practice I only use those while inspecting a long list
-  ;; produced by C-h {f,o,v}.  To pop the Completions buffer, use
-  ;; `minibuffer-completion-help', by default bound to ? from inside the
-  ;; minibuffer.
-
-  (defun prot/completions-kill-save-symbol ()
-    "Add symbol-at-point to the kill ring.
-
-Intended for use in the \\*Completions\\* buffer.  Bind this to a
-key in `completion-list-mode-map'."
-    (interactive)
-    (kill-new (thing-at-point 'symbol)))
-
-  (defmacro prot/completions-buffer-act (name doc &rest body)
-    `(defun ,name ()
-       ,doc
-       (interactive)
-       (let ((completions-window (get-buffer-window "*Completions*"))
-             (completions-buffer (get-buffer "*Completions*"))
-             (symbol (thing-at-point 'symbol)))
-         (if (window-live-p completions-window)
-             (with-current-buffer completions-buffer
-               ,@body)
-           (user-error "No live window with Completions")))))
-
-  (prot/completions-buffer-act
-   prot/completions-kill-symbol-at-point
-   "Add \"Completions\" buffer symbol-at-point to the kill ring."
-   (kill-new `,symbol)
-   (message "Copied %s to kill-ring"
-            (propertize `,symbol 'face 'success)))
-
-  (prot/completions-buffer-act
-   prot/completions-insert-symbol-at-point
-   "Add \"Completions\" buffer symbol-at-point to active window."
-   (let ((window (window-buffer (get-mru-window))))
-     (with-current-buffer window
-       (insert `,symbol)
-       (message "Inserted %s"
-                (propertize `,symbol 'face 'success)))))
-
-  (prot/completions-buffer-act
-   prot/completions-insert-symbol-at-point-exit
-   "Like `prot/completions-insert-symbol-at-point' plus exit."
-   (prot/completions-insert-symbol-at-point)
-   (top-level))
-
-;;; Miscellaneous functions and key bindings
-
-  ;; Technically, this is not specific to the minibuffer, but I define
-  ;; it here so that you can see how it is also used from inside the
-  ;; "Completions" buffer
-  (defun prot/describe-symbol-at-point (&optional arg)
-    "Get help (documentation) for the symbol at point.
-
-With a prefix argument, switch to the *Help* window.  If that is
-already focused, switch to the most recently used window
-instead."
-    (interactive "P")
-    (let ((symbol (symbol-at-point)))
-      (when symbol
-        (describe-symbol symbol)))
-    (when arg
-      (let ((help (get-buffer-window "*Help*")))
-        (when help
-          (if (not (eq (selected-window) help))
-              (select-window help)
-            (select-window (get-mru-window)))))))
-  
-  ;; Defines, among others, aliases for common minibuffer commands to
-  ;; Super-KEY.  Normally these should go in individual package
-  ;; declarations, but their grouping here makes things easier to
-  ;; understand.  Besides, they are related to the minibuffer.
-  :bind (("s-f" . find-file)
-         ("s-F" . find-file-other-window)
-         ("s-d" . dired)
-         ("s-D" . dired-other-window)
-         ("s-b" . switch-to-buffer)
-         ("s-B" . switch-to-buffer-other-window)
-         ("s-v" . prot/focus-minibuffer-or-completions)
-         ("s-h" . prot/describe-symbol-at-point)
-         ("s-H" . (lambda ()
-                    (interactive)
-                    (prot/describe-symbol-at-point '(4))))
-         :map minibuffer-local-completion-map
-         ("<return>" . minibuffer-force-complete-and-exit) ; exit with completion
-         ("C-j" . exit-minibuffer)      ; force input unconditionally
-         :map completion-list-mode-map
-         ("h" . prot/describe-symbol-at-point)
-         ("w" . prot/completions-kill-symbol-at-point)
-         ("i" . prot/completions-insert-symbol-at-point)
-         ("j" . prot/completions-insert-symbol-at-point-exit)
-         ("n" . next-line)
-         ("p" . previous-line)
-         ("f" . next-completion)
-         ("b" . previous-completion)
-         ("M-v" . prot/focus-minibuffer)))
-
 (use-package pylint :ensure)
 
 (use-package py-autopep8 :ensure)
 
-;; (use-package elpy
-;;   :ensure
-;;   :config
-;;   (setq python-shell-interpreter "/home/bonface/.guix-profile/bin/python")
-;;   (setq python-shell-interpreter-args "-i"))
-
-;; I've never used django
-;; (use-package django-mode :ensure)
+(use-package elpy :ensure)
 
 (use-package smooth-scrolling :ensure)
-
-;; Add parts of each file's directory to the buffer name if not unique
-(use-package uniquify-files
-  :ensure
-  :config
-  (setq uniquify-buffer-name-style 'forward
-        uniquify-separator ":"))
-
-(use-package suggest
-  :ensure
-  :defer t)
 
 (use-package lispy
   :ensure
@@ -1288,49 +1072,16 @@ instead."
 (defalias 'list-buffers 'ibuffer) ; always use ibuffer
 
 ;; make frequently used commands short
-(defalias 'qrr 'query-replace-regexp)
-(defalias 'lml 'list-matching-lines)
-(defalias 'dml 'delete-matching-lines)
-(defalias 'dnml 'delete-non-matching-lines)
-(defalias 'dtw 'delete-trailing-whitespace)
 (defalias 'sl 'sort-lines)
 (defalias 'rr 'reverse-region)
 (defalias 'rs 'replace-string)
 
-(defalias 'g 'grep)
-(defalias 'gf 'grep-find)
-(defalias 'fd 'find-dired)
-
 (defalias 'rb 'revert-buffer)
-
-(defalias 'sh 'shell)
-(defalias 'fb 'flyspell-buffer)
-(defalias 'sbc 'set-background-color)
 (defalias 'rof 'recentf-open-files)
-(defalias 'lcd 'list-colors-display)
-(defalias 'cc 'calc)
 
-; elisp
+;; elisp
 (defalias 'eb 'eval-buffer)
 (defalias 'er 'eval-region)
-(defalias 'ed 'eval-defun)
-(defalias 'eis 'elisp-index-search)
-(defalias 'lf 'load-file)
-
-; major modes
-(defalias 'hm 'html-mode)
-(defalias 'tm 'text-mode)
-(defalias 'elm 'emacs-lisp-mode)
-(defalias 'om 'org-mode)
-(defalias 'ssm 'shell-script-mode)
-
-; minor modes
-(defalias 'wsm 'whitespace-mode)
-(defalias 'gwsm 'global-whitespace-mode)
-(defalias 'vlm 'visual-line-mode)
-(defalias 'ln 'global-display-line-numbers-mode)
-
-(setq org-latex-pdf-process (list "latexmk -f -pdf -interaction=nonstopmode -output-directory=%o %f"))
 
 (provide 'sane-defaults)
 ;;; sane-defaults.el ends here
@@ -1369,9 +1120,6 @@ instead."
              (push (concat string " ") display-strings)
              (when (= (mod N per-row) 0) (push "\n" display-strings)))
     (message "%s" (apply #'concat (nreverse display-strings)))))
-
-;; Avy command
-(global-set-key (kbd "M-j") 'avy-goto-char-timer)
 
 ;; Kill text
 (defun avy-action-kill-whole-line (pt)
@@ -1566,145 +1314,7 @@ argument, query for word to search."
 (provide 'setup-eshell)
 ;;; setup-eshell.el ends here
 #+END_SRC
-** setup-engine.el
-#+begin_src emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-engine.el
-;;; Engine mode
-(use-package engine-mode :ensure)
-(engine-mode)
-(require 'eww)
 
-(defun ambrevar/engine-eww-function (url &optional _)
-  (interactive)
-  (eww url))
-
-(defengine arch-aur
-  "https://aur.archlinux.org/packages.php?O=0&K=%s&do_Search=Go"
-  :keybinding "aa")
-
-(defengine arch-packages
-  "https://www.archlinux.org/packages/?sort=&q=%s&maintainer=&flagged="
-  :keybinding "ap")
-
-(defengine arch-wiki
-  "http://wiki.archlinux.org/index.php?title=Special%%3ASearch&search=%s&go=Go"
-  :keybinding "aw"
-  :browser 'ambrevar/engine-eww-function)
-
-(defengine cookbook
-  "https://en.wikibooks.org/wiki/Special:Search?search=%s&prefix=Cookbook%3A&fulltext=Search+Cookbook&fulltext=Search&ns0=1&ns4=1&ns102=1&ns110=1&ns112=1"
-  :keybinding "cb")
-
-(defengine ctan
-  "http://www.ctan.org/search?phrase=%s"
-  :keybinding "c")
-
-(defengine devdocs
-  "http://devdocs.io/#q=%s"
-  :keybinding "dd")
-
-(defengine duckduckgo
-  "https://duckduckgo.com/?q=%s"
-  :keybinding "dg")
-
-(defengine emacs-debbugs
-  "https://debbugs.gnu.org/cgi/pkgreport.cgi?package=emacs;include=subject%3A%s;repeatmerged=on;archive=both"
-  :keybinding "eb"
-  :browser 'ambrevar/engine-eww-function)
-
-(defengine emacs-devel
-  "https://lists.gnu.org/archive/cgi-bin/namazu.cgi?idxname=emacs-devel&submit=Search&query=%s"
-  :keybinding "ed"
-  :browser 'ambrevar/engine-eww-function)
-
-(defengine emms-help
-  "https://lists.gnu.org/archive/cgi-bin/namazu.cgi?idxname=emms-help&submit=Search!&query=%s"
-  :keybinding "ee"
-  :browser 'ambrevar/engine-eww-function)
-
-(defengine gentoo
-  "https://wiki.gentoo.org/index.php?title=Special%3ASearch&search=%s&go=Go"
-  :keybinding "ge")
-
-(defengine github
-  "https://github.com/search?ref=simplesearch&q=%s"
-  :keybinding "gh")
-
-(defengine goodreads
-  "https://www.goodreads.com/search?q=%s"
-  :keybinding "gr")
-
-(defengine google-maps
-  "https://maps.google.com/maps?q=%s"
-  :keybinding "gm")
-
-(defengine guix-devel
-  "https://lists.gnu.org/archive/cgi-bin/namazu.cgi?idxname=guix-devel&submit=Search&query=%s"
-  :keybinding "gud"
-  :browser 'ambrevar/engine-eww-function)
-
-(defengine guix-help
-  "https://lists.gnu.org/archive/cgi-bin/namazu.cgi?idxname=help-guix&submit=Search!&query=%s"
-  :keybinding "guh"
-  :browser 'ambrevar/engine-eww-function)
-
-(defengine guix-issues
-  "https://issues.guix.info/search?query=%s"
-  :keybinding "gui")
-
-(defengine guix-packages
-  "http://data.guix.gnu.org/repository/1/branch/master/package/%s"
-  :keybinding "gup")
-
-(defengine imdb
-  "http://www.imdb.com/find?q=%s&s=all"
-  :keybinding "i")
-
-(defengine musicbrainz-artists
-  "http://musicbrainz.org/search?query=%s&type=artist&method=indexed"
-  :keybinding "mba")
-
-(defengine musicbrainz-releases
-  "http://musicbrainz.org/search?query=%s&type=release&method=indexed"
-  :keybinding "mbr")
-
-(defengine nyxt
-  "https://github.com/atlas-engineer/nyxt/issues?q=%s"
-  :keybinding "nyxt")
-
-(defengine openstreetmap
-  "https://www.openstreetmap.org/search?query=%s"
-  :keybinding "osm")
-
-(defengine stackoverflow
-  "http://stackoverflow.com/search?q=%s"
-  :keybinding "s")
-
-(defengine wikipedia
-  "http://www.wikipedia.org/search-redirect.php?language=en&go=Go&search=%s"
-  :keybinding "wp"
-  :docstring "Search Wikipedia!")
-
-(defengine wikibooks
-  "http://en.wikibooks.org/wiki/Special:Search?search=%s"
-  :keybinding "wb")
-
-(defengine wiktionary
-  "http://en.wiktionary.org/wiki/Special:Search?search=%s"
-  :keybinding "wk")
-
-(defengine wine-appdb
-  "http://www.winehq.org/search/?q=%s"
-  :keybinding "wa")
-
-(defengine youtube
-  "http://www.youtube.com/results?search_query=%s"
-  :keybinding "yt")
-
-(load (expand-file-name "bookmarks/engines.el" (getenv "PERSONAL")) t)
-
-(provide 'setup-engine)
-
-#+end_src
 ** setup-exwm.el
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-exwm.el
 ;;; setup-exwm.el
@@ -1759,10 +1369,6 @@ argument, query for word to search."
 
   (push ?\s-o exwm-input-prefix-keys)
   (push ?\s-k exwm-input-prefix-keys)
-
-  (exwm-input-set-key (kbd "s-p")
-		      #'background-shell-command)
-
   ;; Enable EXWM
   (exwm-enable)
   (exwm-randr-enable)
@@ -1918,48 +1524,6 @@ argument, query for word to search."
    ("s" bookmark-save "save")
    ("q" nil "quit")))
 
-(defhydra hydra-lsp (:exit t :hint nil)
-  "
- Buffer^^               Server^^                   Symbol
--------------------------------------------------------------------------------------
- [_f_] format           [_M-r_] restart            [_d_] declaration  [_i_] implementation  [_o_] documentation
- [_m_] imenu            [_S_]   shutdown           [_D_] definition   [_t_] type            [_r_] rename
- [_x_] execute action   [_M-s_] describe session   [_R_] references   [_s_] signature"
-  ("d" lsp-find-declaration)
-  ("D" lsp-ui-peek-find-definitions)
-  ("R" lsp-ui-peek-find-references)
-  ("i" lsp-ui-peek-find-implementation)
-  ("t" lsp-find-type-definition)
-  ("s" lsp-signature-help)
-  ("o" lsp-describe-thing-at-point)
-  ("r" lsp-rename)
-
-  ("f" lsp-format-buffer)
-  ("m" lsp-ui-imenu)
-  ("x" lsp-execute-code-action)
-
-  ("M-s" lsp-describe-session)
-  ("M-r" lsp-restart-workspace)
-  ("S" lsp-shutdown-workspace))
-
-(defhydra hydra-dumb-jump (:color teal :columns 3)
-  "Dumb Jump"
-  ("q" nil "quit")
-  ("j" dumb-jump-go "Go")
-  ("o" dumb-jump-go-other-window "Other window")
-  ("e" dumb-jump-go-prefer-external "Go external")
-  ("i" dumb-jump-go-prompt "Prompt")
-  ("l" dumb-jump-quick-look "Quick look")
-  ("b" dumb-jump-back "Back")
-  ("x" dumb-jump-go-prefer-external-other-window "Go external other window"))
-
-(defhydra hydra-ide (:color teal
-			    :hint nil)
-  ("q" nil "quit")
-  ("l" hydra-lsp/body "lsp" :column "IDE features")
-  ("d" hydra-dumb-jump/body "dumb-jump"))
-
-(global-set-key (kbd "C-c e") 'hydra-ide/body)
 
 (defhydra hydra-org-template (:color blue :hint nil)
   "
@@ -2844,11 +2408,6 @@ _h_   _l_   _o_k        _y_ank
 (global-set-key (kbd "C-c C-s") 'helm-multi-swoop)
 
 
-(global-set-key (kbd "<s-mouse-3>") 'split-window-below)
-(global-set-key (kbd "<s-mouse-1>") 'split-window-right)
-(global-set-key [double-mouse-3] 'delete-window)
-(global-set-key [double-mouse-1] 'delete-other-windows)
-
 ;;;;;;;;;;;;;;;;
 ;; Appearance ;;
 ;;;;;;;;;;;;;;;;
@@ -2857,11 +2416,8 @@ _h_   _l_   _o_k        _y_ank
 
 ;; Unclutter the mode-line
 ;; My misc key bindings
-(global-set-key (kbd "RET") 'newline-and-indent)
-(global-set-key (kbd "M-/") 'hippie-expand)
 (global-set-key (kbd "C-x g") 'magit-status)
 (global-set-key (kbd "C-x f") 'recentf-open-files)
-(global-set-key (kbd "C-x M-t") 'cleanup-region)
 (use-package expand-region :ensure
   :config (global-set-key (kbd "C-=") 'er/expand-region))
 (use-package zoom-window :ensure
@@ -2881,7 +2437,9 @@ _h_   _l_   _o_k        _y_ank
   (global-set-key (kbd "M-S-<down>") 'smart-down)
   (global-set-key (kbd "M-S-<left>") 'smart-backward)
   (global-set-key (kbd "M-S-<right>") 'smart-forward))
+
 (use-package change-inner :ensure)
+
 (require 'change-inner)
 (global-set-key (kbd "M-S-i") 'change-inner)
 (global-set-key (kbd "M-S-o") 'change-outer)
@@ -2977,10 +2535,6 @@ _h_   _l_   _o_k        _y_ank
 ;; org ;;
 ;;;;;;;;;
 (global-set-key (kbd "C-c C-x C-r") 'org-clock-report)
-
-
-
-
 ;;;;;;;;;;;
 ;; Hydra ;;
 ;;;;;;;;;;;
@@ -4764,10 +4318,6 @@ PATH should be a topic that can be thrown at the man command."
      (R . t)
      (sql . t)
      (C . t)))
-
-  (add-hook 'org-mode-hook '(lambda ()
-                              (local-set-key (kbd "<return>") 'org-return-indent))
-            (local-set-key (kbd "C-M-<return>") 'electric-indent-just-newline))
   (eval-after-load "org-present"
     '(progn
        (add-hook 'org-present-mode-hook
