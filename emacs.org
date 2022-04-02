@@ -1668,6 +1668,8 @@ T - tag prefix
   ("q" quit-window "quit ibuffer" :color blue)
   ("." nil "toggle hydra" :color blue))
 
+(define-key ibuffer-mode-map "." 'hydra-ibuffer-main/body)
+
 (defhydra hydra-ibuffer-mark (:color teal :columns 5
                                      :after-exit (hydra-ibuffer-main/body))
   "Mark"
