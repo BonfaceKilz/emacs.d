@@ -2412,6 +2412,7 @@ _h_   _l_   _o_k        _y_ank
 (global-set-key (kbd "C-S") 'helm-swoop-back-to-last-point)
 (global-set-key (kbd "C-c C-s") 'helm-multi-swoop)
 
+(global-set-key (kbd "C-c C-w") 'hycontrol-windows)
 
 ;;;;;;;;;;;;;;;;
 ;; Appearance ;;
