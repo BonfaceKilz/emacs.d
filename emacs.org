@@ -552,18 +552,11 @@ With \\[universal-argument] toggle the display of the window."
   (ac-config-default)
   (setq ac-show-menu-immediately-on-auto-complete t))
 
-(use-package fill-column-indicator
-  :ensure t
-  :config
-  (setq fci-rule-color "#111122"))
-
 ;; move text
 (use-package move-text
   :ensure t
   :config
   (move-text-default-bindings))
-
-(use-package guix :ensure t)
 
 ;; show emojis
 (use-package emojify
