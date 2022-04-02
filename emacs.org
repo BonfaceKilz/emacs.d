@@ -354,7 +354,6 @@ Configure the packages.
   :ensure t
   :config (autopair-mode 1))
 
-;; This doubles as a quick way to avoid the common formula: C-x b RET *scratch*
 ;; This doubles as a quick way to avoid the common formula: C-x b RET
 ;; *scratch*
 (use-package persistent-scratch
