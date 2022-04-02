@@ -1101,7 +1101,7 @@ With \\[universal-argument] toggle the display of the window."
                       ?a ?s ?d ?f ?g ?h ?j
                       ?l ?' ?c ?v ?b
                       ?n ?, ?/))
-  (setq avy-timeout-seconds 0.5))
+  (setq avy-timeout-seconds 0.3))
 
 (defun avy-show-dispatch-help ()
   (let* ((len (length "avy-action-"))
