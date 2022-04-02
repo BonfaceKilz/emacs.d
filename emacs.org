@@ -54,7 +54,7 @@
 - Perhaps I should rethink how I've named them.
 
 #+BEGIN_SRC emacs-lisp :padding no :tangle ~/.emacs.d/init.el :mkdirp yes :noweb yes
-  ;;; init.el
+;;; init.el
 
 (defvar user-home-directory (concat (expand-file-name "~") "/"))
 
@@ -63,7 +63,9 @@
 (let ((file-name (expand-file-name "custom.el" user-emacs-directory)))
   (when (not (file-exists-p file-name))
     (write-region "" nil file-name)))
+
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+
 (load custom-file)
 
 ;; Set up a settings dir
@@ -74,6 +76,7 @@
 
 (create-directory-if-nonexistent
  (expand-file-name "settings" user-emacs-directory))
+
 (setq settings-dir
       (expand-file-name "settings" user-emacs-directory))
 (add-to-list 'load-path settings-dir)
@@ -85,21 +88,12 @@
       (expand-file-name "site-lisp" user-emacs-directory))
 (add-to-list 'load-path site-lisp-dir)
 
-;; Set up vendor dir
-(create-directory-if-nonexistent
- (expand-file-name "vendor" user-emacs-directory))
-(defvar bonface/vendor-dir
-  (expand-file-name "vendor" user-emacs-directory))
-(add-to-list 'load-path bonface/vendor-dir)
-
-(dolist (project (directory-files bonface/vendor-dir t "\\w+"))
-  (when (file-directory-p project)
-    (add-to-list 'load-path project)))
 
 ;; Write backup files to own directory
 (create-directory-if-nonexistent
  (expand-file-name
   (concat user-emacs-directory "backups")))
+
 (setq backup-directory-alist
       `(("." . ,(expand-file-name
                  (concat user-emacs-directory "backups")))))
