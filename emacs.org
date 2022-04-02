@@ -342,8 +342,6 @@ Configure the packages.
 
 ;; https://github.com/lukhas/buffer-move
 (use-package buffer-move :ensure t)
-(use-package itail :ensure t)
-(use-package guix :ensure t)
 
 (use-package xclip :ensure t
   :config
