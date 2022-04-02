@@ -380,8 +380,6 @@ Configure the packages.
   (ace-window-display-mode 1)
   :bind (("M-o" . ace-window)))
 
-(package-install 'embark)
-
 (use-package embark
   :ensure t
   :bind
