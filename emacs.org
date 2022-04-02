@@ -558,6 +558,7 @@ when that buffer was created) URL
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
+
 ;; Shrink fringes to 7 pixel
 (fringe-mode 7)
 
@@ -575,66 +576,11 @@ when that buffer was created) URL
   (persistent-scratch-setup-default))
 
 
-(define-key global-map "\M-Q" 'unfill-paragraph)
-
-(defun display-startup-echo-area-message ()
-  "The message that is shown after ‘user-init-file’ is loaded."
-  (message
-   (concat "Welcome "      user-full-name
-           "! Emacs "      emacs-version
-           "; Org-mode "   org-version
-           "; System"    (system-name)
-           (format "; Time %.3fs"
-                   (float-time (time-subtract (current-time)
-                                              before-init-time)))
-           "Believe in Yourself!")))
 
 (use-package vterm)
 
 (use-package pass :ensure)
 
-(defun bonz/vterm-buffer (&optional arg)
-  "Open new dedicated terminal for current buffer name at bottom with 1/3 original window height.
-If terminal already opened, then switch to it.
-If we on terminal, then switch to original buffer.
-With C-u close opened terminal and shell process"
-  (interactive "P")
-  (let*
-      (
-       (buffer (buffer-name (current-buffer)))
-       (is-vterm (string-prefix-p "*vterm" buffer))
-       (vterm-buffer-name (format "*vterm %s*" buffer))
-       (orig-buffer
-        (if (string-match "\\vterm \\(.*\\)\\*" buffer)
-            (match-string 1 buffer)
-          nil)))
-    (cond
-     ;; C-u - close opened terminal and shell process
-     (arg
-      (if is-vterm (select-window (get-buffer-window orig-buffer) nil))
-      (when (get-buffer-window vterm-buffer-name)
-        (delete-window (get-buffer-window vterm-buffer-name))
-        (kill-buffer vterm-buffer-name)))
-
-     ;; if term already opened, then switch to it
-     ((get-buffer-window vterm-buffer-name)
-      (select-window (get-buffer-window vterm-buffer-name) nil))
-     ;; if on terminal, then switch to original buffer
-     (is-vterm
-      (select-window (get-buffer-window orig-buffer) nil))
-
-     ;; open new terminal at bottom with 1/3 original window height
-     (t
-      (let ((n (buffer-name)))
-        (split-window-below (- (window-height) (/ (window-height) 3)))
-        (other-window 1)
-        (vterm)
-        (rename-buffer (format "*vterm %s*" n)))
-      ))))
-
-
-(setq browse-url-browser-function 'browse-url-generic
-      browse-url-generic-program "nyxt")
 
 (use-package marginalia
   :ensure t
