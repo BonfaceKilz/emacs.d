@@ -18,7 +18,6 @@
   - [[#setup-hledgerel][setup-hledger.el]]
   - [[#setup-hugoel][setup-hugo.el]]
   - [[#setup-initel][setup-init.el]]
-  - [[#setup-js2-modeel][setup-js2-mode.el]]
   - [[#setup-magitel][setup-magit.el]]
   - [[#setup-markdownel][setup-markdown.el]]
   - [[#setup-orgel][setup-org.el]]
@@ -396,57 +395,6 @@ Configure the packages.
                  nil
                  (window-parameters (mode-line-format . none)))))
 
-(use-package company
-  :ensure
-  :commands company-mode
-  :bind (:map company-active-map
-	      ("C-n" . 'company-select-next)
-	      ("C-p" . 'company-select-previous))
-  :hook ((emacs-lisp-mode-hook . company-mode)
-	 (lisp-mode-hook . company-mode)
-	 (sly-mrepl-mode-hook . company-mode))
-  :config
-  (setq company-idle-delay 0)
-
-  ;; Using digits to select company-mode candidates
-  ;; https://oremacs.com/2017/12/27/company-numbers/
-  (setq company-show-numbers t)
-
-  (let ((map company-active-map))
-    (mapc
-     (lambda (x)
-       (define-key map (format "%d" x) 'ora-company-number))
-     (number-sequence 0 9))
-    (define-key map " " (lambda ()
-			  (interactive)
-			  (company-abort)
-			  (self-insert-command 1)))
-    (define-key map (kbd "<return>") nil))
-
-  (defun ora-company-number ()
-    "Forward to `company-complete-number'.
-
-Unless the number is potentially part of the candidate.
-In that case, insert the number."
-    (interactive)
-    (let* ((k (this-command-keys))
-	   (re (concat "^" company-prefix k)))
-      (if (cl-find-if (lambda (s) (string-match re s))
-		      company-candidates)
-	  (self-insert-command 1)
-	(company-complete-number (string-to-number k))))))
-
-(use-package company-quickhelp
-  :ensure
-  :hook (company-mode-hook . company-quickhelp-local-mode))
-
-(use-package company-prescient
-  :ensure
-  :after company
-  :config
-  (company-prescient-mode))
-
-(use-package debbugs :ensure)
 (use-package debbugs :ensure t)
 
 (use-package diminish
@@ -457,12 +405,7 @@ In that case, insert the number."
   (diminish 'org-indent-mode)
   (diminish 'subword-mode)
   (diminish 'visual-line-mode "")
-  (diminish 'isearch-mode "?")
-  (diminish 'flyspell-mode))
-
-(use-package flyspell-correct
-  :ensure
-  :after flyspell)
+  (diminish 'isearch-mode "?"))
 
 (use-package imenu
   :config
@@ -476,7 +419,6 @@ In that case, insert the number."
   (setq imenu-level-separator "/")
   :bind
   (("M-i" . imenu)))
-
 
 (use-package shrface
   :ensure t
@@ -537,12 +479,6 @@ With \\[universal-argument] toggle the display of the window."
               (pop-to-buffer (other-buffer (current-buffer) t))
             (imenu-list))))))
 
-(use-package flimenu
-  :ensure
-  :after imenu
-  :config
-  (flimenu-global-mode 1))
-
 (use-package password-generator :ensure t)
 
 (use-package pdf-tools
@@ -566,7 +502,6 @@ With \\[universal-argument] toggle the display of the window."
   (setq pdf-view-use-dedicated-register nil)
   (setq pdf-view-max-image-width 4000)
   (setq pdf-outline-imenu-use-flat-menus t)
-
   (pdf-loader-install)
   (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer))
 
@@ -635,35 +570,6 @@ With \\[universal-argument] toggle the display of the window."
   :config
   (ac-config-default)
   (setq ac-show-menu-immediately-on-auto-complete t))
-
-;; Flyspell
-(use-package flyspell
-  :ensure t
-  :config
-  (custom-set-faces '(flyspell-incorrect ((t (:inverse-video t)))))
-  (setq flyspell-issue-welcome-flag nil)
-  (setq ispell-dictionary "en_GB") ;; set the default dictionary
-  (setq ispell-personal-dictionary "~/.emacs.d/.aspell.en.pws")
-  (setq ispell-silently-savep t)
-  (setq-default ispell-list-command "list")
-  (setq-default ispell-program-name "/home/bonface/.guix-profile/bin/aspell")
-  :hook ((prog-mode-hook . flyspell-prog-mode)
-         (text-mode-hook . flyspell-mode)
-         (org-mode-hook . flyspell-mode)
-         (c-mode-hook . flyspell-prog-mode)
-         (python-mode-hook . flyspell-prog-mode)
-         (web-mode-hook . flyspell-prog-mode)
-         (emacs-lisp-mode-hook . flyspell-prog-mode)))
-
-;; Avoid unwanted repetition
-(use-package synosaurus
-  :ensure t
-  :diminish synosaurus-mode
-  :config
-  (setq synosaurus-choose-method 'popup)
-  (synosaurus-mode 1)
-  :bind
-  (("M-#" . synosaurus-choose-and-replace)))
 
 (use-package fill-column-indicator
   :ensure t
@@ -1179,19 +1085,6 @@ With \\[universal-argument] toggle the display of the window."
 
 (setf (alist-get ?  avy-dispatch-alist) 'avy-action-mark-to-char)
 
-;; Flyspell words
-(defun avy-action-flyspell (pt)
-  (save-excursion
-    (goto-char pt)
-    (when (require 'flyspell nil t)
-      (flyspell-auto-correct-word)))
-  (select-window
-   (cdr (ring-ref avy-ring 0)))
-  t)
-
-;; Bind to semicolon (flyspell uses C-;)
-(setf (alist-get ?\; avy-dispatch-alist) 'avy-action-flyspell)
-
 ;; Dictionary: define words
 ;; Replace your package manager or preferred dict package
 (package-install 'dictionary)
@@ -1585,8 +1478,7 @@ argument, query for word to search."
   (add-hook 'markdown-mode-hook
 	    (lambda ()
 	      (visual-line-mode t)
-	      (writegood-mode t)
-	      (flyspell-mode t))))
+	      (writegood-mode t))))
 
 (provide 'setup-markdown)
 
@@ -2170,215 +2062,7 @@ argument, query for word to search."
 
 ;;;; setup-init.el ends here
 #+END_SRC
-** setup-js2-mode.el
-#+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-js2-mode.el
-;;; setup-js2-mode.el --- tweak js2 settings -*- lexical-binding: t; -*-
 
-(setq-default js2-allow-rhino-new-expr-initializer nil)
-(setq-default js2-auto-indent-p nil)
-(setq-default js2-enter-indents-newline nil)
-
-(setq-default js2-idle-timer-delay 0.1)
-(setq-default js2-indent-on-enter-key nil)
-(setq-default js2-mirror-mode nil)
-(setq-default js2-strict-inconsistent-return-warning nil)
-(setq-default js2-auto-indent-p t)
-(setq-default js2-include-rhino-externs nil)
-(setq-default js2-include-gears-externs nil)
-(setq-default js2-include-node-externs t)
-(setq-default js2-concat-multiline-strings 'eol)
-(setq-default js2-rebind-eol-bol-keys nil)
-
-;; Let flycheck handle parse errors
-(setq-default js2-show-parse-errors nil)
-(setq-default js2-strict-missing-semi-warning nil)
-(setq-default js2-strict-trailing-comma-warning t) ;; jshint does not warn about this now for some reason
-(add-hook 'js2-mode-hook (lambda () (flycheck-mode 1)))
-
-(use-package js2-refactor)
-(js2r-add-keybindings-with-prefix "C-c C-r")
-
-(add-hook 'js2-mode-hook (lambda ()
-                           (add-hook 'xref-backend-functions #'xref-js2-xref-backend nil t)))
-(setq js2-skip-preprocessor-directives t)
-(js2r-add-keybindings-with-prefix "C-c C-m")
-
-(require 'js2-imenu-extras)
-
-(js2-imenu-extras-setup)
-
-(defun js2r--remove-all-this-cruft-on-backward-delete ()
-  (set-temporary-overlay-map
-   (let ((map (make-sparse-keymap)))
-     (define-key map (kbd "DEL") 'undo-tree-undo)
-     (define-key map (kbd "C-h") 'undo-tree-undo)
-     map) nil))
-
-(defun js2r--does-not-need-semi ()
-  (save-excursion
-    (back-to-indentation)
-    (or (looking-at "if ")
-        (looking-at "function ")
-        (looking-at "for ")
-        (looking-at "while ")
-        (looking-at "try ")
-        (looking-at "} catch ")
-        (looking-at "} else "))))
-
-(defun js2r--comma-unless (delimiter)
-  (if (looking-at (concat "[\n\t\r ]*" (regexp-quote delimiter)))
-      ""
-    ","))
-
-(define-key js2-mode-map (kbd "C-c RET jt") 'jump-to-test-file)
-(define-key js2-mode-map (kbd "C-c RET ot") 'jump-to-test-file-other-window)
-(define-key js2-mode-map (kbd "C-c RET js") 'jump-to-source-file)
-(define-key js2-mode-map (kbd "C-c RET os") 'jump-to-source-file-other-window)
-(define-key js2-mode-map (kbd "C-c RET jo") 'jump-between-source-and-test-files)
-(define-key js2-mode-map (kbd "C-c RET oo") 'jump-between-source-and-test-files-other-window)
-
-(define-key js2-mode-map (kbd "C-c RET dp") 'js2r-duplicate-object-property-node)
-
-(define-key js2-mode-map (kbd "C-c RET ta") 'toggle-assert-refute)
-
-(defadvice js2r-inline-var (after reindent-buffer activate)
-  (cleanup-buffer))
-
-(defun js2-hide-test-functions ()
-  (interactive)
-  (save-excursion
-    (goto-char (point-min))
-    (ignore-errors
-      (while (re-search-forward "\"[^\"]+\": function (")
-        (js2-mode-hide-element)))))
-
-(define-key js2-mode-map (kbd "C-c t") 'js2-hide-test-functions)
-
-;; js2-mode steals TAB, let's steal it back for yasnippet
-(defun js2-tab-properly ()
-  (interactive)
-  (let ((yas-fallback-behavior 'return-nil))
-    (unless (yas-expand)
-      (indent-for-tab-command)
-      (if (looking-back "^\s*")
-          (back-to-indentation)))))
-
-(define-key js2-mode-map (kbd "TAB") 'js2-tab-properly)
-
-;; When renaming/deleting js-files, check for corresponding testfile
-(define-key js2-mode-map (kbd "C-x C-r") 'js2r-rename-current-buffer-file)
-(define-key js2-mode-map (kbd "C-x C-k") 'js2r-delete-current-buffer-file)
-
-(define-key js2-mode-map (kbd "C-k") #'js2r-kill)
-
-(comment ;; avoid confusing shorthands
- ;; Use lambda for anonymous functions
- (font-lock-add-keywords
-  'js2-mode `(("\\(function\\) *("
-               (0 (progn (compose-region (match-beginning 1)
-                                         (match-end 1) "\u0192")
-                         nil)))))
-
- ;; Use right arrow for return in one-line functions
- (font-lock-add-keywords
-  'js2-mode `(("function *([^)]*) *{ *\\(return\\) "
-               (0 (progn (compose-region (match-beginning 1)
-                                         (match-end 1) "\u2190")
-                         nil))))))
-
-;; After js2 has parsed a js file, we look for jslint globals decl comment ("/* global Fred, _, Harry */") and
-;; add any symbols to a buffer-local var of acceptable global vars
-;; Note that we also support the "symbol: true" way of specifying names via a hack (remove any ":true"
-;; to make it look like a plain decl, and any ':false' are left behind so they'll effectively be ignored as
-;; you can't have a symbol called "someName:false"
-(add-hook 'js2-post-parse-callbacks
-          (lambda ()
-            (when (> (buffer-size) 0)
-              (let ((btext (replace-regexp-in-string
-                            ": *true" " "
-                            (replace-regexp-in-string "[\n\t ]+" " " (buffer-substring-no-properties 1 (buffer-size)) t t))))
-                (mapc (apply-partially 'add-to-list 'js2-additional-externs)
-                      (split-string
-                       (if (string-match "/\\* *global *\\(.*?\\) *\\*/" btext) (match-string-no-properties 1 btext) "")
-                       " *, *" t))
-                ))))
-
-(require 'json)
-
-(defun my-aget (key map)
-  (cdr (assoc key map)))
-
-(defun js2-fetch-autolint-externs (file)
-  (let* ((settings (with-temp-buffer
-                     (insert-file-literally file)
-                     (javascript-mode)
-                     (let (kill-ring kill-ring-yank-pointer) (kill-comment 1000))
-                     (->> (buffer-substring (point-min) (point-max))
-                          (s-trim)
-                          (s-chop-prefix "module.exports = ")
-                          (s-chop-suffix ";")
-                          (json-read-from-string))))
-         (predef (->> settings
-                      (my-aget 'linterOptions)
-                      (my-aget 'predef))))
-    (--each (append predef nil)
-      (add-to-list 'js2-additional-externs it))))
-
-(defun cjsp--eldoc-innards (beg)
-  (save-excursion
-    (goto-char beg)
-    (search-forward "=")
-    (let ((start (point)))
-      (search-forward "*/")
-      (forward-char -2)
-      (buffer-substring-no-properties start (point)))))
-
-(defun cjsp--indentation-of-html-line (html line-number)
-  (with-temp-buffer
-    (insert html)
-    (html-mode)
-    (indent-region (point-min) (point-max))
-    (goto-line line-number)
-    (back-to-indentation)
-    (current-column)))
-
-(defun cjsp--line-number-in-eldoc (p beg)
-  (save-excursion
-    (goto-char p)
-    (let ((l (line-number-at-pos)))
-      (goto-char beg)
-      (- l (line-number-at-pos) -1))))
-
-(defun js2-lineup-comment (parse-status)
-  "Indent a multi-line block comment continuation line."
-  (let* ((beg (nth 8 parse-status))
-         (first-line (js2-same-line beg))
-         (p (point))
-         (offset (save-excursion
-                   (goto-char beg)
-                   (cond
-
-                    ((looking-at "/\\*:DOC ")
-                     (+ 2 (current-column)
-                        (cjsp--indentation-of-html-line
-                         (cjsp--eldoc-innards beg)
-                         (cjsp--line-number-in-eldoc p beg))))
-
-                    ((looking-at "/\\*")
-                     (+ 1 (current-column)))
-
-                    (:else 0)))))
-    (unless first-line
-      (indent-line-to offset))))
-(setq js-indent-level 2)
-;; js-mode (which js2 is based on) binds "M-." which conflicts with xref, so
-;; unbind it.
-(define-key js-mode-map (kbd "M-.") nil)
-
-(provide 'setup-js2-mode)
-
-;;; setup-js2-mode.el ends here
-#+END_SRC
 ** setup-magit.el
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-magit.el
 ;;; setup-magit.el
@@ -2493,8 +2177,7 @@ argument, query for word to search."
   (add-hook 'markdown-mode-hook
 	    (lambda ()
 	      (visual-line-mode t)
-	      (writegood-mode t)
-	      (flyspell-mode t))))
+	      (writegood-mode t))))
 
 (provide 'setup-markdown)
 
@@ -3533,10 +3216,6 @@ PATH should be a topic that can be thrown at the man command."
   (setq rcirc-startup-channels-alist
 	'(("\\.freenode\\.net$" "#emacs" "#nairobilug" "#lisp")))
 
-  ;; Turn on spell checking.
-  (add-hook 'rcirc-mode-hook (lambda ()
-			       (flyspell-mode 1)))
-
   ;; Keep input line at bottom.
   (add-hook 'rcirc-mode-hook
 	    (lambda ()
@@ -3588,33 +3267,6 @@ PATH should be a topic that can be thrown at the man command."
   (yas-global-mode 1)
   ;; respect the spacing in my snippet declarations
   (setq yas-indent-line 'fixed))
-
-(use-package php-auto-yasnippets :ensure t
-  :config
-  (defun bonz/php-mode-hook ()
-    "My PHP-mode hook."
-    (flycheck-mode t))
-  :hook
-  ((bonz/php-mode-hook . php-mode-hook)))
-
-;; Nice “interface” to said program
-(use-package yankpad
-  :ensure t
-  :demand t
-  :config
-  (require 'company)
-  (setq yankpad-file "/home/bonface/.emacs.d/yankpad.org")
-  ;; If you want to complete snippets using company-mode
-  (add-to-list 'company-backends #'company-yankpad)
-  ;; If you want to expand snippets with hippie-expand
-  (add-to-list 'hippie-expand-try-functions-list #'yankpad-expand)
-  ;; Load the snippet templates -- useful after yankpad is altered
-  (add-hook 'after-init-hook 'yankpad-reload)
-  :bind (("C-c y m" . yankpad-map)
-         ("C-c y c" . yankpad-set-category)
-         ("C-c y i" . yankpad-insert)
-         ("C-c y r" . yankpad-repeat)
-         ("C-c y e" . yankpad-expand)))
 
 (use-package yasnippet-snippets :ensure t)
 
