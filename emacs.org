@@ -324,7 +324,7 @@ Configure the packages.
 
 ;;; setup-package.el
 #+end_src
-** Sane defaults
+** sane-defaults.el
 
 "Sane" defaults go here. Also ad-hoc packages that don't warrant their own section go here.
 
