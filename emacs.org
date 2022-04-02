@@ -4650,7 +4650,8 @@ PATH should be a topic that can be thrown at the man command."
 (require 'oc-csl)
 (require 'oc-biblatex)
 (setq org-cite-export-processors
-      '((latex biblatex)
+      '((beamer natbib)
+        (latex biblatex)
         (t csl)))
 (require 'org-habit)
 
