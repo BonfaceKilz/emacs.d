@@ -3915,7 +3915,10 @@ agenda."
 
 (require 'ol)
 
-(org-link-set-parameters "elpher"
+(org-link-set-parameters "gemini"
+                         :follow #'org-elpher-open
+                         :store #'org-elpher-store-link)
+(org-link-set-parameters "gopher"
                          :follow #'org-elpher-open
                          :store #'org-elpher-store-link)
 
@@ -3930,7 +3933,7 @@ PATH should be a topic that can be thrown at the man command."
   (funcall org-elpher-command path))
 
 (defun org-elpher-store-link ()
-  "Store a link to a man page."
+  "Store a link to an elpher page."
   (when (memq major-mode '(elpher-mode))
     ;; This is a elpher page, we do make this link.
     (let* ((page (elpher-copy-current-url))
