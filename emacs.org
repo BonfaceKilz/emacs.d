@@ -450,16 +450,15 @@ Configure the packages.
   :mode ("\\.epub\\'" . nov-mode)
   :init
   (setq nov-text-width t)
-  (add-hook 'nov-mode-hook #'bonz/set-50-char)
-  (add-hook 'nov-mode-hook #'shrface-mode)
-  (add-hook 'nov-post-html-render-hook #'bonz/set-50-char)
-  (add-hook 'nov-post-html-render-hook #'shrface-mode)
   :config
   (setq visual-fill-column-center-text t)
   (require 'shrface)
   (setq nov-shr-rendering-functions '((img . nov-render-img) (title . nov-render-title)))
   (setq nov-shr-rendering-functions (append nov-shr-rendering-functions shr-external-rendering-functions))
-  :hook ((nov-mode-hook . bonz/set-50-char)))
+  :hook ((nov-mode-hook . #'bonz/set-50-char)
+         (nov-mode-hook . #'shrface-mode)
+         (nov-post-html-render-hook . #'bonz/set-50-char)
+         (nov-post-html-render-hook . #'shrface-mode)))
 
 (use-package markdown-mode+
   :ensure t
@@ -508,28 +507,21 @@ With \\[universal-argument] toggle the display of the window."
   (setq pdf-view-max-image-width 4000)
   (setq pdf-outline-imenu-use-flat-menus t)
   (pdf-loader-install)
-  (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer))
-
-(add-hook 'pdf-view-mode-hook (lambda() (linum-mode -1)))
-
+  :hook ((pdf-view-mode-hook . (lambda() (linum-mode -1)))
+         (TeX-after-compilation-finished-functions . #'TeX-revert-document-buffer)))
 
 (use-package emmet-mode
   :ensure t
-  :config
-  (add-hook 'sgml-mode-hook 'emmet-mode) ;; Auto-start on any markup modes
-  (add-hook 'web-mode-hook 'emmet-mode) ;; Auto-start on any markup modes
-  (add-hook 'css-mode-hook  'emmet-mode) ;; enable Emmet's css abbreviation.
-  )
+  :hook ((sgml-mode-hook . #'emmet-mode)
+         (web-mode-hook . #'emmet-mode)
+         (css-mode-hook . #'emmet-mode)))
 
 (use-package web-mode
   :mode ("\\.html\\'" . web-mode)
   :ensure t
-  :config
-  (add-hook 'web-mode-hook 'visual-line-mode))
-
+  :hook ((web-mode-hook . #'visual-line-mode)))
 
 (use-package haskell-mode
-  :mode ("\\.hs\\'" . haskell-mode))
 
 (use-package web-beautify
   :ensure t
@@ -546,6 +538,7 @@ With \\[universal-argument] toggle the display of the window."
     '(define-key web-mode-map (kbd "C-c b") 'web-beautify-html))
   (eval-after-load 'css-mode
     '(define-key css-mode-map (kbd "C-c b") 'web-beautify-css)))
+  :mode ("\\.hs\\'" . haskell-mode))
 
 (use-package wordnut
   :ensure t
