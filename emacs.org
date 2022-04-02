@@ -2835,7 +2835,7 @@ _h_   _l_   _o_k        _y_ank
   (add-hook 'org-store-link-functions
             'org-elfeed-entry-store-link)
   :bind
-  (("C-x w" . actuator-elfeed-load-db-and-open)
+  (("C-c e" . actuator-elfeed-load-db-and-open)
    :map elfeed-show-mode-map
    ("c" .  (lambda () (interactive) (org-capture nil "f")))
    :map elfeed-search-mode-map
