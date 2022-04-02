@@ -334,6 +334,13 @@ Configure the packages.
   (when (daemonp)
   (exec-path-from-shell-initialize)))
 
+(use-package use-package-chords
+  :ensure t
+  :config (key-chord-mode 1))
+
+(use-package use-package-ensure-system-package
+  :ensure t)
+
 (provide 'setup-package)
 
 ;;; setup-package.el
