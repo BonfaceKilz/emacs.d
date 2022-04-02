@@ -3897,6 +3897,8 @@ agenda."
 ;;; setup-org.el
 
 ;; Org-mode
+(setq org-latex-pdf-process (list "latexmk -f -pdf -interaction=nonstopmode -output-directory=%o %f"))
+
 (setq org-time-budgets
       '((:title "Genenetwork/ Weekday" :tags "+genenetwork+weekday" :budget "25:00" :blocks (workday week))
         (:title "Genenetwork/ Weekend" :tags "+genenetwork+weekend" :budget "6:00" :blocks (day week))
