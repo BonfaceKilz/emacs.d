@@ -522,8 +522,7 @@ With \\[universal-argument] toggle the display of the window."
   :mode ("\\.hs\\'" . haskell-mode))
 
 (use-package wordnut
-  :ensure t
-  :bind ("C-c !" . wordnut-lookup-current-word))
+  :ensure t)
 
 ;; Making it easier to discover Emacs key presses.
 (use-package which-key
