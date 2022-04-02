@@ -928,6 +928,7 @@ With \\[universal-argument] toggle the display of the window."
   (global-subword-mode 1)
   (global-visual-line-mode)
   (hes-mode)
+  (hyperbole-mode 1)
   (menu-bar-mode -1)
   (recentf-mode 1)
   (savehist-mode 1)
