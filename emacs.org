@@ -38,20 +38,10 @@
 - [[#ghci][GHCI]]
 
 * Emacs init.el
-- This file should be small and quite readable. Without this, things will crush
-- Set my user name and all my email address
-- Really not required but \m/ \m/
-- If this is not set, the init file may become really noisy.
-- You can read more here: [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Saving-Customizations.html][Saving customizations]]
-- Any useful function that I come across in the interwebs is dumped in the
-  defuns directory: ".emacs.d/defuns"
-- This keeps things nice and clean
-- Create custom dirs for things
-- Really long.
-- I use the `require` function to load packages if they haven't already been
-  loaded.
-- The order in which things are been loaded is important.
-- Perhaps I should rethink how I've named them.
+
+=init.el= bootstraps everything else in my GNU Emacs configuration. My
+goal is: to have a minimal system, and a simple intuitive system. Note
+that I use [[https://github.com/ch11ng/exwm][exwm]] as my Window Manager. With time, I want to look into [[https://guix.gnu.org/manual/devel/en/html_node/Home-Configuration.html][Guix Home]] to manage my configuration files.
 
 #+BEGIN_SRC emacs-lisp :padding no :tangle ~/.emacs.d/init.el :mkdirp yes :noweb yes
 ;;; init.el
@@ -87,7 +77,6 @@
 (setq site-lisp-dir
       (expand-file-name "site-lisp" user-emacs-directory))
 (add-to-list 'load-path site-lisp-dir)
-
 
 ;; Write backup files to own directory
 (create-directory-if-nonexistent
@@ -147,6 +136,7 @@
 (load-file "~/guix/etc/copyright.el")
 ;;; init.el ends here
 #+END_SRC
+
 * Defuns
 - Most of this defuns were lifted online over time
 ** lisp-defuns
