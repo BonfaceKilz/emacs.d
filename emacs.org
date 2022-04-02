@@ -123,10 +123,10 @@ that I use [[https://github.com/ch11ng/exwm][exwm]] as my Window Manager. With t
 (eval-after-load 'js2-mode '(require 'setup-js2-mode))
 (eval-after-load 'markdown-mode '(require 'setup-markdown))
 
-(use-package buffer-move :ensure)
-(use-package itail :ensure)
-(use-package guix :ensure)
-(use-package xclip :ensure
+(use-package buffer-move :ensure t)
+(use-package itail :ensure t)
+(use-package guix :ensure t)
+(use-package xclip :ensure t
   :config
   (xclip-mode 1))
 
@@ -365,6 +365,7 @@ Configure the packages.
          ("M-A" . marginalia-cycle)))
 
 (use-package ace-window
+  :ensure t
   :config
   (setq aw-dispatch-always nil)
   (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
@@ -443,9 +444,10 @@ In that case, insert the number."
   (company-prescient-mode))
 
 (use-package debbugs :ensure)
+(use-package debbugs :ensure t)
 
 (use-package diminish
-  :ensure
+  :ensure t
   :after use-package
   :config
   (diminish 'eldoc-mode)
@@ -480,7 +482,7 @@ In that case, insert the number."
     (visual-fill-column-mode))
 
 (use-package shrface
-  :ensure
+  :ensure t
   :defer t
   :config
   (shrface-basic)
@@ -497,7 +499,8 @@ In that case, insert the number."
   :hook ((eww-mode-hook . bonz/set-50-char)))
 
 ;; open epubs
-(use-package nov :ensure
+(use-package nov
+  :ensure t
   :mode ("\\.epub\\'" . nov-mode)
   :init
   (setq nov-text-width t)
@@ -515,7 +518,7 @@ In that case, insert the number."
 (use-package org-make-toc :ensure)
 
 (use-package markdown-mode+
-  :ensure
+  :ensure t
   :mode ("\\.md\\'" . markdown-mode))
 
 (use-package imenu-list
@@ -547,10 +550,10 @@ With \\[universal-argument] toggle the display of the window."
   :config
   (flimenu-global-mode 1))
 
-(use-package password-generator :ensure)
+(use-package password-generator :ensure t)
 
 (use-package pdf-tools
-  :ensure
+  :ensure t
   :load-path "site-lisp/pdf-tools/lisp"
   :mode ("\\.pdf\\'" . pdf-view-mode)
   :magic ("%PDF" . pdf-view-mode)
@@ -578,7 +581,7 @@ With \\[universal-argument] toggle the display of the window."
 
 
 (use-package emmet-mode
-  :ensure
+  :ensure t
   :config
   (add-hook 'sgml-mode-hook 'emmet-mode) ;; Auto-start on any markup modes
   (add-hook 'web-mode-hook 'emmet-mode) ;; Auto-start on any markup modes
@@ -587,7 +590,7 @@ With \\[universal-argument] toggle the display of the window."
 
 (use-package web-mode
   :mode ("\\.html\\'" . web-mode)
-  :ensure
+  :ensure t
   :config
   (add-hook 'web-mode-hook 'visual-line-mode))
 
@@ -596,7 +599,7 @@ With \\[universal-argument] toggle the display of the window."
   :mode ("\\.hs\\'" . haskell-mode))
 
 (use-package web-beautify
-  :ensure
+  :ensure t
   :config
   (eval-after-load 'js2-mode
     '(define-key js2-mode-map (kbd "C-c b") 'web-beautify-js))
@@ -612,12 +615,12 @@ With \\[universal-argument] toggle the display of the window."
     '(define-key css-mode-map (kbd "C-c b") 'web-beautify-css)))
 
 (use-package wordnut
-  :ensure
+  :ensure t
   :bind ("C-c !" . wordnut-lookup-current-word))
 
 ;; Making it easier to discover Emacs key presses.
 (use-package which-key
-  :ensure
+  :ensure t
   :diminish which-key-mode
   :init (which-key-mode)
   :config (which-key-setup-side-window-bottom)
@@ -626,23 +629,23 @@ With \\[universal-argument] toggle the display of the window."
   (setq which-key-idle-secondary-delay 0.05))
 
 (use-package smartparens
-  :ensure
+  :ensure t
   :config
   (require 'smartparens-config))
 
 ;; Highlight escape sequences
-(use-package highlight-escape-sequences :ensure)
+(use-package highlight-escape-sequences :ensure t)
 
 ;; autocomplete
 (use-package auto-complete
-  :ensure
+  :ensure t
   :config
   (ac-config-default)
   (setq ac-show-menu-immediately-on-auto-complete t))
 
 ;; Flyspell
 (use-package flyspell
-  :ensure
+  :ensure t
   :config
   (custom-set-faces '(flyspell-incorrect ((t (:inverse-video t)))))
   (setq flyspell-issue-welcome-flag nil)
@@ -661,7 +664,7 @@ With \\[universal-argument] toggle the display of the window."
 
 ;; Avoid unwanted repetition
 (use-package synosaurus
-  :ensure
+  :ensure t
   :diminish synosaurus-mode
   :config
   (setq synosaurus-choose-method 'popup)
@@ -670,34 +673,34 @@ With \\[universal-argument] toggle the display of the window."
   (("M-#" . synosaurus-choose-and-replace)))
 
 (use-package fill-column-indicator
-  :ensure
+  :ensure t
   :config
   (setq fci-rule-color "#111122"))
 
 ;; move text
 (use-package move-text
-  :ensure
+  :ensure t
   :config
   (move-text-default-bindings))
 
-(use-package guix :ensure)
+(use-package guix :ensure t)
 
 ;; show emojis
 (use-package emojify
-  :ensure
+  :ensure t
   :hook
   ((after-init-hook . global-emojify-mode)))
 
 ;; add $PATH to eshell
 (use-package exec-path-from-shell
-  :ensure
+  :ensure t
   :init
   (when (memq window-system '(mac ns x))
     (exec-path-from-shell-initialize)))
 
 (use-package yaml-mode
   :mode ("\\.yml\\'" . yaml-mode)
-  :ensure)
+  :ensure t)
 (use-package emacs
   :init
   (auto-compression-mode 1)
@@ -830,16 +833,16 @@ With \\[universal-argument] toggle the display of the window."
   :bind (("C-g" . keyboard-quit-strong)
          ("s-n" . rename-buffer)))
 
-(use-package pylint :ensure)
+(use-package pylint :ensure t)
 
-(use-package py-autopep8 :ensure)
+(use-package py-autopep8 :ensure t
 
-(use-package elpy :ensure)
+(use-package elpy :ensure t)
 
-(use-package smooth-scrolling :ensure)
+(use-package smooth-scrolling :ensure t)
 
 (use-package lispy
-  :ensure
+  :ensure t
   :hook ((emacs-lisp-mode-hook . lispy-mode)
 	 (lisp-mode-hook . lispy-mode)
 	 (clojure-mode-hook . lispy-mode)
@@ -847,7 +850,7 @@ With \\[universal-argument] toggle the display of the window."
 	 (sly-mrepl-mode-hook . lispy-mode)))
 
 (use-package geiser
-  :ensure
+  :ensure t
   :defer run-geiser
   :config
   ;; I have to use the guile2.2 binary because of Fedora
@@ -897,9 +900,9 @@ With \\[universal-argument] toggle the display of the window."
   (blink-cursor-mode -1))
 
 ;; Nice looking themes ^_^
-(use-package solarized-theme :ensure)
-(use-package doom-themes :ensure)
-(use-package ewal-spacemacs-themes :ensure)
+(use-package solarized-theme :ensure t)
+(use-package doom-themes :ensure t)
+(use-package ewal-spacemacs-themes :ensure t)
 
 (defun disable-all-themes ()
   (dolist (th custom-enabled-themes)
@@ -920,9 +923,9 @@ With \\[universal-argument] toggle the display of the window."
 
 (bonz/load-dark-theme)
 
-(use-package all-the-icons :ensure)
+(use-package all-the-icons :ensure t)
 (use-package doom-modeline
-  :ensure
+  :ensure t
   :hook (after-init-hook . doom-modeline-mode)
   :config
   (setq doom-modeline-height 30)
@@ -1067,7 +1070,7 @@ With \\[universal-argument] toggle the display of the window."
 
 ;; Colour parens, and other delimiters, depending on their depth.
 ;; Very useful for parens heavy languages like Lisp.
-(use-package rainbow-delimiters :ensure
+(use-package rainbow-delimiters :ensure t
   :config
   (add-hook 'org-mode-hook
             '(lambda () (rainbow-delimiters-mode 1)))
@@ -1076,7 +1079,7 @@ With \\[universal-argument] toggle the display of the window."
 
 (column-number-mode nil)
 (use-package dimmer
-  :ensure
+  :ensure t
   :config (dimmer-mode)
   (setq dimmer-fraction 0.2))
 
@@ -1283,7 +1286,7 @@ argument, query for word to search."
 ** setup-eshell.el
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-eshell.el
 ;;; setup-eshell.el
-(use-package f :ensure)
+(use-package f :ensure t)
 
 (setq eshell-visual-commands
       '("less" "tmux" "htop" "top" "bash" "zsh" "fish"))
@@ -1430,9 +1433,9 @@ argument, query for word to search."
 ** setup-hugo.el
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-hugo.el
 ;;; setup-hugo.el
-(use-package ox-hugo :ensure
+(use-package ox-hugo :ensure t
   :after ox)
-(use-package easy-hugo :ensure
+(use-package easy-hugo :ensure t
   :init
   (setq easy-hugo-basedir "~/Public/BonfaceKilz/")
   (setq easy-hugo-url "https://bonfacemunyoki.com")
@@ -1447,7 +1450,7 @@ argument, query for word to search."
 ** setup-keybindings.el
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-keybindings.el
 ;;; setup-keybindings.el
-(use-package key-seq :ensure
+(use-package key-seq :ensure t
   :config
   (key-chord-mode 1))
 
@@ -1463,10 +1466,10 @@ argument, query for word to search."
 ;; My misc key bindings
 (global-set-key (kbd "C-x g") 'magit-status)
 (global-set-key (kbd "C-x f") 'recentf-open-files)
-(use-package zoom-window :ensure
+(use-package zoom-window :ensure t
   :config (global-set-key (kbd "C-x C-z") 'zoom-window-zoom))
 ;; setting up multiple cursors
-(use-package multiple-cursors :ensure
+(use-package multiple-cursors :ensure t
   :config
   (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
   (global-set-key (kbd "C->") 'mc/mark-next-like-this)
@@ -1474,14 +1477,14 @@ argument, query for word to search."
   (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
   (global-set-key (kbd "C-S-<mouse-1>") 'mc/add-cursor-on-click))
 ;; setting up smart-forward
-(use-package smart-forward :ensure
+(use-package smart-forward :ensure t
   :config
   (global-set-key (kbd "M-S-<up>") 'smart-up)
   (global-set-key (kbd "M-S-<down>") 'smart-down)
   (global-set-key (kbd "M-S-<left>") 'smart-backward)
   (global-set-key (kbd "M-S-<right>") 'smart-forward))
 
-(use-package change-inner :ensure)
+(use-package change-inner :ensure t)
 
 (require 'change-inner)
 (global-set-key (kbd "M-S-i") 'change-inner)
@@ -1601,7 +1604,7 @@ argument, query for word to search."
   ;;; setup-elfeed.el
 
 (use-package elfeed
-  :ensure
+  :ensure t
   :config
   (setq elfeed-feeds
         '(;; Normal blogs
@@ -2132,7 +2135,7 @@ argument, query for word to search."
 ;;; setup-hledger.el
 
 (use-package hledger-mode
-  :ensure
+  :ensure t
   :mode ("\\.journal\\'" "\\.hledger\\'")
   :config
   (setq hledger-jfile "/home/bonface/Self/finances/hledger.journal"))
@@ -2388,7 +2391,7 @@ argument, query for word to search."
 ;;; setup-magit.el
 
 ;; move cursor into position when entering commit message
-(use-package diff-hl :ensure)
+(use-package diff-hl :ensure t)
 
 (defun my/magit-cursor-fix ()
  (beginning-of-buffer)
@@ -2401,11 +2404,11 @@ argument, query for word to search."
   (unless prefix
     (delete-other-windows)))
 
-(use-package magit-todos :ensure
+(use-package magit-todos :ensure t
   :after magit
   :after hl-todo)
 
-(use-package hl-todo :ensure
+(use-package hl-todo :ensure t
   :config
   ;; Adding a new keyword: TEST.
   (add-to-list 'hl-todo-keyword-faces '("TEST" . "#dc8cc3"))
@@ -2415,7 +2418,7 @@ argument, query for word to search."
 
 ;; full screen magit-status
 ;; Efficient version control.
-(use-package magit :ensure
+(use-package magit :ensure t
   :config
   (global-set-key (kbd "C-x g") 'magit-status)
   (global-set-key (kbd "C-x M-g") 'magit-dispatch)
@@ -2430,7 +2433,7 @@ argument, query for word to search."
   ;; update diff-hl
   (global-diff-hl-mode))
 
-(use-package magit-patch-changelog :ensure)
+(use-package magit-patch-changelog :ensure t)
 
 (with-eval-after-load 'magit
     (require 'magit-patch-changelog))
@@ -2473,7 +2476,7 @@ argument, query for word to search."
 ** setup-markdown.el
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-markdown.el
 ;;; setup-markdown.el
-(use-package markdown-mode :ensure
+(use-package markdown-mode :ensure t
   :mode (("\\.yml$" . yaml-mode)
          ("\\.yaml$" . yaml-mode))
   :config
@@ -2928,17 +2931,17 @@ PATH should be a topic that can be thrown at the man command."
       parent-task)))
 
 
-(use-package ob-async :ensure)
-(use-package ob-elm :ensure)
-(use-package ob-rust :ensure)
-(use-package ob-go :ensure)
-(use-package ox-gemini :ensure
+(use-package ob-async :ensure t)
+(use-package ob-elm :ensure t)
+(use-package ob-rust :ensure t
+(use-package ob-go :ensure t)
+(use-package ox-gemini :ensure t
   :config
   (eval-after-load "org"
     '(require 'ox-gemini nil t)))
-(use-package  ob-restclient :ensure)
+(use-package  ob-restclient :ensure t)
 (use-package toc-org
-  :ensure
+  :ensure t
   :hook
   ((toc-org-mode . org-mode-hook)))
 
@@ -2946,12 +2949,12 @@ PATH should be a topic that can be thrown at the man command."
 (setq org-books-file "/home/bonface/Self/org/books.org")
 
 (use-package magit-org-todos
-  :ensure
+  :ensure t
   :config
   (magit-org-todos-autoinsert))
 
-(use-package writegood-mode :ensure)
-(use-package org-pomodoro :ensure)
+(use-package writegood-mode :ensure t)
+(use-package org-pomodoro :ensure t)
 
 (use-package ol
   :config
@@ -2962,10 +2965,10 @@ PATH should be a topic that can be thrown at the man command."
 
               ("C-c C-S-l" . org-insert-last-stored-link)))
 
-(use-package orgit :ensure)
+(use-package orgit :ensure t)
 
 (use-package org
-  :ensure
+  :ensure t
   :hook (org-mode-hook . writegood-mode)
   :config
   (cl-defun my/make/org-capture-template
@@ -3268,7 +3271,7 @@ PATH should be a topic that can be thrown at the man command."
 (use-package ox-reveal :ensure t
   :config (setq org-reveal-root "https://cdn.jsdelivr.net/reveal.js/3.0.0/"))
 
-(use-package ox-gfm :ensure
+(use-package ox-gfm :ensure t
   :config
   (eval-after-load "org"
     '(require 'ox-gfm nil t)))
@@ -3306,7 +3309,7 @@ PATH should be a topic that can be thrown at the man command."
 
 (setq org-confirm-babel-evaluate 'my-org-confirm-babel-evaluate)
 
-(use-package el-patch :ensure)
+(use-package el-patch :ensure t)
 
 (use-package org-download
   :after org
@@ -3436,7 +3439,7 @@ PATH should be a topic that can be thrown at the man command."
 ;;; setup-paredit.el
 
 ;; My keybindings for paredit
-(use-package paredit :ensure)
+(use-package paredit :ensure t)
 
 (defun paredit-wrap-round-from-behind ()
   (interactive)
@@ -3584,14 +3587,14 @@ PATH should be a topic that can be thrown at the man command."
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-yasnippet.el
 ;;; setup-yasnippet.el
 
-(use-package yasnippet :ensure
+(use-package yasnippet :ensure t
   :diminish yas-minor-mode
   :config
   (yas-global-mode 1)
   ;; respect the spacing in my snippet declarations
   (setq yas-indent-line 'fixed))
 
-(use-package php-auto-yasnippets :ensure
+(use-package php-auto-yasnippets :ensure t
   :config
   (defun bonz/php-mode-hook ()
     "My PHP-mode hook."
@@ -3618,7 +3621,7 @@ PATH should be a topic that can be thrown at the man command."
          ("C-c y r" . yankpad-repeat)
          ("C-c y e" . yankpad-expand)))
 
-(use-package yasnippet-snippets :ensure)
+(use-package yasnippet-snippets :ensure t)
 
 (provide 'setup-yasnippet)
 ;;; setup-yasnippet.el ends here
