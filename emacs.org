@@ -340,9 +340,11 @@ Configure the packages.
 ;; Shrink fringes to 7 pixel
 (fringe-mode 7)
 
+;; https://github.com/lukhas/buffer-move
 (use-package buffer-move :ensure t)
 (use-package itail :ensure t)
 (use-package guix :ensure t)
+
 (use-package xclip :ensure t
   :config
   (xclip-mode 1))
@@ -355,6 +357,8 @@ Configure the packages.
   :config (autopair-mode 1))
 
 ;; This doubles as a quick way to avoid the common formula: C-x b RET *scratch*
+;; This doubles as a quick way to avoid the common formula: C-x b RET
+;; *scratch*
 (use-package persistent-scratch
   :ensure t
   :config
@@ -369,6 +373,10 @@ Configure the packages.
   :bind (("M-A" . marginalia-cycle)
          :map minibuffer-local-map
          ("M-A" . marginalia-cycle)))
+(use-package password-generator :ensure t)
+
+(use-package password-store :ensure t)
+
 
 (use-package ace-window
   :ensure t
@@ -480,8 +488,6 @@ With \\[universal-argument] toggle the display of the window."
           (if (eq major-mode 'imenu-list-major-mode)
               (pop-to-buffer (other-buffer (current-buffer) t))
             (imenu-list))))))
-
-(use-package password-generator :ensure t)
 
 (use-package pdf-tools
   :ensure t
