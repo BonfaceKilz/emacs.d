@@ -561,9 +561,7 @@ With \\[universal-argument] toggle the display of the window."
 
 ;; show emojis
 (use-package emojify
-  :ensure t
-  :hook
-  ((after-init-hook . global-emojify-mode)))
+  :ensure t)
 
 ;; add $PATH to eshell
 (use-package exec-path-from-shell
