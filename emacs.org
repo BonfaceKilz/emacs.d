@@ -142,6 +142,18 @@ Really quick way to insert evaluated functions in the buffer.
     (visual-line-mode)
     (visual-fill-column-mode))
 
+(defun keyboard-quit-strong ()
+    "Run `keyboard-quit' to return emacs to a more responsive state.
+    If repeated twice in a row, run `top-level' instead, to also exit
+    any recursive editing levels."
+    (interactive)
+    (when (eq last-command 'keyboard-quit-strong)
+      (setq this-command 'top-level) ;dis-arm a 3rd C-g
+      (ding)
+      (top-level))
+    ;; Not reached after `top-level'. (A rare behavior in lisp.)
+    (keyboard-quit))
+
 (defun scratch ()
   "create a scratch buffer"
   (interactive)
@@ -605,17 +617,6 @@ With \\[universal-argument] toggle the display of the window."
   (pdf-tools-install :no-query)
   (require-final-newline t)
   :config
-  (defun keyboard-quit-strong ()
-    "Run `keyboard-quit' to return emacs to a more responsive state.
-    If repeated twice in a row, run `top-level' instead, to also exit
-    any recursive editing levels."
-    (interactive)
-    (when (eq last-command 'keyboard-quit-strong)
-      (setq this-command 'top-level) ;dis-arm a 3rd C-g
-      (ding)
-      (top-level))
-    ;; Not reached after `top-level'. (A rare behavior in lisp.)
-    (keyboard-quit))
 
   (defun nolinum ()
     (global-linum-mode 0))
