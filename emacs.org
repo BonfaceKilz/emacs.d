@@ -96,7 +96,10 @@ that I use [[https://github.com/ch11ng/exwm][exwm]] as my Window Manager. With t
 (dolist (file (directory-files defuns-dir t "\\w+"))
   (when (file-regular-p file)
     (load file)))
-(require 'setup-init)
+
+(unless (server-running-p)
+    (server-start))
+
 (require 'sane-defaults)
 (require 'setup-email)
 (require 'appearance)
@@ -140,6 +143,16 @@ Really quick way to insert evaluated functions in the buffer.
 
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/defuns/lisp-defuns.el
 ;;; lisp-defuns.el -*- lexical-binding: t; -*-
+
+;; A very simple function to recreate the scratch buffer:
+;; ( http://emacswiki.org/emacs/RecreateScratchBuffer )
+(defun scratch ()
+  "create a scratch buffer"
+  (interactive)
+  (switch-to-buffer-other-window (get-buffer-create "*scratch*"))
+  (insert initial-scratch-message)
+  (org-mode))
+
 (defun toggle-window-split ()
   (interactive)
   (if (= (count-windows) 2)
@@ -465,6 +478,34 @@ when that buffer was created) URL
 ** sane-defaults.el
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/sane-defaults.el
 ;;; sane-defaults.el
+
+;; No splash screen
+(setq inhibit-splash-screen t
+      initial-major-mode 'org-mode
+      initial-scratch-message (concat
+                               "#+Title: Persistent Scratch Buffer\n#\n"
+                               "# There is no system but GNU and Linux "
+                               "is one of it's kernels\n"))
+
+;; Turn off default UI
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+;; Shrink fringes to 7 pixel
+(fringe-mode 7)
+
+(use-package cl-lib
+  :ensure t)
+
+(use-package autopair
+  :ensure t
+  :config (autopair-mode 1))
+
+;; This doubles as a quick way to avoid the common formula: C-x b RET *scratch*
+(use-package persistent-scratch
+  :ensure t
+  :config
+  (persistent-scratch-setup-default))
 
 ;;; It is the opposite of fill-paragraph
 (defun unfill-paragraph ()
@@ -1398,51 +1439,6 @@ argument, query for word to search."
 ;;; setup-hugo.el ends here
 #+END_SRC
 
-** setup-init.el
-#+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-init.el
-;;;; setup-init.el
-
-;; Initial setup
-(use-package emacs
-  :preface
-  ;; A very simple function to recreate the scratch buffer:
-  ;; ( http://emacswiki.org/emacs/RecreateScratchBuffer )
-  (defun scratch ()
-    "create a scratch buffer"
-    (interactive)
-    (switch-to-buffer-other-window (get-buffer-create "*scratch*"))
-    (insert initial-scratch-message)
-    (org-mode))
-  :config
-  (defvar bootstrap-version)
-  (let ((bootstrap-file
-         (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-        (bootstrap-version 5))
-    (unless (file-exists-p bootstrap-file)
-      (with-current-buffer
-          (url-retrieve-synchronously
-           "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-           'silent 'inhibit-cookies)
-        (goto-char (point-max))
-        (eval-print-last-sexp)))
-    (load bootstrap-file nil 'nomessage)
-    (setq initial-scratch-message
-          (concat
-           "#+Title: Persistent Scratch Buffer"
-           "\n#\n # Welcome! This’ a place for trying things out. \n"))))
-
-(use-package cl-lib :ensure)
-
-;; Emacs server
-(use-package server
-  :config
-  (unless (server-running-p)
-    (server-start)))
-
-(provide 'setup-init)
-
-;;;; setup-init.el ends here
-#+END_SRC
 ** setup-keybindings.el
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-keybindings.el
 ;;; setup-keybindings.el
@@ -2163,225 +2159,11 @@ argument, query for word to search."
 ;; Initial setup
 
 ;; Emacs server
-(use-package server)
 (unless (server-running-p)
   (server-start))
 
-(use-package autopair
-  :config
-  (autopair-mode 1))
-
-;; Shrinking fringes to 1 pixel
-(fringe-mode 7)
-
-;; Remove security vulnerabiliyt
-(eval-after-load "enriched"
-  '(defun enriched-decode-display-prop (start end &optional param)
-     (list start end)))
 
 
-;; No splash screen
-(setq inhibit-splash-screen t
-      initial-major-mode 'org-mode)
-
-(setq initial-scratch-message (concat
-                               "#+Title: Persistent Scratch Buffer"
-                               "\n#\n # Welcome! This’ a place for trying things out. \n"))
-;; A very simple function to recreate the scratch buffer:
-;; ( http://emacswiki.org/emacs/RecreateScratchBuffer )
-(defun scratch ()
-  "create a scratch buffer"
-  (interactive)
-  (switch-to-buffer-other-window (get-buffer-create "*scratch*"))
-  (insert initial-scratch-message)
-  (org-mode))
-
-;; This doubles as a quick way to avoid the common formula: C-x b RET *scratch*
-(use-package persistent-scratch
-  :config
-  (persistent-scratch-setup-default))
-
-;; This is the de-facto standard in-buffer completion package. In case
-;; you're wondering, Company stands for Complete Anything.
-(use-package company
-  :demand t
-  :bind (;; Replace `completion-at-point' and `complete-symbol' with
-         ;; `company-manual-begin'. You might think this could be put
-         ;; in the `:bind*' declaration below, but it seems that
-         ;; `bind-key*' does not work with remappings.
-         ([remap completion-at-point] . company-manual-begin)
-         ([remap complete-symbol] . company-manual-begin)
-
-         ;; The following are keybindings that take effect whenever
-         ;; the completions menu is visible, even if the user has not
-         ;; explicitly interacted with Company.
-
-         :map company-active-map
-
-         ;; Make TAB always complete the current selection. Note that
-         ;; <tab> is for windowed Emacs and TAB is for terminal Emacs.
-         ("<tab>" . company-complete-selection)
-         ("TAB" . company-complete-selection)
-
-         ;; Prevent SPC from ever triggering a completion.
-         ("SPC" . nil)
-
-         ;; The following are keybindings that only take effect if the
-         ;; user has explicitly interacted with Company.
-
-         :map company-active-map
-         :filter (company-explicit-action-p)
-
-         ;; Make RET trigger a completion if and only if the user has
-         ;; explicitly interacted with Company. Note that <return> is
-         ;; for windowed Emacs and RET is for terminal Emacs.
-         ("<return>" . company-complete-selection)
-         ("RET" . company-complete-selection)
-
-         ;; We then do the same for the up and down arrows. Note that
-         ;; we use `company-select-previous' instead of
-         ;; `company-select-previous-or-abort'. I think the former
-         ;; makes more sense since the general idea of this `company'
-         ;; configuration is to decide whether or not to steal
-         ;; keypresses based on whether the user has explicitly
-         ;; interacted with `company', not based on the number of
-         ;; candidates.
-
-         ("<up>" . company-select-previous)
-         ("<down>" . company-select-next))
-
-  :bind* (;; The default keybinding for `completion-at-point' and
-          ;; `complete-symbol' is M-TAB or equivalently C-M-i. Here we
-          ;; make sure that no minor modes override this keybinding.
-          ("M-TAB" . company-manual-begin))
-
-  :diminish company-mode
-  :config
-
-  ;; Turn on Company everywhere.
-  (global-company-mode 0)
-
-  ;; Show completions instantly, rather than after half a second.
-  (setq company-idle-delay 0)
-
-  ;; Show completions after typing a single character, rather than
-  ;; after typing three characters.
-  (setq company-minimum-prefix-length 1)
-
-  ;; Show a maximum of 10 suggestions. This is the default but I think
-  ;; it's best to be explicit.
-  (setq company-tooltip-limit 10)
-
-  ;; Always display the entire suggestion list onscreen, placing it
-  ;; above the cursor if necessary.
-  (setq company-tooltip-minimum company-tooltip-limit)
-
-  ;; Always display suggestions in the tooltip, even if there is only
-  ;; one. Also, don't display metadata in the echo area. (This
-  ;; conflicts with ElDoc.)
-  (setq company-frontends '(company-pseudo-tooltip-frontend))
-
-  ;; Show quick-reference numbers in the tooltip. (Select a completion
-  ;; with M-1 through M-0.)
-  (setq company-show-numbers t)
-
-  ;; Prevent non-matching input (which will dismiss the completions
-  ;; menu), but only if the user interacts explicitly with Company.
-  (setq company-require-match #'company-explicit-action-p)
-
-  ;; Company appears to override our settings in `company-active-map'
-  ;; based on `company-auto-complete-chars'. Turning it off ensures we
-  ;; have full control.
-  (setq company-auto-complete-chars nil)
-
-  ;; Prevent Company completions from being lowercased in the
-  ;; completion menu. This has only been observed to happen for
-  ;; comments and strings in Clojure.
-  (setq company-dabbrev-downcase nil)
-
-  ;; Only search the current buffer to get suggestions for
-  ;; company-dabbrev (a backend that creates suggestions from text
-  ;; found in your buffers). This prevents Company from causing lag
-  ;; once you have a lot of buffers open.
-  (setq company-dabbrev-other-buffers nil)
-
-  ;; Make company-dabbrev case-sensitive. Case insensitivity seems
-  ;; like a great idea, but it turns out to look really bad when you
-  ;; have domain-specific words that have particular casing.
-  (setq company-dabbrev-ignore-case nil)
-
-  ;; Make it so that Company's keymap overrides Yasnippet's keymap
-  ;; when a snippet is active. This way, you can TAB to complete a
-  ;; suggestion for the current field in a snippet, and then TAB to
-  ;; move to the next field. Plus, C-g will dismiss the Company
-  ;; completions menu rather than cancelling the snippet and moving
-  ;; the cursor while leaving the completions menu on-screen in the
-  ;; same location.
-
-  (with-eval-after-load 'yasnippet
-    ;; TODO: this is all a horrible hack, can it be done with
-    ;; `bind-key' instead?
-
-    ;; This function translates the "event types" I get from
-    ;; `map-keymap' into things that I can pass to `lookup-key'
-    ;; and `define-key'. It's a hack, and I'd like to find a
-    ;; built-in function that accomplishes the same thing while
-    ;; taking care of any edge cases I might have missed in this
-    ;; ad-hoc solution.
-    (defun radian--normalize-event (event)
-      (if (vectorp event)
-          event
-        (vector event)))
-
-    ;; Here we define a hybrid keymap that delegates first to
-    ;; `company-active-map' and then to `yas-keymap'.
-    (setq radian--yas-company-keymap
-          ;; It starts out as a copy of `yas-keymap', and then we
-          ;; merge in all of the bindings from
-          ;; `company-active-map'.
-          (let ((keymap (copy-keymap yas-keymap)))
-            (map-keymap
-             (lambda (event company-cmd)
-               (let* ((event (radian--normalize-event event))
-                      (yas-cmd (lookup-key yas-keymap event)))
-                 ;; Here we use an extended menu item with the
-                 ;; `:filter' option, which allows us to
-                 ;; dynamically decide which command we want to
-                 ;; run when a key is pressed.
-                 (define-key keymap event
-                   `(menu-item
-                     nil ,company-cmd :filter
-                     (lambda (cmd)
-                       ;; There doesn't seem to be any obvious
-                       ;; function from Company to tell whether or
-                       ;; not a completion is in progress (à la
-                       ;; `company-explicit-action-p'), so I just
-                       ;; check whether or not `company-my-keymap'
-                       ;; is defined, which seems to be good
-                       ;; enough.
-                       (if company-my-keymap
-                           ',company-cmd
-                         ',yas-cmd))))))
-             company-active-map)
-            keymap))
-
-    ;; The function `yas--make-control-overlay' uses the current
-    ;; value of `yas-keymap' to build the Yasnippet overlay, so to
-    ;; override the Yasnippet keymap we only need to dynamically
-    ;; rebind `yas-keymap' for the duration of that function.
-    (defun radian--advice-company-overrides-yasnippet
-        (yas--make-control-overlay &rest args)
-      "Allow `company' to override `yasnippet'.
-This is an `:around' advice for `yas--make-control-overlay'."
-      (let ((yas-keymap radian--yas-company-keymap))
-        (apply yas--make-control-overlay args)))
-
-    (advice-add #'yas--make-control-overlay :around
-                #'radian--advice-company-overrides-yasnippet)))
-
-(menu-bar-mode -1)
-(tool-bar-mode -1)
-(scroll-bar-mode -1)
 
 (provide 'setup-init)
 
