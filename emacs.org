@@ -539,9 +539,7 @@ With \\[universal-argument] toggle the display of the window."
       (with-current-buffer
           (if (eq major-mode 'imenu-list-major-mode)
               (pop-to-buffer (other-buffer (current-buffer) t))
-            (imenu-list)))))
-
-  :bind (("C-," . bonz/imenu-list-dwim)))
+            (imenu-list))))))
 
 (use-package flimenu
   :ensure
