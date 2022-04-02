@@ -514,8 +514,6 @@ In that case, insert the number."
   (setq nov-shr-rendering-functions (append nov-shr-rendering-functions shr-external-rendering-functions))
   :hook ((nov-mode-hook . bonz/set-50-char)))
 
-(use-package org-make-toc :ensure)
-
 (use-package markdown-mode+
   :ensure t
   :mode ("\\.md\\'" . markdown-mode))
@@ -2671,6 +2669,8 @@ agenda."
 ;;; setup-org.el
 
 ;; Org-mode
+(use-package org-make-toc :ensure t)
+
 (setq org-latex-pdf-process (list "latexmk -f -pdf -interaction=nonstopmode -output-directory=%o %f"))
 
 (setq org-time-budgets
