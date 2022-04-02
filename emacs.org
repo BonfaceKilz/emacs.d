@@ -359,8 +359,6 @@ Configure the packages.
   :config
   (persistent-scratch-setup-default))
 
-(use-package vterm :ensure t)
-
 (use-package pass :ensure t)
 
 (use-package marginalia
