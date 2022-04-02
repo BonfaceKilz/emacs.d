@@ -145,6 +145,11 @@ Really quick way to insert evaluated functions in the buffer.
 
 ;; A very simple function to recreate the scratch buffer:
 ;; ( http://emacswiki.org/emacs/RecreateScratchBuffer )
+(defun bonz/set-50-char ()
+    (set-fill-column 50)
+    (visual-line-mode)
+    (visual-fill-column-mode))
+
 (defun scratch ()
   "create a scratch buffer"
   (interactive)
@@ -474,12 +479,6 @@ In that case, insert the number."
   :bind
   (("M-i" . imenu)))
 
-(use-package visual-fill-column :ensure)
-
-(defun bonz/set-50-char ()
-    (set-fill-column 50)
-    (visual-line-mode)
-    (visual-fill-column-mode))
 
 (use-package shrface
   :ensure t
