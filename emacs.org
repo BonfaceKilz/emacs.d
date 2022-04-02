@@ -130,10 +130,6 @@ that I use [[https://github.com/ch11ng/exwm][exwm]] as my Window Manager. With t
 (require 'setup-keybindings)
 
 (setq default-buffer-file-coding-system 'utf-8)
-
-(with-eval-after-load 'yasnippet
-  (add-to-list 'yas-snippet-dirs "~/guix/etc/snippets"))
-(load-file "~/guix/etc/copyright.el")
 ;;; init.el ends here
 #+END_SRC
 
