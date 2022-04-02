@@ -213,6 +213,13 @@ Really quick way to insert evaluated functions in the buffer.
   (insert initial-scratch-message)
   (org-mode))
 
+;;; It is the opposite of fill-paragraph
+(defun unfill-paragraph ()
+  "Takes a multi-line paragraph and makes it into a single line of text."
+  (interactive)
+  (let ((fill-column (point-max)))
+    (fill-paragraph nil)))
+
 (defun toggle-window-split ()
   (interactive)
   (if (= (count-windows) 2)
@@ -567,12 +574,6 @@ when that buffer was created) URL
   :config
   (persistent-scratch-setup-default))
 
-;;; It is the opposite of fill-paragraph
-(defun unfill-paragraph ()
-  "Takes a multi-line paragraph and makes it into a single line of text."
-  (interactive)
-  (let ((fill-column (point-max)))
-    (fill-paragraph nil)))
 
 (define-key global-map "\M-Q" 'unfill-paragraph)
 
