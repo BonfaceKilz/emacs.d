@@ -2519,7 +2519,7 @@ _h_   _l_   _o_k        _y_ank
 ;; switch-window ;;
 ;;;;;;;;;;;;;;;;;;;
 (use-package switch-window :ensure t)
-(global-set-key (kbd "M-o") 'switch-window)
+(global-set-key (kbd "M-o") 'ace-window)
 (global-set-key (kbd "C-x 1") 'switch-window-then-maximize)
 (global-set-key (kbd "C-x 2") 'switch-window-then-split-below)
 (global-set-key (kbd "C-x 3") 'switch-window-then-split-right)
