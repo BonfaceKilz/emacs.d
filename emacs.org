@@ -138,6 +138,66 @@ that I use [[https://github.com/ch11ng/exwm][exwm]] as my Window Manager. With t
 
 * Defuns
 - Most of this defuns were lifted online over time
+** setup-package.el
+Configure the packages.
+
+#+begin_src emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-package.el
+;;; setup-package.el
+(require 'package)
+
+;; Internet repos for new packages
+(setq package-archives '(("nongnu"    . "https://elpa.nongnu.org/nongnu/")
+                         ("elpa"      . "http://elpa.gnu.org/packages/")
+                         ("melpa"     . "https://melpa.org/packages/")))
+;; Initialise the packages, avoiding a re-initialisation.
+(unless (bound-and-true-p package--initialized)
+  (setq package-enable-at-startup nil)
+  (package-initialize))
+
+;; Make sure `use-package' is available.
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+
+;; Configure `use-package' prior to loading it.
+(eval-and-compile
+  (setq use-package-compute-statistics t)
+  ;; The following is VERY IMPORTANT.  Write hooks using their real name
+  ;; instead of a shorter version: after-init ==> `after-init-hook'.
+  ;;
+  ;; This is to empower help commands with their contextual awareness,
+  ;; such as `describe-symbol'.
+  (setq use-package-hook-name-suffix nil))
+
+(eval-when-compile
+  (require 'use-package))
+
+;; Do not initialise the package manager.  This is done in `init.el'.
+(setq package-enable-at-startup nil)
+
+;; Allow loading from the package cache.
+(setq package-quickstart t)
+
+;; Setting up straight
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
+;; Do not resize the frame at this early stage.
+(setq frame-inhibit-implied-resize t)
+(provide 'setup-package)
+
+;;; setup-package.el
+#+end_src
 ** lisp-defuns
 Really quick way to insert evaluated functions in the buffer.
 
@@ -3426,64 +3486,6 @@ PATH should be a topic that can be thrown at the man command."
 (provide 'setup-org)
 ;;; setup-org.el ends here
 #+END_SRC
-** setup-package.el
-#+begin_src emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-package.el
-;;; setup-package.el
-(require 'package)
-
-;; Internet repos for new packages
-(setq package-archives '(("nongnu"    . "https://elpa.nongnu.org/nongnu/")
-                         ("elpa"      . "http://elpa.gnu.org/packages/")
-                         ("melpa"     . "https://melpa.org/packages/")))
-;; Initialise the packages, avoiding a re-initialisation.
-(unless (bound-and-true-p package--initialized)
-  (setq package-enable-at-startup nil)
-  (package-initialize))
-
-;; Make sure `use-package' is available.
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
-
-;; Configure `use-package' prior to loading it.
-(eval-and-compile
-  (setq use-package-compute-statistics t)
-  ;; The following is VERY IMPORTANT.  Write hooks using their real name
-  ;; instead of a shorter version: after-init ==> `after-init-hook'.
-  ;;
-  ;; This is to empower help commands with their contextual awareness,
-  ;; such as `describe-symbol'.
-  (setq use-package-hook-name-suffix nil))
-
-(eval-when-compile
-  (require 'use-package))
-
-;; Do not initialise the package manager.  This is done in `init.el'.
-(setq package-enable-at-startup nil)
-
-;; Allow loading from the package cache.
-(setq package-quickstart t)
-
-;; Setting up straight
-(defvar bootstrap-version)
-(let ((bootstrap-file
-       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-      (bootstrap-version 5))
-  (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
-
-;; Do not resize the frame at this early stage.
-(setq frame-inhibit-implied-resize t)
-(provide 'setup-package)
-
-;;; setup-package.el
-#+end_src
 ** setup-paredit.el
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-paredit.el
 ;;; setup-paredit.el
