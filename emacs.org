@@ -103,8 +103,6 @@ that I use [[https://github.com/ch11ng/exwm][exwm]] as my Window Manager. With t
 (require 'appearance)
 (require 'setup-elfeed)
 (require 'setup-exwm)
-(require 'setup-eshell)
-(require 'setup-hledger)
 (require 'org-time-budgets)
 (require 'setup-org)
 (require 'setup-hugo)
@@ -351,22 +349,58 @@ Configure the packages.
 
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/sane-defaults.el
 ;;; sane-defaults.el
-
-(setq inhibit-splash-screen t
-      initial-major-mode 'org-mode
-      initial-scratch-message (concat
-                               "#+Title: Persistent Scratch Buffer\n#\n"
-                               "# There is no system but GNU and Linux "
-                               "is one of it's kernels\n"))
-
 ;; https://github.com/lukhas/buffer-move
 (use-package buffer-move :ensure t)
+
+(use-package f
+  :ensure t)
+
+(use-package hledger-mode
+  :ensure t
+  :mode ("\\.journal\\'" "\\.hledger\\'")
+  :custom
+  (hledger-jfile (concat user-home-directory
+                         "Self/finances/hledger.journal")))
 
 (use-package xclip
   :ensure t
   :delight
   :config
   (xclip-mode 1))
+
+(use-package eshell
+  :init
+  ;; Prompt with a bit of help from http://www.emacswiki.org/emacs/EshellPrompt
+  (defmacro with-face (str &rest properties)
+    `(propertize ,str 'face (list ,@properties)))
+  (defun eshell/abbr-pwd ()
+    (let ((home (getenv "HOME"))
+	  (path (eshell/pwd)))
+      (cond
+       ((string-equal home path) "~")
+       ((f-ancestor-of? home path) (concat "~/" (f-relative path home)))
+       (path))))
+
+  (defun eshell/my-prompt ()
+    (let ((header-bg "#161616"))
+      (concat
+       (with-face (eshell/abbr-pwd) :foreground "#008700")
+       (if (= (user-uid) 0)
+	   (with-face "#" :foreground "red")
+         (with-face "$" :foreground "#2345ba"))
+       " ")))
+  :custom
+  (eshell-visual-commands
+   '("less" "tmux" "htop" "top" "bash" "zsh" "fish"))
+  (eshell-visual-subcommands
+   '(("git" "log" "l" "diff" "show")))
+  (eshell-prompt-function 'eshell/my-prompt)
+  (eshell-highlight-prompt nil)
+  (eshell-prompt-regexp "^[^#$\n]+[#$] ")
+  (eshell-cmpl-cycle-completions nil)
+  :config
+  (eval-after-load 'eshell
+    '(require 'eshell-autojump nil t)))
 
 (use-package cl-lib
   :ensure t)
@@ -657,6 +691,12 @@ With \\[universal-argument] toggle the display of the window."
   (history-length 100)
   (ibuffer-show-empty-filter-groups -1)
   (indicate-empty-lines 1)
+    (inhibit-splash-screen t)
+  (initial-major-mode 'org-mode)
+  (initial-scratch-message (concat
+                            "#+Title: Persistent Scratch Buffer\n#\n"
+                            "# There is no system but GNU and Linux "
+                            "is one of it's kernels\n"))
   (inhibit-splash-screen 1)
   (jump-char-lazy-highlight-face -1)
   (line-number-mode t)
@@ -1555,83 +1595,7 @@ argument, query for word to search."
 
 ;;; setup-markdown.el ends here
 #+END_SRC
-** setup-eshell.el
-#+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-eshell.el
-;;; setup-eshell.el
-(use-package f)
 
-(setq eshell-visual-commands
-      '("less" "tmux" "htop" "top" "bash" "zsh" "fish"))
-
-(setq eshell-visual-subcommands
-      '(("git" "log" "l" "diff" "show")))
-
-;; Prompt with a bit of help from http://www.emacswiki.org/emacs/EshellPrompt
-(defmacro with-face (str &rest properties)
-  `(propertize ,str 'face (list ,@properties)))
-
-(defun eshell/abbr-pwd ()
-  (let ((home (getenv "HOME"))
-	(path (eshell/pwd)))
-    (cond
-     ((string-equal home path) "~")
-     ((f-ancestor-of? home path) (concat "~/" (f-relative path home)))
-     (path))))
-
-(defun eshell/my-prompt ()
-  (let ((header-bg "#161616"))
-    (concat
-     (with-face (eshell/abbr-pwd) :foreground "#008700")
-     (if (= (user-uid) 0)
-	 (with-face "#" :foreground "red")
-       (with-face "$" :foreground "#2345ba"))
-     " ")))
-
-(eval-after-load 'eshell
-  '(require 'eshell-autojump nil t))
-
-(setq eshell-prompt-function 'eshell/my-prompt)
-(setq eshell-highlight-prompt nil)
-(setq eshell-prompt-regexp "^[^#$\n]+[#$] ")
-
-(setq eshell-cmpl-cycle-completions nil)
-
-;; ref: http://pragmaticemacs.com/emacs/pop-up-a-quick-shell-with-shell-pop/
-(use-package shell-pop
-  :config
-  (defun shell-pop-zsh ()
-    (interactive)
-    (setq shell-pop-shell-type (quote ("ansi-term" "*ansi-term*" (lambda nil (ansi-term shell-pop-term-shell)))))
-    (setq shell-pop-term-shell "/home/bonface/.guix-profile/bin/zsh")
-    ;; need to do this manually or not picked up by `shell-pop'
-    (shell-pop--set-shell-type 'shell-pop-shell-type shell-pop-shell-type)
-    (call-interactively 'shell-pop))
-  (defun shell-pop-eshell ()
-    (interactive)
-    (let ((shell-pop-shell-type '("eshell" "*eshell*" (lambda () (eshell))))
-          (shell-pop-term-shell "eshell"))
-      (shell-pop--set-shell-type 'shell-pop-shell-type shell-pop-shell-type)
-      (call-interactively 'shell-pop)))
-  ;; :bind (("C-c z" . shell-pop-zsh)
-  ;;        ("C-c t" . shell-pop-eshell))
-  )
-
-(provide 'setup-eshell)
-;;; setup-eshell.el ends here
-#+END_SRC
-** setup-hledger.el
-#+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-hledger.el
-;;; setup-hledger.el
-
-(use-package hledger-mode
-  :ensure t
-  :mode ("\\.journal\\'" "\\.hledger\\'")
-  :config
-  (setq hledger-jfile "/home/bonface/Self/finances/hledger.journal"))
-
-(provide 'setup-hledger)
-;;; setup-hledger.el ends here
-#+END_SRC
 ** setup-hugo.el
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-hugo.el
 ;;; setup-hugo.el
