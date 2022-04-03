@@ -359,18 +359,12 @@ Configure the packages.
                                "# There is no system but GNU and Linux "
                                "is one of it's kernels\n"))
 
-;; Turn off default UI
-(menu-bar-mode -1)
-(tool-bar-mode -1)
-(scroll-bar-mode -1)
-
-;; Shrink fringes to 7 pixel
-(fringe-mode 7)
-
 ;; https://github.com/lukhas/buffer-move
 (use-package buffer-move :ensure t)
 
-(use-package xclip :ensure t
+(use-package xclip
+  :ensure t
+  :delight
   :config
   (xclip-mode 1))
 
@@ -378,6 +372,7 @@ Configure the packages.
   :ensure t)
 
 (use-package autopair
+  :delight
   :ensure t
   :config (autopair-mode 1))
 
@@ -395,19 +390,20 @@ Configure the packages.
   :bind (("M-A" . marginalia-cycle)
          :map minibuffer-local-map
          ("M-A" . marginalia-cycle)))
+
 (use-package password-generator :ensure t)
 
 (use-package password-store :ensure t)
 
-
 (use-package ace-window
   :ensure t
+  :custom
+  (aw-dispatch-always nil)
+  (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+  :custom-face
+  (aw-leading-char-face
+   ((t (:inherit ace-jump-face-foreground :height 2.0))))
   :config
-  (setq aw-dispatch-always nil)
-  (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
-  (custom-set-faces
-   '(aw-leading-char-face
-     ((t (:inherit ace-jump-face-foreground :height 2.0)))))
   (ace-window-display-mode 1)
   :bind (("M-o" . ace-window)))
 
@@ -440,25 +436,26 @@ Configure the packages.
   (diminish 'isearch-mode "?"))
 
 (use-package imenu
-  :config
-  (setq imenu-use-markers t)
-  (setq imenu-auto-rescan t)
-  (setq imenu-auto-rescan-maxout 600000)
-  (setq imenu-max-item-length 100)
-  (setq imenu-use-popup-menu nil)
-  (setq imenu-eager-completion-buffer t)
-  (setq imenu-space-replacement " ")
-  (setq imenu-level-separator "/")
+  :custom
+  (imenu-use-markers t)
+  (imenu-auto-rescan t)
+  (imenu-auto-rescan-maxout 600000)
+  (imenu-max-item-length 100)
+  (imenu-use-popup-menu nil)
+  (imenu-eager-completion-buffer t)
+  (imenu-space-replacement " ")
+  (imenu-level-separator "/")
   :bind
   (("M-i" . imenu)))
 
 (use-package shrface
   :ensure t
   :defer t
+  :custom
+  (shrface-href-versatile t)
   :config
   (shrface-basic)
-  (shrface-trial)
-  (setq shrface-href-versatile t))
+  (shrface-trial))
 
 (use-package eww
   :defer t
@@ -472,14 +469,17 @@ Configure the packages.
 ;; open epubs
 (use-package nov
   :ensure t
+  :delight
   :mode ("\\.epub\\'" . nov-mode)
   :init
-  (setq nov-text-width t)
-  :config
-  (setq visual-fill-column-center-text t)
   (require 'shrface)
-  (setq nov-shr-rendering-functions '((img . nov-render-img) (title . nov-render-title)))
-  (setq nov-shr-rendering-functions (append nov-shr-rendering-functions shr-external-rendering-functions))
+  :custom
+  (nov-text-width t)
+  (visual-fill-column-center-text t)
+  (nov-shr-rendering-functions
+   '((img . nov-render-img) (title . nov-render-title)))
+  (nov-shr-rendering-functions
+   (append nov-shr-rendering-functions shr-external-rendering-functions))
   :hook ((nov-mode-hook . #'bonz/set-50-char)
          (nov-mode-hook . #'shrface-mode)
          (nov-post-html-render-hook . #'bonz/set-50-char)
@@ -487,7 +487,8 @@ Configure the packages.
 
 (use-package markdown-mode+
   :ensure t
-  :mode ("\\.md\\'" . markdown-mode))
+  :delight
+  :mode "\\.md\\'")
 
 (use-package imenu-list
   :ensure
@@ -512,43 +513,49 @@ With \\[universal-argument] toggle the display of the window."
 
 (use-package pdf-tools
   :ensure t
+  :delight
   :load-path "site-lisp/pdf-tools/lisp"
   :mode ("\\.pdf\\'" . pdf-view-mode)
   :magic ("%PDF" . pdf-view-mode)
   :requires tablist
   :bind (("M-g M-g" . pdf-view-goto-page))
+  :custom
+  (pdf-tools-enabled-modes         ; simplified from the defaults
+   '(pdf-history-minor-mode
+     pdf-isearch-minor-mode
+     pdf-links-minor-mode
+     pdf-outline-minor-mode
+     pdf-misc-size-indication-minor-mode
+     pdf-occur-global-minor-mode))
+  (pdf-view-display-size 'fit-height)
+  (pdf-view-continuous t)
+  (pdf-view-use-dedicated-register nil)
+  (pdf-view-max-image-width 4000)
+  (pdf-outline-imenu-use-flat-menus t)
   :config
   (pdf-tools-install :no-query)
-  (setq pdf-tools-enabled-modes         ; simplified from the defaults
-        '(pdf-history-minor-mode
-          pdf-isearch-minor-mode
-          pdf-links-minor-mode
-          pdf-outline-minor-mode
-          pdf-misc-size-indication-minor-mode
-          pdf-occur-global-minor-mode))
-  (setq pdf-view-display-size 'fit-height)
-  (setq pdf-view-continuous t)
-  (setq pdf-view-use-dedicated-register nil)
-  (setq pdf-view-max-image-width 4000)
-  (setq pdf-outline-imenu-use-flat-menus t)
   (pdf-loader-install)
   :hook ((pdf-view-mode-hook . (lambda() (linum-mode -1)))
          (TeX-after-compilation-finished-functions . #'TeX-revert-document-buffer)))
 
 (use-package emmet-mode
+  :mode ("\\.html\\'" "\\.hbs\\'" "\\.erb\\'")
   :ensure t
+  :delight
   :hook ((sgml-mode-hook . #'emmet-mode)
          (web-mode-hook . #'emmet-mode)
          (css-mode-hook . #'emmet-mode)))
 
 (use-package web-mode
-  :mode ("\\.html\\'" . web-mode)
+  :mode ("\\.html\\'" "\\.hbs\\'" "\\.erb\\'")
+  :delight
   :ensure t
   :hook ((web-mode-hook . #'visual-line-mode)))
 
 (use-package haskell-mode
   :ensure t
-  :mode ("\\.hs\\'" . haskell-mode))
+  :delight
+  :mode "\\.hs\\'")
 
 (use-package wordnut
   :ensure t)
@@ -556,15 +563,17 @@ With \\[universal-argument] toggle the display of the window."
 ;; Making it easier to discover Emacs key presses.
 (use-package which-key
   :ensure t
-  :diminish which-key-mode
+  :delight
+  :custom
+  (which-key-show-early-on-C-h t)
+  (which-key-idle-delay 10000)
+  (which-key-idle-secondary-delay 0.05)
   :init (which-key-mode)
-  :config (which-key-setup-side-window-bottom)
-  (setq which-key-show-early-on-C-h t)
-  (setq which-key-idle-delay 10000)
-  (setq which-key-idle-secondary-delay 0.05))
+  :config (which-key-setup-side-window-bottom))
 
 (use-package smartparens
   :ensure t
+  :delight
   :config
   (require 'smartparens-config))
 
@@ -578,6 +587,7 @@ With \\[universal-argument] toggle the display of the window."
 ;; autocomplete
 (use-package auto-complete
   :ensure t
+  :delight
   :config
   (ac-config-default)
   (setq ac-show-menu-immediately-on-auto-complete t))
@@ -595,47 +605,121 @@ With \\[universal-argument] toggle the display of the window."
 (use-package yaml-mode
   :mode ("\\.yml\\'" . yaml-mode)
   :ensure t)
+
+(use-package highlight-escape-sequences
+  :ensure t
+  :config
+  (hes-mode))
+
+(use-package hyperbole
+  :ensure t
+  :init
+  (hyperbole-mode 1))
+
+(use-package pylint
+  :ensure t)
+
+(use-package py-autopep8
+  :ensure t)
+
+(use-package elpy
+  :ensure t
+  :init
+  (elpy-enable))
+
+(use-package lispy
+  :ensure t
+  :hook ((emacs-lisp-mode-hook . lispy-mode)
+	 (lisp-mode-hook . lispy-mode)
+	 (clojure-mode-hook . lispy-mode)
+	 (scheme-mode-hook . lispy-mode)
+	 (sly-mrepl-mode-hook . lispy-mode)))
+
+(use-package writeroom-mode
+  :ensure t)
+
 (use-package emacs
+  :custom
+  (auto-revert-verbose t)
+  (column-number-mode t)
+  (custom-safe-themes t)
+  (debbugs-gnu-default-packages '("guix-patches" "guix"))
+  (default-input-method 'TeX)
+  (delete-by-moving-to-trash t)
+  (enable-recursive-minibuffers t)
+  (epa-pinentry-mode 'loopback)
+  (fill-column 50)
+  (gc-cons-threshold 100000000)
+  (geiser-default-implementation 'racket)
+  (geiser-racket-binary
+   (concat user-home-directory ".guix-profile/bin/racket"))
+  (global-auto-revert-non-file-buffers nil)
+  (history-length 100)
+  (ibuffer-show-empty-filter-groups -1)
+  (indicate-empty-lines 1)
+  (inhibit-splash-screen 1)
+  (jump-char-lazy-highlight-face -1)
+  (line-number-mode t)
+  (make-backup-files -1)
+  (python-indent 4)
+  (read-process-output-max (* 1024 1024)) ;; 1mb
+  (recentf-max-menu-items 25)
+  (recentf-max-saved-items 100)
+  (require-final-newline t)
+  (set-mark-command-repeat-pop t)
+  (shell-file-name
+   (concat user-home-directory
+           ".guix-profile/bin/zsh"))
+  (show-trailing-whitespace 1)
+  (shr-width 50)
+  (size-indication-mode t)
+  (sp-autoescape-string-quote nil)
+  (tramp-chunksize 500)
+  (tramp-default-method "ssh")
+  (use-dialog-box nil)
+  (use-file-dialog nil)
+  (use-short-answers t)
+  (visible-bell t)
+  (w3m-fill-column 50)
+  (w3m-search-default-engine "duckduckgo")
+  (x-select-enable-clipboard t)
+  (world-clock-list
+   '(("CET-1CDT" "Amsterdam/ Paris")
+     ("CDT+5" "Memphis")
+     ("EST5EDT" "New York/ Miami")
+     ("GMT0BST" "London")
+     ("IST-5:30" "Bangalore")
+     ("PST8PDT" "Seattle")
+     ("JST-9" "Tokyo")))
   :init
   (auto-compression-mode 1)
-  (column-number-mode t)
+  (column-number-mode 1)
   (delete-selection-mode 1)
-  (smartparens-global-mode 1)
   (display-battery-mode)
   (display-time)
   (display-time-mode t)
+  (doom-modeline-mode)
   (fringe-mode 7)
   (global-auto-revert-mode 1)
   (global-hl-line-mode t)
+  (global-linum-mode -1)
   (global-subword-mode 1)
   (global-visual-line-mode)
-  (hes-mode)
-  (hyperbole-mode 1)
   (menu-bar-mode -1)
-  (recentf-mode 1)
   (savehist-mode 1)
   (scroll-bar-mode -1)
   (show-paren-mode 1)
-  (tool-bar-mode -1)
+  (size-indication-mode 1)
   (tab-bar-mode 1)
+  (tool-bar-mode -1)
   (transient-mark-mode 1)
   (winner-mode 1) ; Undo/redo window configuration with C-c <left>/<right>
-  (doom-modeline-mode)
-  (pdf-tools-install :no-query)
-  (require-final-newline t)
+  :hook ((after-save-hook . #'executable-make-buffer-file-executable-if-script-p))
   :config
-
-  (defun nolinum ()
-    (global-linum-mode 0))
   ;; make a shell script executable automatically on save
-  (add-hook 'after-save-hook
-            'executable-make-buffer-file-executable-if-script-p)
   (add-to-list 'auto-mode-alist '("\\.zsh$" . shell-script-mode))
   ;; conf-mode
   (add-to-list 'auto-mode-alist '("\\.gitconfig$" . conf-mode))
-  (add-to-list 'auto-mode-alist '("\\.hbs$" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.erb$" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.html$" . web-mode))
   ;; yaml
   (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
   (add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))
@@ -647,115 +731,11 @@ With \\[universal-argument] toggle the display of the window."
   (add-to-list 'auto-mode-alist '("\\.\\(org\\|org_archive\\)$" . org-mode))
   
   (define-key ac-mode-map (kbd "M-TAB") 'auto-complete)
-  (set-default 'indent-tabs-mode nil)
-  (setq default-input-method 'TeX)
-  (setq auto-revert-verbose nil)
-  (setq column-number-mode t)
-  (setq size-indication-mode t)
-  (setq dired-listing-switches "-alh")
-  (setq custom-safe-themes t)
-  (setq delete-by-moving-to-trash t)
-  (setq display-time-day-and-date t)
-  (setq display-time-default-load-average nil)
-  (setq echo-keystrokes 0.1)
-  (setq ediff-diff-options "-w")
-  (setq ediff-split-window-function 'split-window-horizontally)
-  (setq ediff-window-setup-function 'ediff-setup-windows-plain)
-  (setq enable-recursive-minibuffers t)
-  (setq epa-pinentry-mode 'loopback)
-  (setq fill-column 50)
-  (setq gc-cons-threshold 100000000)
-  (setq read-process-output-max (* 1024 1024)) ;; 1mb
-  (setq geiser-default-implementation 'racket)
-  (setq geiser-racket-binary "/home/bonface/.guix-profile/bin/racket")
-  (setq global-auto-revert-non-file-buffers t)
-  (setq debbugs-gnu-default-packages '("guix-patches" "guix")
-        gnus-summary-line-format "%I%(%[ %n%]%) %s\n")
-  (setq history-length 100)
-  (setq ibuffer-show-empty-filter-groups -1)
-  (setq inhibit-splash-screen t)
-  (setq python-indent 4)
-  (setq use-short-answers t)
-  (setq jump-char-lazy-highlight-face -1)
-  (setq line-number-mode t)
-  (setq make-backup-files -1)
-  (setq org-image-actual-width nil)
-  (setq org-src-fontify-natively t)
-  (setq recentf-max-menu-items 25)
-  (setq recentf-max-saved-items 100)
-  (setq set-mark-command-repeat-pop t)
-  (setq show-trailing-whitespace 1)
-  (setq shell-file-name "/home/bonface/.guix-profile/bin/zsh")
-  (setq shr-width 50)
-  (setq sp-autoescape-string-quote nil)
-  (setq tramp-default-method "ssh")
-  (setq tramp-chunksize 500)
-  (setq undo-tree-mode-lighter "")
-  (setq use-dialog-box nil)
-  (setq use-file-dialog nil)
-  (setq visible-bell t)
-  (setq w3m-fill-column 50)
-  (setq w3m-search-default-engine "duckduckgo")
-  (setq x-select-enable-clipboard t)
-  (setq world-clock-list
-        '(("CET-1CDT" "Amsterdam/ Paris")
-          ("CDT+5" "Memphis")
-          ("EST5EDT" "New York/ Miami")
-          ("GMT0BST" "London")
-          ("IST-5:30" "Bangalore")
-          ("PST8PDT" "Seattle")
-          ("JST-9" "Tokyo")))
-  (setq-default indicate-empty-lines t)
-  :hook
-  (;;(geiser-mode . scheme-mode-hook)
-   (ibuffer-auto-mode . ibuffer-mode-hook)
-   (nolim . org-mode-hook)
-   (nolim . web-mode-hook)
-   (php-enable-psr2-coding-style . php-mode-hook)
-   (php-refactor-mode . php-mode-hook))
   :bind (("C-g" . keyboard-quit-strong)
          ("s-n" . rename-buffer)))
 
-(use-package pylint :ensure t)
-
-(use-package py-autopep8 :ensure t
-
-(use-package elpy :ensure t)
-
-(use-package smooth-scrolling :ensure t)
-
-(use-package lispy
-  :ensure t
-  :hook ((emacs-lisp-mode-hook . lispy-mode)
-	 (lisp-mode-hook . lispy-mode)
-	 (clojure-mode-hook . lispy-mode)
-	 (scheme-mode-hook . lispy-mode)
-	 (sly-mrepl-mode-hook . lispy-mode)))
-
-(use-package geiser
-  :ensure t
-  :defer run-geiser
-  :config
-  ;; I have to use the guile2.2 binary because of Fedora
-  (setq geiser-guile-binary "guile"))
-
-(use-package writeroom-mode :ensure t)
-
 ;; Aliases
 (defalias 'yes-or-no-p 'y-or-n-p) ; y or n is enough
-(defalias 'list-buffers 'ibuffer) ; always use ibuffer
-
-;; make frequently used commands short
-(defalias 'sl 'sort-lines)
-(defalias 'rr 'reverse-region)
-(defalias 'rs 'replace-string)
-
-(defalias 'rb 'revert-buffer)
-(defalias 'rof 'recentf-open-files)
-
-;; elisp
-(defalias 'eb 'eval-buffer)
-(defalias 'er 'eval-region)
 
 (provide 'sane-defaults)
 ;;; sane-defaults.el ends here
@@ -1992,24 +1972,6 @@ argument, query for word to search."
 
 (provide 'setup-hugo)
 ;;; setup-hugo.el ends here
-#+END_SRC
-
-** setup-init.el
-#+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-init.el
-;;;; setup-init.el
-
-;; Initial setup
-
-;; Emacs server
-(unless (server-running-p)
-  (server-start))
-
-
-
-
-(provide 'setup-init)
-
-;;;; setup-init.el ends here
 #+END_SRC
 
 ** setup-magit.el
