@@ -823,134 +823,95 @@ With \\[universal-argument] toggle the display of the window."
 
 (use-package elfeed
   :ensure t
+  :custom
+  (elfeed-search-title-max-width 150)
+  (elfeed-search-trailing-width 30)
+  (elfeed-search-filter "@1-week-ago +unread ")
+  (elfeed-feeds
+   '(;; Normal blogs
+     ("https://jnduli.co.ke/feeds/all.atom.xml" blog)
+     ("https://memo.barrucadu.co.uk/atom.xml" blog)
+     ("https://ambrevar.xyz/atom.xml" blog)
+     ("http://feeds.feedburner.com/typepad/sethsmainblog" blog)
+     ("http://www.aaronsw.com/2002/feeds/pgessays.rss" blog)
+     ("http://www.beplucky.com/feed/" blog)
+     ("http://www.joelonsoftware.com/rss.xml" blog)
+     ("http://www.quirksmode.org/blog/index.xml" blog)
+     ("https://adactio.com/journal/rss" blog)
+     ("https://adamsilver.io/atom.xml" blog)
+     ("https://alexschroeder.ch/wiki/feed/full" blog)
+     ("https://ariadne.space/" blog)
+     ("https://blog.aaronbieber.com/posts/index.xml" blog)
+     ("https://blog.jim-nielsen.com/feed.xml" blog)
+     ("https://blog.khinsen.net/feeds/all.rss.xml" blog)
+     ("https://blog.tecosaur.com/tmio/rss.xml" blog)
+     ("https://daneden.me/rss.xml" blog)
+     ("https://danluu.com/atom.xml" blog)
+     ("https://daverupert.com/atom.xml" blog)
+     ("https://drewdevault.com/blog/index.xml" blog)
+     ("https://eli.thegreenplace.net/feeds/all.atom.xml" blog)
+     ("https://emacsair.me/feed.xml" blog)
+     ("https://emacstil.com/feed.xml" blog)
+     ("https://jarango.com/feed" blog)
+     ("https://lars.ingebrigtsen.no/rss" blog)
+     ("https://notes.baldurbjarnason.com/feed.xml" blog)
+     ("https://occasionallycogent.com/feed.xml" blog)
+     ("https://overreacted.io/rss.xml" blog)
+     ("https://takeonrules.com/index.xml" blog)
+     ("https://twobithistory.org/feed.xml" blog)
+     ("https://www.arp242.net/feed.xml" blog)
+     ("https://www.benkuhn.net/index.xml" blog)
+     ("https://www.johndcook.com/blog/feed" blog)
+     ("www.roughtype.com/?feed=rss2" blog)
+     ("https://jvns.ca/atom.xml" blog)
+     ;; Misc
+     ("https://upbookclub.com/latest.rss" misc)
+     ;; Newsletters
+     ("https://www.lesswrong.com/feed.xml?view=curated-rss" newsletter)
+     ("https://www.quastor.org/feed" newsletter)
+     ;; Podcasts
+     ("https://fossandcrafts.org/rss-feed-ogg.rss" podcast)
+     ;; News
+     ("http://newsrss.bbc.co.uk/rss/newsonline_world_edition/front_page/rss.xml" news)
+     ("http://rss.slashdot.org/slashdot/eqWf" news)
+     ("https://hnrss.org/frontpage" news)
+     ("https://lwn.net/headlines/rss" news)
+     ;; Emacs
+     ("https://updates.orgmode.org/feed/updates" emacs)
+     ("https://jao.io/blog/rss.xml" emacs)
+     ("https://emacsredux.com/atom.xml" emacs)
+     ("http://emacsrocks.com/atom.xml" emacs)
+     ("https://cestlaz.github.io/rss.xml" emacs)
+     ("http://blog.binchen.org/rss.xml" emacs)
+     ("http://www.howardism.org/index.xml" emacs)
+     ("http://irreal.org/blog/?feed=rss2" emacs)
+     ("http://mbork.pl/?action=rss" emacs)
+     ("https://www.masteringemacs.org/feed" emacs)
+     ("https://fuco1.github.io/rss.xml" emacs)
+     ("https://longreads.com/feed/")
+     ("https://nullprogram.com/feed/" emacs)
+     ("https://scripter.co/posts/index.xml" emacs)
+     ("http://pragmaticemacs.com/feed/" emacs)
+     ("http://www.lunaryorn.com/feed/" emacs)
+     ("http://endlessparentheses.com/atom.xml" emacs)
+     ("https://sachachua.com/blog/feed/" emacs)
+     ;; Comics
+     ("https://xkcd.com/atom.xml" comic)
+     ("https://www.drugsandwires.fail/feed/" comic)
+     ("http://feeds.feedburner.com/Explosm" comic)
+     ("https://www.foxtrot.com/feed/" comic)
+     ("http://feeds.feedburner.com/PoorlyDrawnLines" comic)))
   :config
-  (setq elfeed-feeds
-        '(;; Normal blogs
-          ("https://jnduli.co.ke/feeds/all.atom.xml" blog)
-          ("https://memo.barrucadu.co.uk/atom.xml" blog)
-          ("https://castel.dev/rss.xml" blog)
-          ("https://ambrevar.xyz/atom.xml" blog)
-          ("http://feeds.feedburner.com/typepad/sethsmainblog" blog)
-          ("http://math.andrej.com/feed.xml" blog)
-          ("http://www.aaronsw.com/2002/feeds/pgessays.rss" blog)
-          ("http://www.beplucky.com/feed/" blog)
-          ("http://www.joelonsoftware.com/rss.xml" blog)
-          ("http://www.quirksmode.org/blog/index.xml" blog)
-          ("https://adactio.com/journal/rss" blog)
-          ("https://adamsilver.io/atom.xml" blog)
-          ("https://alexschroeder.ch/wiki/feed/full" blog)
-          ("https://ariadne.space/" blog)
-          ("https://blog.aaronbieber.com/posts/index.xml" blog)
-          ("https://blog.jim-nielsen.com/feed.xml" blog)
-          ("https://blog.khinsen.net/feeds/all.rss.xml" blog)
-          ("https://blog.tecosaur.com/tmio/rss.xml" blog)
-          ("https://daneden.me/rss.xml" blog)
-          ("https://danluu.com/atom.xml" blog)
-          ("https://daverupert.com/atom.xml" blog)
-          ("https://drewdevault.com/blog/index.xml" blog)
-          ("https://eli.thegreenplace.net/feeds/all.atom.xml" blog)
-          ("https://emacsair.me/feed.xml" blog)
-          ("https://emacstil.com/feed.xml" blog)
-          ("https://jarango.com/feed" blog)
-          ("https://lars.ingebrigtsen.no/rss" blog)
-          ("https://notes.baldurbjarnason.com/feed.xml" blog)
-          ("https://occasionallycogent.com/feed.xml" blog)
-          ("https://overreacted.io/rss.xml" blog)
-          ("https://takeonrules.com/index.xml" blog)
-          ("https://twobithistory.org/feed.xml" blog)
-          ("https://www.arp242.net/feed.xml" blog)
-          ("https://www.benkuhn.net/index.xml" blog)
-          ("https://www.johndcook.com/blog/feed" blog)
-          ("www.roughtype.com/?feed=rss2" blog)
-          ("https://jvns.ca/atom.xml" blog)
-          ;; Misc
-          ("https://upbookclub.com/latest.rss" misc)
-          ;; Newsletters
-          ("https://www.lesswrong.com/feed.xml?view=curated-rss" newsletter)
-          ("https://www.quastor.org/feed" newsletter)
-          ;; Podcasts
-          ("https://fossandcrafts.org/rss-feed-ogg.rss" podcast)
-          ;; News
-          ("http://newsrss.bbc.co.uk/rss/newsonline_world_edition/front_page/rss.xml" news)
-          ("http://rss.slashdot.org/slashdot/eqWf" news)
-          ("https://hnrss.org/frontpage" news)
-          ("https://lwn.net/headlines/rss" news)
-          ;; github
-          ("https://github.com/genenetwork/genenetwork2/commits.atom" github)
-          ("https://github.com/genenetwork/genenetwork3/commits.atom" github)
-          ("https://github.com/guix-science/guix-science/commits.atom" github)
-          ("https://github.com/Python-Nairobi/pynbo-blog/commits.atom" github)
-          ("https://github.com/nairobilug/nairobilug.or.ke/commits.atom" github)
-          ("https://github.com/chen42/openbehavior/commits.atom" github)
-          ("https://github.com/DopplerHQ/awesome-interview-questions/commits.atom" github)
-          ("https://github.com/ekg/guix-genomics/commits.atom" github)
-          ("https://github.com/arunisaac/ccwl/commits.atom" github)
-          ("https://github.com/liuxinyu95/unplugged/commits.atom" github)
-          ("https://github.com/danluu/post-mortems/commits.atom" github)
-          ("https://github.com/pjotrp/deploy/commits.atom" github)
-          ("https://github.com/jbranchaud/til/commits.atom" github)
-          ("https://github.com/genenetwork/gn-gemtext-threads/commits.atom" github)
-          ("https://github.com/atlas-engineer/nyxt/releases.atom" github)
-          ("https://github.com/redis/redis-py/releases.atom" github)
-          ("https://github.com/liberapay/liberapay.com/releases.atom" github)
-          ("https://github.com/ch11ng/exwm/releases.atom" github)
-          ;; Reddit
-          ("https://www.reddit.com/.rss?feed=dfbee48300af2edfe2c01b3330aa15609532a18a&user=BonfaceKilz" reddit)          ("https://www.reddit.com/saved.rss?feed=dfbee48300af2edfe2c01b3330aa15609532a18a&user=BonfaceKilz" reddit)
-          ("https://www.reddit.com/message/inbox/.rss?feed=dfbee48300af2edfe2c01b3330aa15609532a18a&user=BonfaceKilz" reddit)
-          ;; Emacs
-          ("https://www.reddit.com/r/planetemacs.rss" emacs)
-          ("https://www.reddit.com/r/emacs.rss" emacs)
-          ("https://updates.orgmode.org/feed/updates" emacs)
-          ("https://jao.io/blog/rss.xml" emacs)
-          ("https://emacsredux.com/atom.xml" emacs)
-          ("http://emacsrocks.com/atom.xml" emacs)
-          ("https://cestlaz.github.io/rss.xml" emacs)
-          ("http://blog.binchen.org/rss.xml" emacs)
-          ("http://www.howardism.org/index.xml" emacs)
-          ("http://irreal.org/blog/?feed=rss2" emacs)
-          ("http://mbork.pl/?action=rss" emacs)
-          ("https://www.masteringemacs.org/feed" emacs)
-          ("https://fuco1.github.io/rss.xml" emacs)
-          ("https://longreads.com/feed/")
-          ("https://nullprogram.com/feed/" emacs)
-          ("https://scripter.co/posts/index.xml" emacs)
-          ("http://pragmaticemacs.com/feed/" emacs)
-          ("http://www.lunaryorn.com/feed/" emacs)
-          ("http://endlessparentheses.com/atom.xml" emacs)
-          ("https://sachachua.com/blog/feed/" emacs)
-          ;; Comics
-          ("https://xkcd.com/atom.xml" comic)
-          ("https://www.drugsandwires.fail/feed/" comic)
-          ("http://feeds.feedburner.com/Explosm" comic)
-          ("https://www.foxtrot.com/feed/" comic)
-          ("http://feeds.feedburner.com/PoorlyDrawnLines" comic)
-          ;; YouTube
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UC0uTPqBCFIpZxlz_Lv1tk_g" emacs)
-          ;; Colors
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UC2Qw1dzXDBAZPwS7zm37g8g" youtube)
-          ;; John Kitchin
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCQp2VLAOlvq142YN3JO3y8w" youtube)
-          ;; Jambu Kize
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCR3DTCpk9b-EoMzCicyAfLg" youtube)
-          ;; Arjan codes
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCVhQ2NnY5Rskt6UjCUkJ_DA" youtube)
-          ;; Soviet Reliable
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UC3Lhz4sPFPbH2TDtTxmNiQg" youtube)
-          ;; The Futur
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UC-b3c7kxa5vU-bnmaROgvog" youtube)
-          ;; System crafters
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCAiiOTio8Yu69c3XnR7nQBQ" youtube)
-          ;; Last week tonight
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UC3XTzVzaHQEd30rQbuvCtTQ" youtube)
-          ))
   (defun actuator-elfeed-show-all ()
     (interactive)
     (bookmark-maybe-load-default-file)
     (bookmark-jump "elfeed-all"))
+  
   (defun actuator-elfeed-show-unread ()
     (interactive)
     (bookmark-maybe-load-default-file)
     (bookmark-jump "elfeed-unread"))
+  
   (defun actuator-elfeed-load-db-and-open ()
     "Wrapper to load the elfeed database from disk before
         opening. Taken from Pragmatic Emacs."
@@ -961,7 +922,7 @@ With \\[universal-argument] toggle the display of the window."
     (elfeed-db-load)
     (elfeed-search-update 1)
     (elfeed-update))
-
+  
   (defun actuator-elfeed-save-db-and-bury ()
     "Wrapper to save the Elfeed database to disk before burying
     buffer. Taken from Pragmatic Emacs."
@@ -970,15 +931,13 @@ With \\[universal-argument] toggle the display of the window."
     (quit-window)
     (garbage-collect)
     (jump-to-register :elfeed-fullscreen))
-
+  
   (defun actuator-elfeed-mark-all-as-read ()
     "Mark all feeds in search as read. Taken from Mike Zamansky"
     (interactive)
     (mark-whole-buffer)
     (elfeed-search-untag-all-unread))
-  (setq elfeed-search-title-max-width 150)
-  (setq elfeed-search-trailing-width 30)
-
+  
   (defun email-elfeed-entry ()
     "Capture the elfeed entry and put it in an email."
     (interactive)
@@ -1010,7 +969,6 @@ With \\[universal-argument] toggle the display of the window."
 
       (message-goto-body)
       (fill-region (point) (point-max))
-
       (message-goto-to)))
 
   (defun org-elfeed-open (path)
@@ -1054,115 +1012,106 @@ With \\[universal-argument] toggle the display of the window."
    :follow 'org-elfeed-open
    :store 'org-elfeed-store-link)
 
-  (add-hook 'org-store-link-functions
-            'org-elfeed-entry-store-link)
+  (defface newsletter-elfeed-entry
+    '((t :foreground "thistle1"))
+    "Marks a newsletter Elfeed entry."
+    :group 'bonz-elfeed)
+
+  (push '(newsletter newsletter-elfeed-entry)
+        elfeed-search-face-alist)
+
+  (defface misc-elfeed-entry
+    '((t :foreground "tan1"))
+    "Marks a misc Elfeed entry."
+    :group 'bonz-elfeed)
+
+  (push '(misc misc-elfeed-entry)
+        elfeed-search-face-alist)
+
+  (defface blog-elfeed-entry
+    '((t :foreground "khaki"))
+    "Marks a blog Elfeed entry."
+    :group 'bonz-elfeed)
+
+  (push '(blog blog-elfeed-entry)
+        elfeed-search-face-alist)
+
+  (defface news-elfeed-entry
+    '((t :foreground "DarkOrange1"))
+    "Marks a news Elfeed entry."
+    :group 'bonz-elfeed)
+
+  (push '(news news-elfeed-entry)
+        elfeed-search-face-alist)
+
+  (defface github-elfeed-entry
+    '((t :foreground "DeepSkyBlue"))
+    "Marks a github Elfeed entry."
+    :group 'bonz-elfeed)
+
+  (push '(github github-elfeed-entry)
+        elfeed-search-face-alist)
+
+  (defface python-elfeed-entry
+    '((t :foreground "LawnGreen"))
+    "Marks a python Elfeed entry."
+    :group 'bonz-elfeed)
+
+  (push '(python python-elfeed-entry)
+        elfeed-search-face-alist)
+
+  (defface emacs-elfeed-entry
+    '((t :foreground "NavajoWhite2"))
+    "Marks an Emacs Elfeed entry."
+    :group 'bonz-elfeed)
+
+  (push '(emacs emacs-elfeed-entry)
+        elfeed-search-face-alist)
+
+  (defface youtube-elfeed-entry
+    '((t :foreground "red1"))
+    "Marks a YouTube Elfeed entry."
+    :group 'bonz-elfeed)
+
+  (push '(youtube youtube-elfeed-entry)
+        elfeed-search-face-alist)
+
+  (defface reddit-elfeed-entry
+    '((t :foreground "IndianRed1"))
+    "Marks a Reddit Elfeed entry."
+    :group 'bonz-elfeed)
+
+  (push '(reddit reddit-elfeed-entry)
+        elfeed-search-face-alist)
+
+  ;; From http://pragmaticemacs.com/emacs/star-and-unstar-articles-in-elfeed/
+  (defalias 'elfeed-toggle-star
+    (elfeed-expose #'elfeed-search-toggle-all 'star))
+
+  (eval-after-load 'elfeed-search
+    '(define-key elfeed-search-mode-map (kbd "m") 'elfeed-toggle-star))
+
+  ;; face for starred articles
+  (defface elfeed-search-star-title-face
+    '((t :foreground "magenta"))
+    "Marks a starred Elfeed entry.")
+
+  (push '(star elfeed-search-star-title-face) elfeed-search-face-alist)
+
+  :hook ((org-store-link-functions . #'org-elfeed-entry-store-link))
   :bind
-  (("C-c e" . actuator-elfeed-load-db-and-open)
-   :map elfeed-show-mode-map
-   ("c" .  (lambda () (interactive) (org-capture nil "f")))
-   :map elfeed-search-mode-map
-   ("A" . actuator-elfeed-show-all)
-   ("U" . actuator-elfeed-show-unread)
-   ("q" . actuator-elfeed-save-db-and-bury)
-   ("M" . email-elfeed-entry)
-   ("R" . actuator-elfeed-mark-all-as-read))
-  :custom
-  (elfeed-search-filter "@1-week-ago +unread "))
-
-(require 'elfeed)
-
-(defface newsletter-elfeed-entry
-  '((t :foreground "thistle1"))
-  "Marks a newsletter Elfeed entry."
-  :group 'bonz-elfeed)
-
-(push '(newsletter newsletter-elfeed-entry)
-      elfeed-search-face-alist)
-
-(defface misc-elfeed-entry
-  '((t :foreground "tan1"))
-  "Marks a misc Elfeed entry."
-  :group 'bonz-elfeed)
-
-(push '(misc misc-elfeed-entry)
-      elfeed-search-face-alist)
-
-(defface blog-elfeed-entry
-  '((t :foreground "khaki"))
-  "Marks a blog Elfeed entry."
-  :group 'bonz-elfeed)
-
-(push '(blog blog-elfeed-entry)
-      elfeed-search-face-alist)
-
-(defface news-elfeed-entry
-  '((t :foreground "DarkOrange1"))
-  "Marks a news Elfeed entry."
-  :group 'bonz-elfeed)
-
-(push '(news news-elfeed-entry)
-      elfeed-search-face-alist)
-
-(defface github-elfeed-entry
-  '((t :foreground "DeepSkyBlue"))
-  "Marks a github Elfeed entry."
-  :group 'bonz-elfeed)
-
-(push '(github github-elfeed-entry)
-      elfeed-search-face-alist)
-
-(defface python-elfeed-entry
-  '((t :foreground "LawnGreen"))
-  "Marks a python Elfeed entry."
-  :group 'bonz-elfeed)
-
-(push '(python python-elfeed-entry)
-      elfeed-search-face-alist)
-
-(defface emacs-elfeed-entry
-  '((t :foreground "NavajoWhite2"))
-  "Marks an Emacs Elfeed entry."
-  :group 'bonz-elfeed)
-
-(push '(emacs emacs-elfeed-entry)
-      elfeed-search-face-alist)
-
-(defface youtube-elfeed-entry
-  '((t :foreground "red1"))
-  "Marks a YouTube Elfeed entry."
-  :group 'bonz-elfeed)
-
-(push '(youtube youtube-elfeed-entry)
-      elfeed-search-face-alist)
-
-(defface reddit-elfeed-entry
-  '((t :foreground "IndianRed1"))
-  "Marks a Reddit Elfeed entry."
-  :group 'bonz-elfeed)
-
-(push '(reddit reddit-elfeed-entry)
-      elfeed-search-face-alist)
-
-
-;; From http://pragmaticemacs.com/emacs/star-and-unstar-articles-in-elfeed/
-(defalias 'elfeed-toggle-star
-  (elfeed-expose #'elfeed-search-toggle-all 'star))
-
-(eval-after-load 'elfeed-search
-  '(define-key elfeed-search-mode-map (kbd "m") 'elfeed-toggle-star))
-
-;; face for starred articles
-(defface elfeed-search-star-title-face
-  '((t :foreground "magenta"))
-  "Marks a starred Elfeed entry.")
-
-(push '(star elfeed-search-star-title-face) elfeed-search-face-alist)
-
-(run-at-time 180 1800 (lambda () (unless elfeed-waiting (elfeed-update))))
+  (:map elfeed-show-mode-map
+        ("c" .  (lambda () (interactive) (org-capture nil "f")))
+        :map elfeed-search-mode-map
+        ("A" . actuator-elfeed-show-all)
+        ("U" . actuator-elfeed-show-unread)
+        ("q" . actuator-elfeed-save-db-and-bury)
+        ("M" . email-elfeed-entry)
+        ("R" . actuator-elfeed-mark-all-as-read)))
 
 (provide 'setup-elfeed)
 
-  ;;; end setup-elfeed.el
+;;; end setup-elfeed.el
 #+END_SRC
 
 ** setup-avy.el
