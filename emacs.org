@@ -10,10 +10,9 @@
   - [[#org-time-budgets][org-time-budgets]]
   - [[#setup-avyel][setup-avy.el]]
   - [[#setup-eshellel][setup-eshell.el]]
-  - [[#setup-hugoel][setup-hugo.el]]
   - [[#setup-keybindingsel][setup-keybindings.el]]
   - [[#setup-markdownel][setup-markdown.el]]
-  - [[#setup-hugoel-1][setup-hugo.el]]
+  - [[#setup-hugoel][setup-hugo.el]]
   - [[#setup-magitel][setup-magit.el]]
   - [[#setup-markdownel-1][setup-markdown.el]]
   - [[#setup-orgel][setup-org.el]]
@@ -100,7 +99,6 @@ that I use [[https://github.com/ch11ng/exwm][exwm]] as my Window Manager. With t
 (require 'setup-exwm)
 (require 'org-time-budgets)
 (require 'setup-org)
-(require 'setup-hugo)
 (require 'setup-perspective)
 (require 'setup-rcirc)
 (require 'setup-yasnippet)
@@ -1625,22 +1623,6 @@ argument, query for word to search."
 ;;; setup-eshell.el ends here
 #+END_SRC
 
-** setup-hugo.el
-#+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-hugo.el
-;;; setup-hugo.el
-(use-package ox-hugo :ensure t
-  :after ox)
-(use-package easy-hugo :ensure t
-  :init
-  (setq easy-hugo-basedir "~/Public/BonfaceKilz/")
-  (setq easy-hugo-url "https://bonfacemunyoki.com")
-  (setq easy-hugo-sshdomain "myserver")
-  (setq easy-hugo-root "/home/bonface/bonfacemunyoki.com/")
-  (setq easy-hugo-previewtime "300"))
-
-(provide 'setup-hugo)
-;;; setup-hugo.el ends here
-#+END_SRC
 
 ** setup-keybindings.el
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-keybindings.el
@@ -2193,6 +2175,19 @@ argument, query for word to search."
   :config
   (eval-after-load "org"
     '(require 'ox-gfm nil t)))
+
+(use-package ox-hugo
+  :ensure t
+  :after ox)
+
+(use-package easy-hugo
+  :ensure t
+  :custom
+  (easy-hugo-basedir "~/Public/BonfaceKilz/")
+  (easy-hugo-url "https://bonfacemunyoki.com")
+  (easy-hugo-sshdomain "myserver")
+  (easy-hugo-root "/home/bonface/bonfacemunyoki.com/")
+  (easy-hugo-previewtime "300"))
 
 (use-package magit-org-todos
   :ensure t
