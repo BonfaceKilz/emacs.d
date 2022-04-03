@@ -1119,34 +1119,25 @@ With \\[universal-argument] toggle the display of the window."
 ;;; setup-exwm.el
 ;; Load exwm
 (use-package exwm
+  :custom
+  (exwm-randr-workspace-output-plist
+   '(0 "eDP1" 1 "eDP1" 2 "HDMI1" 3 "HDMI1"))
+  (exwm-layout-show-all-buffers nil)
+  (exwm-workspace-show-all-buffers nil)
+  (exwm-workspace-number 4)
+  (exwm-input-simulation-keys
+   '(([?\C-b] . [left])
+     ([?\C-f] . [right])
+     ([?\C-p] . [up])
+     ([?\C-n] . [down])
+     ([?\C-a] . [home])
+     ([?\C-e] . [end])
+     ([?\M-v] . [prior])
+     ([?\C-v] . [next])
+     ([?\C-d] . [delete])
+     ([?\C-k] . [S-end delete])))
   :config
   (require 'exwm-randr)
-  (setq exwm-randr-workspace-output-plist '(0 "eDP1"
-        				      1 "eDP1"
-        				      2 "HDMI1"
-        				      3 "HDMI1"))
-  (setq exwm-layout-show-all-buffers 't)
-  (setq exwm-workspace-show-all-buffers 't)
-  ;; Set the initial workspace number.
-  (setq exwm-workspace-number 4)
-  ;; Line-editing shortcuts
-  (setq exwm-input-simulation-keys
-	'(([?\C-b] . [left])
-	  ([?\C-f] . [right])
-	  ([?\C-p] . [up])
-	  ([?\C-n] . [down])
-	  ([?\C-a] . [home])
-	  ([?\C-e] . [end])
-	  ([?\M-v] . [prior])
-	  ([?\C-v] . [next])
-	  ([?\C-d] . [delete])
-	  ([?\C-k] . [S-end delete])))
-  ;; Make gimp floating
-  (add-hook 'exwm-update-class-hook
-            (lambda ()
-              (unless (or (string-prefix-p "sun-awt-X11-" exwm-instance-name)
-        		  (string= "gimp" exwm-instance-name))
-        	(rename-buffer exwm-class-name t))))
   ;; Add these hooks in a suitable place (e.g., as done in exwm-config-default)
   (exwm-input-set-key (kbd "s-r") #'exwm-reset)
   ;; 's-w': Switch workspace
@@ -1162,55 +1153,55 @@ With \\[universal-argument] toggle the display of the window."
 		      (lambda (command)
 			(interactive (list (read-shell-command "$ ")))
 			(start-process-shell-command command nil command)))
-  (push ?\s-j exwm-input-prefix-keys)
-  (exwm-input-set-key (kbd "s-o") 'other-window)
-  (exwm-input-set-key (kbd "s-k") 'other-window)
+  (defun exwm-workspace-next ()
+    (interactive)
+    (let ((next-numb (mod (+ 1 exwm-workspace-current-index) exwm-workspace-number)))
+      (exwm-workspace-switch next-numb)))
 
-  (push ?\s-o exwm-input-prefix-keys)
-  (push ?\s-k exwm-input-prefix-keys)
+  (defmacro exwm-switch-to-workspace-key (ws-num)
+    `(progn (exwm-input-set-key (kbd (concat "s-" ,(number-to-string ws-num)))
+			        (lambda ()
+				  (interactive)
+				  (exwm-workspace-switch ,ws-num)))
+	    (let ((key-num (if (eq 0 ,ws-num)
+			       10
+			     ,ws-num)))
+	      (exwm-input-set-key (kbd (concat "s-<f" (number-to-string key-num) ">"))
+				  (lambda ()
+				    (interactive)
+				    (exwm-workspace-switch ,ws-num))))))
+
+  (add-to-list 'display-buffer-alist
+	       `(,(rx bos " *async command*")
+	         (display-buffer-no-window)))
+
+  (defun background-shell-command (command)
+    (interactive (list (read-shell-command "$ ")))
+    (async-shell-command command (generate-new-buffer " *async command*")))
+
+  (defmacro define-run-or-rise-command (prog)
+    (let ((Prog (capitalize prog)))
+      `(defun ,(intern (format "run-or-rise-%s" prog)) ()
+         ,(format "Run or rise %s" Prog)
+         (interactive)
+         (if (string= (buffer-name) ,Prog)
+             (bury-buffer)
+           (if (get-buffer ,Prog)
+               (exwm-workspace-switch-to-buffer ,Prog)
+             (start-process ,prog nil ,prog))))))
+
+  (define-run-or-rise-command "nyxt")
+
+  (defun exwm-rename-buffer ()
+    (interactive)
+    (exwm-workspace-rename-buffer
+     (concat exwm-class-name ":"
+             (if (<= (length exwm-title) 7) exwm-title
+               (concat (substring exwm-title 0 6) "...")))))
   ;; Enable EXWM
   (exwm-enable)
   (exwm-randr-enable)
   :bind (("C-x C-c" . exwm-logout)))
-
-(defun exwm-workspace-next ()
-  (interactive)
-  (let ((next-numb (mod (+ 1 exwm-workspace-current-index) exwm-workspace-number)))
-    (exwm-workspace-switch next-numb)))
-
-(defmacro exwm-switch-to-workspace-key (ws-num)
-  `(progn (exwm-input-set-key (kbd (concat "s-" ,(number-to-string ws-num)))
-			      (lambda ()
-				(interactive)
-				(exwm-workspace-switch ,ws-num)))
-	  (let ((key-num (if (eq 0 ,ws-num)
-			     10
-			   ,ws-num)))
-	    (exwm-input-set-key (kbd (concat "s-<f" (number-to-string key-num) ">"))
-				(lambda ()
-				  (interactive)
-				  (exwm-workspace-switch ,ws-num))))))
-
-(add-to-list 'display-buffer-alist
-	     `(,(rx bos " *async command*")
-	       (display-buffer-no-window)))
-
-(defun background-shell-command (command)
-  (interactive (list (read-shell-command "$ ")))
-  (async-shell-command command (generate-new-buffer " *async command*")))
-
-(defmacro define-run-or-rise-command (prog)
-  (let ((Prog (capitalize prog)))
-    `(defun ,(intern (format "run-or-rise-%s" prog)) ()
-       ,(format "Run or rise %s" Prog)
-       (interactive)
-       (if (string= (buffer-name) ,Prog)
-           (bury-buffer)
-         (if (get-buffer ,Prog)
-             (exwm-workspace-switch-to-buffer ,Prog)
-           (start-process ,prog nil ,prog))))))
-
-(define-run-or-rise-command "nyxt")
 
 (provide 'setup-exwm)
 ;;; setup-exwm.el ends here
