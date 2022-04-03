@@ -2,26 +2,21 @@
 - [[#emacs-initel][Emacs init.el]]
 - [[#defuns][Defuns]]
   - [[#lisp-defuns][lisp-defuns]]
-  - [[#appearanceel][appearance.el]]
+  - [[#setup-packageel][setup-package.el]]
   - [[#sane-defaultsel][sane-defaults.el]]
+  - [[#appearanceel][appearance.el]]
+  - [[#setup-elfeedel][setup-elfeed.el]]
+  - [[#setup-exwmel][setup-exwm.el]]
+  - [[#org-time-budgets][org-time-budgets]]
   - [[#setup-avyel][setup-avy.el]]
   - [[#setup-eshellel][setup-eshell.el]]
-  - [[#setup-engineel][setup-engine.el]]
-  - [[#setup-exwmel][setup-exwm.el]]
   - [[#setup-hugoel][setup-hugo.el]]
-  - [[#setup-initel][setup-init.el]]
   - [[#setup-keybindingsel][setup-keybindings.el]]
   - [[#setup-markdownel][setup-markdown.el]]
-  - [[#setup-elfeedel][setup-elfeed.el]]
-  - [[#setup-eshellel][setup-eshell.el]]
-  - [[#setup-exwmel][setup-exwm.el]]
-  - [[#setup-hledgerel][setup-hledger.el]]
-  - [[#setup-hugoel][setup-hugo.el]]
-  - [[#setup-initel][setup-init.el]]
+  - [[#setup-hugoel-1][setup-hugo.el]]
   - [[#setup-magitel][setup-magit.el]]
-  - [[#setup-markdownel][setup-markdown.el]]
+  - [[#setup-markdownel-1][setup-markdown.el]]
   - [[#setup-orgel][setup-org.el]]
-  - [[#setup-packageel][setup-package.el]]
   - [[#setup-perspectiveel][setup-perspective.el]]
   - [[#setup-rcircel][setup-rcirc.el]]
   - [[#setup-slimeel][setup-slime.el]]
@@ -672,6 +667,9 @@ With \\[universal-argument] toggle the display of the window."
 (use-package writeroom-mode
   :ensure t)
 
+(use-package writegood-mode
+  :ensure t)
+
 (use-package emacs
   :custom
   (auto-revert-verbose t)
@@ -691,7 +689,7 @@ With \\[universal-argument] toggle the display of the window."
   (history-length 100)
   (ibuffer-show-empty-filter-groups -1)
   (indicate-empty-lines 1)
-    (inhibit-splash-screen t)
+  (inhibit-splash-screen t)
   (initial-major-mode 'org-mode)
   (initial-scratch-message (concat
                             "#+Title: Persistent Scratch Buffer\n#\n"
@@ -733,6 +731,7 @@ With \\[universal-argument] toggle the display of the window."
      ("JST-9" "Tokyo")))
   :init
   (auto-compression-mode 1)
+  (auto-save-default t)
   (column-number-mode nil)
   (delete-selection-mode 1)
   (display-battery-mode)
@@ -743,9 +742,11 @@ With \\[universal-argument] toggle the display of the window."
   (global-auto-revert-mode 1)
   (global-hl-line-mode t)
   (global-linum-mode -1)
+  (global-prettify-symbols-mode -1)
   (global-subword-mode 1)
   (global-visual-line-mode)
   (menu-bar-mode -1)
+  (prettify-symbols-unprettify-at-point 'right-edge)
   (savehist-mode 1)
   (scroll-bar-mode -1)
   (show-paren-mode 1)
@@ -1900,305 +1901,61 @@ argument, query for word to search."
 ;;; setup-org.el
 
 ;; Org-mode
-(use-package org-make-toc :ensure t)
-
-(setq org-latex-pdf-process (list "latexmk -f -pdf -interaction=nonstopmode -output-directory=%o %f"))
-
-(setq org-time-budgets
-      '((:title "Genenetwork/ Weekday" :tags "+genenetwork+weekday" :budget "25:00" :blocks (workday week))
-        (:title "Genenetwork/ Weekend" :tags "+genenetwork+weekend" :budget "6:00" :blocks (nil week))
-        (:title "Algorithms" :match "+algorithms" :budget "3:30" :blocks (day week))
-        (:title "Strathmore/ Weekday" :match "+strathmore+weekday" :budget "5:00" :blocks (workday week))
-        (:title "Strathmore/ Weekend" :match "+strathmore+weekend" :budget "4:00" :blocks (day week))
-        (:title "Guix" :match "+guix" :budget "5:00" :blocks (nil week))
-))
-
-(setq org-agenda-custom-commands
-      '(("a" "Agenda"
-         ((agenda "" ((org-agenda-sorting-strategy '(habit-down time-up priority-down category-keep user-defined-up))))
-          (org-time-budgets-in-agenda-maybe)))))
-
-(require 'ol)
-
-(org-link-set-parameters "gemini"
-                         :follow #'org-elpher-open
-                         :store #'org-elpher-store-link)
-(org-link-set-parameters "gopher"
-                         :follow #'org-elpher-open
-                         :store #'org-elpher-store-link)
-
-(defcustom org-elpher-command 'elpher
-  "The Emacs command to be used to display a gemini page."
-  :group 'org-link
-  :type '(choice (const gemini) (const gopher)))
-
-(defun org-elpher-open (path _)
-  "Visit the gemini/ gopher page on PATH.
-PATH should be a topic that can be thrown at the man command."
-  (funcall org-elpher-command path))
-
-(defun org-elpher-store-link ()
-  "Store a link to an elpher page."
-  (when (memq major-mode '(elpher-mode))
-    ;; This is a elpher page, we do make this link.
-    (let* ((page (elpher-copy-current-url))
-           (link (elpher-copy-current-url))
-           (description page))
-      (org-link-store-props
-       :type "elpher"
-       :link link
-       :description description))))
-
-(defun org-elpher-get-page-name ()
-  "Extract the page name from the buffer name."
-  (if (string-match " \\(\\S-+\\)\\*" (buffer-name))
-      (match-string 1 (buffer-name))
-    (error "Cannot create link to this man page")))
-
-
-(defun bonz/org-add-note (func &rest args)
-  "Advisor function to go around `org-add-note'.  Takes optional
-  count (c-u) and sets bonz/org-log-into-drawer to be used by
-  `bonz/org-store-log-note'.
-
-  The usage is thus:
-
-  (advice-add 'org-log-into-drawer :around #'bonz/org-log-into-drawer)
-  (advice-add 'org-add-note :around #'bonz/org-add-note)
-
-  When you do not want to log note into a draw use C-u C-c C-z.
-  Otherwise use C-c C-z as normal and it should log note as per
-  standard `org-log-into-drawer'.
-  "
-  (interactive "P")
-  (setq bonz/org-log-into-drawer (car args))
-  (funcall func))
-
-(defun bonz/org-log-into-drawer (func)
-  "Advisor function to go around `org-log-into-drawer'.
-  Reads value of bonz/org-log-into-drawer, as set by
-  `bonz/org-add-note', and if set returns nil meaning do not log
-  into drawer.  Otherwise returns value from call to
-  `org-log-into-draw'.  Before returning resets
-  bonz/org-log-into-drawer for subsequent calls."
-  (let ((ret
-         (if (not bonz/org-log-into-drawer)
-             (funcall func)
-           nil)))
-    (setq bonz/org-log-into-drawer nil)
-    ret))
-
-(setq bonz/org-log-into-drawer nil)
-(advice-add 'org-log-into-drawer :around #'bonz/org-log-into-drawer)
-(advice-add 'org-add-note :around #'bonz/org-add-note)
-
-(defun org-clock-select-task (&optional prompt)
-  "Select a task that was recently associated with clocking.
-  If `org-select-task-completing', use a completing-read to select.
-  Otherwise use the custom orgmode menus."
-  (interactive)
-  (let (och chl sel-list rpl (i 0) s)
-    ;; Remove successive dups from the clock history to consider
-    (mapc (lambda (c) (if (not (equal c (car och))) (push c och)))
-          org-clock-history)
-    (setq och (reverse och) chl (length och))
-    (if (zerop chl)
-        (user-error "No recent clock")
-      ;; Completing read (e.g. Helm)
-      (if org-select-task-completing
-          (let ((crlist (org-select-task-table och i)))
-            (cdr (gethash (completing-read "Clock Task Select:" crlist nil t) crlist)))
-        ;; Orgmode menus
-        (save-window-excursion
-          (org-switch-to-buffer-other-window
-           (get-buffer-create "*Clock Task Select*"))
-          (erase-buffer)
-          (when (marker-buffer org-clock-default-task)
-            (insert (org-add-props "Default Task\n" nil 'face 'bold))
-            (setq s (org-clock-insert-selection-line ?d org-clock-default-task))
-            (push s sel-list))
-          (when (marker-buffer org-clock-interrupted-task)
-            (insert (org-add-props "The task interrupted by starting the last one\n" nil 'face 'bold))
-            (setq s (org-clock-insert-selection-line ?i org-clock-interrupted-task))
-            (push s sel-list))
-          (when (org-clocking-p)
-            (insert (org-add-props "Current Clocking Task\n" nil 'face 'bold))
-            (setq s (org-clock-insert-selection-line ?c org-clock-marker))
-            (push s sel-list))
-          (insert (org-add-props "Recent Tasks\n" nil 'face 'bold))
-          (mapc
-           (lambda (m)
-             (when (marker-buffer m)
-               (setq i (1+ i)
-                     s (org-clock-insert-selection-line
-                        (if (< i 10)
-                            (+ i ?0)
-                          (+ i (- ?A 10))) m))
-               (if (fboundp 'int-to-char) (setf (car s) (int-to-char (car s))))
-               (push s sel-list)))
-           och)
-          (run-hooks 'org-clock-before-select-task-hook)
-          (goto-char (point-min))
-          ;; Set min-height relatively to circumvent a possible but in
-          ;; `fit-window-to-buffer'
-          (fit-window-to-buffer nil nil (if (< chl 10) chl (+ 5 chl)))
-          (message (or prompt "Select task for clocking:"))
-          (setq cursor-type nil rpl (read-char-exclusive))
-          (cond
-           ((eq rpl ?q) nil)
-           ((eq rpl ?x) nil)
-           ((assoc rpl sel-list) (message (cdr (assoc rpl sel-list))))
-           (t (user-error "Invalid task choice %c" rpl)))))))
-  )
-
-(defun org-clock-get-selection-line (marker)
-  "Return the string for a line for the clock selection list,
-  for use in a completing-read"
-  (when (marker-buffer marker)
-    (let (file cat task heading prefix)
-      (with-current-buffer (org-base-buffer (marker-buffer marker))
-        (save-excursion
-          (save-restriction
-            (widen)
-            (ignore-errors
-              (goto-char marker)
-              (setq file (buffer-file-name (marker-buffer marker))
-                    cat (org-get-category)
-                    heading (org-get-heading 'notags)
-                    prefix (save-excursion
-                             (org-back-to-heading t)
-                             (looking-at org-outline-regexp)
-                             (match-string 0))
-                    task (substring
-                          (org-fontify-like-in-org-mode
-                           (concat prefix heading)
-                           org-odd-levels-only)
-                          (length prefix)))))))
-      (when (and cat task)
-        (format "%s\t%s" cat task)
-        ))))
-
-(defun org-select-task-table (och i)
-  "Return a hash table equivalent to the
-  regular clock task selection list, associating
-  task-name with (char, marker)"
-  (let ((crlist (make-hash-table :test #'equal)))
-    (mapc (lambda (l) (puthash
-                       (org-clock-get-selection-line l)
-                       (cons (if (< i 10)
-                                 (+ i ?0)
-                               (+ i (- ?A 10)))
-                             l) crlist)) och)
-    crlist))
-
-;; From Jason
-(defun clone-and-narrow-org-element ()
-  (interactive)
-  (setq current-prefix-arg '(4)) ; C-u
-  (call-interactively 'clone-indirect-buffer)
-  (org-narrow-to-element))
-
-(defun bonz/is-project-p ()
-  "Any task with a todo keyword subtask"
-  (save-restriction
-    (widen)
-    (let ((has-subtask)
-          (subtree-end (save-excursion (org-end-of-subtree t)))
-          (is-a-task (member (nth 2 (org-heading-components)) org-todo-keywords-1)))
-      (save-excursion
-        (forward-line 1)
-        (while (and (not has-subtask)
-                    (< (point) subtree-end)
-                    (re-search-forward "^\*+ " subtree-end t))
-          (when (member (org-get-todo-state) org-todo-keywords-1)
-            (setq has-subtask t))))
-      (and is-a-task has-subtask))))
-
-(defun bonz/is-task-p ()
-  "Any task with a todo keyword and no subtask"
-  (save-restriction
-    (widen)
-    (let ((has-subtask)
-          (subtree-end (save-excursion (org-end-of-subtree t)))
-          (is-a-task (member (nth 2 (org-heading-components)) org-todo-keywords-1)))
-      (save-excursion
-        (forward-line 1)
-        (while (and (not has-subtask)
-                    (< (point) subtree-end)
-                    (re-search-forward "^\*+ " subtree-end t))
-          (when (member (org-get-todo-state) org-todo-keywords-1)
-            (setq has-subtask t))))
-      (and is-a-task (not has-subtask)))))
-
-(defun clock-in-to-inprogress (kw)
-  "Switch a task from NEXT to INPROGRESS when clocking in.
-   Skips capture tasks, projects, and subprojects.
-    Switch projects and subprojects from NEXT back to TODO"
-  (when (not (and (boundp 'org-capture-mode) org-capture-mode))
-    (cond
-     ((and (member (org-get-todo-state) (list "TODO" "WAITING" "ON_HOLD"))
-           (bonz/is-task-p))
-      "STARTED")
-     ((and (member (org-get-todo-state) (list "TODO" "WAITING" "ON_HOLD"))
-           (bonz/is-project-p))
-      "STARTED"))))
-
-(defun pinentry-emacs (desc prompt ok error)
-  (let ((str (read-passwd (concat (replace-regexp-in-string "%22" "\"" (replace-regexp-in-string "%0A" "\n" desc)) prompt ": "))))
-    str))
-
-(defun find-project-task ()
-  "Move point to the parent (project) task if any"
-  (save-restriction
-    (widen)
-    (let ((parent-task (save-excursion (org-back-to-heading 'invisible-ok) (point))))
-      (while (org-up-heading-safe)
-        (when (member (nth 2 (org-heading-components)) org-todo-keywords-1)
-          (setq parent-task (point))))
-      (goto-char parent-task)
-      parent-task)))
-
-
-(use-package ob-async :ensure t)
-(use-package ob-elm :ensure t)
-(use-package ob-rust :ensure t
-(use-package ob-go :ensure t)
-(use-package ox-gemini :ensure t
-  :config
-  (eval-after-load "org"
-    '(require 'ox-gemini nil t)))
-(use-package  ob-restclient :ensure t)
-(use-package toc-org
-  :ensure t
-  :hook
-  ((toc-org-mode . org-mode-hook)))
-
-(use-package org-books :ensure t)
-(setq org-books-file "/home/bonface/Self/org/books.org")
-
-(use-package magit-org-todos
-  :ensure t
-  :config
-  (magit-org-todos-autoinsert))
-
-(use-package writegood-mode :ensure t)
-(use-package org-pomodoro :ensure t)
-
-(use-package ol
-  :config
-  (setq org-link-keep-stored-after-insertion t)
-  :bind (:map org-mode-map
-              ("C-c l" . org-store-link)
-              ("C-c S-l" . org-toggle-link-display)
-
-              ("C-c C-S-l" . org-insert-last-stored-link)))
-
-(use-package orgit :ensure t)
-
 (use-package org
   :ensure t
-  :hook (org-mode-hook . writegood-mode)
-  :config
+  :init
+  ;; From Jason
+  (defun clone-and-narrow-org-element ()
+    (interactive)
+    (setq current-prefix-arg '(4))      ; C-u
+    (call-interactively 'clone-indirect-buffer)
+    (org-narrow-to-element))
+  
+  (defun munyoki/is-task-p ()
+    "Any task with a todo keyword and no subtask"
+    (save-restriction
+      (widen)
+      (let ((has-subtask)
+            (subtree-end (save-excursion (org-end-of-subtree t)))
+            (is-a-task (member (nth 2 (org-heading-components)) org-todo-keywords-1)))
+        (save-excursion
+          (forward-line 1)
+          (while (and (not has-subtask)
+                      (< (point) subtree-end)
+                      (re-search-forward "^\*+ " subtree-end t))
+            (when (member (org-get-todo-state) org-todo-keywords-1)
+              (setq has-subtask t))))
+        (and is-a-task (not has-subtask)))))
+  
+  (defun munyoki/is-project-p ()
+    "Any task with a todo keyword subtask"
+    (save-restriction
+      (widen)
+      (let ((has-subtask)
+            (subtree-end (save-excursion (org-end-of-subtree t)))
+            (is-a-task (member (nth 2 (org-heading-components)) org-todo-keywords-1)))
+        (save-excursion
+          (forward-line 1)
+          (while (and (not has-subtask)
+                      (< (point) subtree-end)
+                      (re-search-forward "^\*+ " subtree-end t))
+            (when (member (org-get-todo-state) org-todo-keywords-1)
+              (setq has-subtask t))))
+        (and is-a-task has-subtask))))
+  
+  (defun clock-in-to-inprogress (kw)
+    "Switch a task from NEXT to INPROGRESS when clocking in.
+   Skips capture tasks, projects, and subprojects.
+    Switch projects and subprojects from NEXT back to TODO"
+    (when (not (and (boundp 'org-capture-mode) org-capture-mode))
+      (cond
+       ((and (member (org-get-todo-state) (list "TODO" "WAITING" "ON_HOLD"))
+             (munyoki/is-task-p))
+        "STARTED")
+       ((and (member (org-get-todo-state) (list "TODO" "WAITING" "ON_HOLD"))
+             (munyoki/is-project-p))
+        "STARTED"))))
+  
   (cl-defun my/make/org-capture-template
       (shortcut heading &optional (no-todo nil) (description heading) (category heading))
     "Quickly produce an org-capture-template.
@@ -2223,84 +1980,124 @@ PATH should be a topic that can be thrown at the man command."
                                )
                 , (concat "*" (unless no-todo " TODO") " %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n\n")
                 :empty-lines 1))
-  (setq alert-default-style 'libnotify)
-  (setq epa-pinentry-mode 'loopback)
-  (setq org-agenda-files
-        '("~/Self/org/journal.org"
-          "~/Self/org/archive/2022_personal.org_archive"
-          "~/Self/org/archive/2022_email.org_archive"
-          "~/Self/org/archive/2022_genenetwork.org_archive"
-          "~/Self/org/archive/2021_strathmore.org_archive"
-          "~/Self/org/archive/2022_reading.org_archive"
-          "~/Self/org/archive/2022_guix.org_archive"
-          "~/Self/org/archive/2022_blog.org_archive"))
-  (setq org-agenda-ndays 7)
-  (setq org-agenda-show-all-dates t)
-  (setq org-agenda-skip-deadline-if-done t)
-  (setq org-agenda-skip-scheduled-if-done t)
-  (setq org-agenda-start-on-weekday nil)
-  (setq org-catch-invisible-edits 'show)
-  (setq org-clock-history-length 23)
-  (setq org-clock-in-resume t)
-  (setq org-clock-in-switch-to-state 'clock-in-to-inprogress)
-  (setq org-clock-out-remove-zero-time-clocks t)
-  (setq org-clock-out-when-done t)
-  (setq org-clock-persist t)
-  (setq org-clock-report-include-clocking-task t)
-  (setq org-crypt-key "D4F09EB110177E03C28E2FE1F5BBAE1E0392253F")
-  (setq org-deadline-warning-days 14)
-  (setq org-default-notes-file "~/Self/org/journal.org")
-  (setq org-ellipsis " ⤵")
-  (setq org-fontify-quote-and-verse-blocks t)
-  (setq org-hide-block-startup t)
-  (setq org-imenu-depth 7)
-  (setq org-log-done t)
-  (setq org-log-into-drawer t)
-  (setq org-log-note-clock-out t)
-  (setq org-plantuml-jar-path (expand-file-name "/home/bonface/.guix-profile/bin/plantuml"))
-  (setq org-return-follows-link t)
-  (setq org-reverse-note-order nil)
-  (setq org-select-task-completing t)
-  ;; Reset the org-template expnsion system, this is need after upgrading to org 9 for some reason
-  (setq org-structure-template-alist (eval (car (get 'org-structure-template-alist 'standard-value))))
-  (setq org-special-ctrl-a/e t)
-  (setq org-src-preserve-indentation t)
-  (setq org-src-tab-acts-natively t)
-  (setq org-startup-indented t)
-  (setq org-tags-exclude-from-inheritance (quote ("crypt")))
-  (setq org-timer-default-timer 45)
-  (setq org-use-fast-todo-selection t)
-  (setq org-use-speed-commands t)
-  (setq org-yank-adjusted-subtrees t)
-  (setq org-todo-keywords (quote ((sequence "TODO(t)" "STARTED(s@/!)" "|" "DONE(d/!)")
-                                  (sequence "WAITING(w@/!)" "ON_HOLD(h@/!)" "|" "CANCELLED(c@/!)")
-                                  (sequence "MEETING(m)" "IN_PROGRESS(i@/!)" "FINISHED(f/!)" "|" "DROPPED(d@/!)"))))
-  (setq org-todo-keyword-faces (quote (("TODO" :foreground "green" :weight bold)
-                                       ("STARTED" :foreground "yellow" :weight bold)
-                                       ("DONE" :foreground "orange" :weight bold)
-                                       ("WAITING" :foreground "brown" :weight bold)
-                                       ("ON_HOLD" :foreground "grey" :weight bold)
-                                       ("CANCELLED" :foreground "red" :weight bold))))
-  (setq org-capture-templates
-        `(
-          ,(my/make/org-capture-template "g" "Tasks, Genenetwork")
-          ,(my/make/org-capture-template "s" "Tasks, Strathmore")
-          ,(my/make/org-capture-template "d" "Daily Programmer(Algorithms)")
-          ,(my/make/org-capture-template "x" "Tasks, Guix")
-          ,(my/make/org-capture-template "r" "Research")
-          ,(my/make/org-capture-template "m" "Email")
-          ,(my/make/org-capture-template "e" "Emacs (•̀ᴗ•́)و")
-          ,(my/make/org-capture-template "b" "Blog")
-          ,(my/make/org-capture-template "a" "Arbitrary Reading and Learning")
-          ,(my/make/org-capture-template "p" "Personal Matters")
-          ,(my/make/org-capture-template "i" "Meetings, Interviews or Zoom Calls")
-          ,(my/make/org-capture-template "c" "Chores, Repetitive tasks")
-          ("n" "Note" entry (file "~/Self/org/notes.org")
-           "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)))
-  (setq org-capture-templates-contexts
-        '(("r" ((in-mode . "gnus-summary-mode")
-                (in-mode . "gnus-article-mode")
-                (in-mode . "message-mode")))))
+  
+  (defun munyoki/org-add-note (func &rest args)
+    "Advisor function to go around `org-add-note'.  Takes optional
+  count (c-u) and sets munyoki/org-log-into-drawer to be used by
+  `munyoki/org-store-log-note'.
+
+  The usage is thus:
+
+  (advice-add 'org-log-into-drawer :around #'munyoki/org-log-into-drawer)
+  (advice-add 'org-add-note :around #'munyoki/org-add-note)
+
+  When you do not want to log note into a draw use C-u C-c C-z.
+  Otherwise use C-c C-z as normal and it should log note as per
+  standard `org-log-into-drawer'.
+  "
+    (interactive "P")
+    (setq munyoki/org-log-into-drawer (car args))
+    (funcall func))
+
+  (defun munyoki/org-log-into-drawer (func)
+    "Advisor function to go around `org-log-into-drawer'.
+  Reads value of munyoki/org-log-into-drawer, as set by
+  `munyoki/org-add-note', and if set returns nil meaning do not log
+  into drawer.  Otherwise returns value from call to
+  `org-log-into-draw'.  Before returning resets
+  munyoki/org-log-into-drawer for subsequent calls."
+    (let ((ret
+           (if (not munyoki/org-log-into-drawer)
+               (funcall func)
+             nil)))
+      (setq munyoki/org-log-into-drawer nil)
+      ret))
+  :custom
+  (org-latex-pdf-process
+   (list "latexmk -f -pdf -interaction=nonstopmode -output-directory=%o %f"))
+  
+  (org-src-window-setup 'current-window)
+  (org-tag-alist
+   '(("algorithm" . ?a) ("guix" . ?G)
+     ("genenetwork" . ?g) ("strathmore" . ?s)
+     ("personal" . ?p)
+     (:startgroup)
+     ("Blog" . ?b)
+     (:grouptags)
+     ("life-tips" . ?l) ("life" . ?L)
+     ("how_to" . ?h) ("weekly_reviews" . ?w)
+     ("programming" . ?p)
+     (:endgroup)
+     ))
+  (org-confirm-babel-evaluate
+   (lambda (lang body)
+     (not (member lang '("scheme" "python" "sh" "bash")))))
+  (org-catch-invisible-edits 'show)
+  (org-clock-history-length 23)
+  (org-clock-in-resume t)
+  (org-journal-dir "/home/bonface/Self/org/journal/")
+  (org-clock-in-switch-to-state 'clock-in-to-inprogress)
+  (org-clock-out-remove-zero-time-clocks t)
+  (org-clock-out-when-done t)
+  (org-clock-persist t)
+  (org-clock-report-include-clocking-task t)
+  (org-crypt-key "D4F09EB110177E03C28E2FE1F5BBAE1E0392253F")
+  (org-deadline-warning-days 7)
+  (org-default-notes-file (concat user-home-directory "~/Self/org/journal.org"))
+  (org-ellipsis " ⤵")
+  (org-fontify-quote-and-verse-blocks t)
+  (org-fontify-done-headline t)
+  (org-hide-block-startup t)
+  (org-imenu-depth 7)
+  (org-log-done 'note)
+  (org-log-into-drawer nil)
+  (org-log-note-clock-out nil)
+  (org-plantuml-jar-path (expand-file-name (concat user-home-directory ".guix-profile/bin/plantuml")))
+  (org-return-follows-link nil)
+  (org-reverse-note-order nil)
+  ;; Reset the org-template expansion system, this is need after upgrading to org 9 for some reason
+  (org-structure-template-alist (eval (car (get 'org-structure-template-alist 'standard-value))))
+  (org-special-ctrl-a/e t)
+  (org-src-preserve-indentation t)
+  (org-src-tab-acts-natively t)
+  (org-startup-indented t)
+  (org-tags-exclude-from-inheritance (quote ("crypt")))
+  (org-timer-default-timer 45)
+  (org-use-fast-todo-selection t)
+  (org-use-speed-commands t)
+  (org-yank-adjusted-subtrees t)
+  (org-todo-keywords
+   (quote ((sequence "TODO(t)" "STARTED(s@/!)" "|" "DONE(d/!)")
+           (sequence "WAITING(w@/!)" "ON_HOLD(h@/!)" "|" "CANCELLED(c@/!)")
+           (sequence "MEETING(m)" "IN_PROGRESS(i@/!)" "FINISHED(f/!)" "|" "DROPPED(d@/!)"))))
+  (org-todo-keyword-faces (quote (("TODO" :foreground "green" :weight bold)
+                                  ("STARTED" :foreground "yellow" :weight bold)
+                                  ("DONE" :foreground "orange" :weight bold)
+                                  ("WAITING" :foreground "brown" :weight bold)
+                                  ("ON_HOLD" :foreground "grey" :weight bold)
+                                  ("CANCELLED" :foreground "red" :weight bold))))
+  (org-capture-templates
+   `(
+     ,(my/make/org-capture-template "g" "Tasks, Genenetwork")
+     ,(my/make/org-capture-template "s" "Tasks, Strathmore")
+     ,(my/make/org-capture-template "d" "Daily Programmer(Algorithms)")
+     ,(my/make/org-capture-template "x" "Tasks, Guix")
+     ,(my/make/org-capture-template "r" "Research")
+     ,(my/make/org-capture-template "m" "Email")
+     ,(my/make/org-capture-template "e" "Emacs (•̀ᴗ•́)و")
+     ,(my/make/org-capture-template "b" "Blog")
+     ,(my/make/org-capture-template "a" "Arbitrary Reading and Learning")
+     ,(my/make/org-capture-template "p" "Personal Matters")
+     ,(my/make/org-capture-template "i" "Meetings, Interviews or Zoom Calls")
+     ,(my/make/org-capture-template "c" "Chores, Repetitive tasks")
+     ("n" "Note" entry (file "~/Self/org/notes.org")
+      "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)))
+  (org-capture-templates-contexts
+   '(("r" ((in-mode . "gnus-summary-mode")
+           (in-mode . "gnus-article-mode")
+           (in-mode . "message-mode")))))
+  :hook (org-mode-hook . writegood-mode)
+  :config
   (add-to-list 'org-capture-templates
                '("f" "Elfeed" entry (file "/home/bonface/Self/org/elfeed.org")
                  "* %a\n%U" :empty-lines 1))
@@ -2332,35 +2129,122 @@ PATH should be a topic that can be thrown at the man command."
      (R . t)
      (sql . t)
      (C . t)))
-  (eval-after-load "org-present"
-    '(progn
-       (add-hook 'org-present-mode-hook
-                 (lambda ()
-                   (org-present-big)
-                   (org-display-inline-images)
-                   (org-present-hide-cursor)
-                   (org-present-read-only)))
-       (add-hook 'hide-line-hook
-                 (lambda ()
-                   (hide-line-mode)))
-       (add-hook 'org-present-mode-quit-hook
-                 (lambda ()
-                   (org-present-small)
-                   (org-remove-inline-images)
-                   (org-present-show-cursor)
-                   (org-present-read-write)))))
-  (org-agenda "a" "a")
-  (require 'org-crypt)
+  (advice-add 'org-log-into-drawer :around #'munyoki/org-log-into-drawer)
+  (advice-add 'org-add-note :around #'munyoki/org-add-note)
+  (set-face-attribute 'org-done nil :strike-through t)
+  (set-face-attribute
+   'org-headline-done nil
+   :strike-through t
+   :foreground "light gray")
+  :bind (("C-c C-x n" . clone-and-narrow-org-element)
+         ("C-c l" . org-store-link)         
+         ("C-c b" . org-switchb)
+         ("C-c c" . org-capture) ;; Tasks get a 25 minute count down timer
+         :map org-mode-map
+         ("C-'" . avy-goto-char-timer)
+         ("s-p" . org-babel-previous-src-block)
+         ("s-n" . org-babel-next-src-block)
+         ("s-e" . org-edit-src-block)
+         :map org-src-mode-map
+         ("s-e" . org-edit-src-block)))
+
+(use-package toc-org
+  :ensure t
+  :requires org
+  :hook
+  ((toc-org-mode . org-mode-hook)))
+
+(use-package org-books
+  :ensure t
+  :requires org
+  :custom
+  (org-books-file
+   (concat user-home-directory "Self/org/books.org")))
+
+(use-package ob-async
+  :ensure t
+  :requires org)
+
+(use-package ob-elm
+  :ensure t)
+
+(use-package ob-rust
+  :ensure t
+  :requires org)
+
+(use-package ob-go
+  :ensure t
+  :requires org)
+
+(use-package  ob-restclient
+  :ensure t
+  :requires org)
+
+(use-package ox-gemini
+  :ensure t
+  :requires org
+  :config
+  (eval-after-load "org"
+    '(require 'ox-gemini nil t)))
+
+(use-package ox-gfm
+  :ensure t
+  :requires org
+  :config
+  (eval-after-load "org"
+    '(require 'ox-gfm nil t)))
+
+(use-package magit-org-todos
+  :ensure t
+  :requires org
+  :config
+  (magit-org-todos-autoinsert))
+
+(use-package orgit
+  :ensure t
+  :requires org)
+
+(use-package org-present
+  :ensure t
+  :requires org
+  :hook ((org-present-mode-hook . (lambda ()
+                                    (org-present-big)
+                                    (org-display-inline-images)
+                                    (org-present-hide-cursor)
+                                    (org-present-read-only)))
+         (hide-line-hook . (lambda ()
+                             (hide-line-mode)))
+         (org-present-mode-quit-hook . (lambda ()
+                                         (org-present-small)
+                                         (org-remove-inline-images)
+                                         (org-present-show-cursor)
+                                         (org-present-read-write)))))
+
+(use-package org-tanglesync
+  :requires org
+  :custom
+  (org-tanglesync-skip-user-check nil)
+  :bind
+  (( "C-c M-i" . org-tanglesync-process-buffer-interactive))
+  ( "C-c M-a" . org-tanglesync-process-buffer-automatic))
+
+(use-package munyoki/org-habit
+  :init
+  (require 'org-habit))
+
+(use-package munyoki/org-crypt
+  :requires org-crypt
+  :init
   (org-crypt-use-before-save-magic)
-  (setenv "GPG_AGENT_INFO" nil)
+  (setenv "GPG_AGENT_INFO" nil))
 
-
+(use-package munyoki/org-agenda
+  :requires org
+  :config
   (add-to-list 'org-agenda-custom-commands
                '("c" todo "DONE|ON_HOLD|CANCELLED" nil))
-
   (add-to-list 'org-agenda-custom-commands
                '("u" "unscheduled tasks" tags "-SCHEDULED={.+}/!+TODO|+STARTED|+WAITING"))
-
   (add-to-list 'org-agenda-custom-commands
                '("%" "Appointments" agenda* "Today's appointments"
                  ((org-agenda-span 1)
@@ -2372,184 +2256,96 @@ PATH should be a topic that can be thrown at the man command."
                    (lambda ()
                      (org-agenda-skip-entry-if 'scheduled 'deadline 'regexp  "\n]+>")))
                   (org-agenda-overriding-header "Unscheduled TODO entries: "))))
-
-  :bind (("C-c C-x n" . clone-and-narrow-org-element)
-         ("C-c l" . org-store-link)
-         ("C-c a" . org-agenda)
-         ("C-c b" . org-switchb)
-         ("C-c c" . org-capture) ;; Tasks get a 25 minute count down timer
-         :map org-mode-map
-         ("C-'" . avy-goto-char-timer)
-         ("s-p" . org-babel-previous-src-block)
-         ("s-n" . org-babel-next-src-block)
-         ("s-e" . org-edit-src-block)
-         :map org-src-mode-map
-         ("s-e" . org-edit-src-block)))
-
-(add-to-list 'org-agenda-custom-commands
-             '("R" . "Review" ))
-
-;; Common settings for all reviews
-(setq bonz/org-agenda-review-settings
-      '((org-agenda-show-all-dates t)
-        (org-agenda-start-with-log-mode t)
-        (org-agenda-start-with-clockreport-mode t)
-        (org-agenda-archives-mode t)
-        ;; I don't care if an entry was archived
-        (org-agenda-hide-tags-regexp
-         (concat org-agenda-hide-tags-regexp
-                 "\\|ARCHIVE"))
-      ))
-;; Show the agenda with the log turn on, the clock table show and
-;; archived entries shown.  These commands are all the same except for
-;; the time period.
-(add-to-list 'org-agenda-custom-commands
-             `("Rw" "Week in review"
-                agenda ""
-                ;; agenda settings
-                ,(append
-                  bonz/org-agenda-review-settings
-                  '((org-agenda-span 'week)
-                    (org-agenda-start-on-weekday 0)
-                    (org-agenda-overriding-header "Week in Review"))
-                  );; journal.org
-                ("/home/bonface/Self/org/review/week.html")))
-
-(add-to-list 'org-agenda-custom-commands
-             `("Rl" "Last Week in review"
-               agenda ""
-               ;; agenda settings
-               ,(append
-                 bonz/org-agenda-review-settings
-                 '((org-agenda-span 'week)
-                   (org-agenda-start-on-weekday 0)
-                   (org-agenda-start-day "-7d")
-                   (org-agenda-overriding-header "Last Week in Review")))
-               ("/home/bonface/Self/org/review/lastweek.html")))
-
-(add-to-list 'org-agenda-custom-commands
-             `("Rd" "Day in review"
-               agenda ""
-               ;; agenda settings
-               ,(append
-                 bonz/org-agenda-review-settings
-                 '((org-agenda-span 'day)
-                   (org-agenda-overriding-header "Day in Review"))
-                 )
-               ("/home/bonface/Self/org/review/day.html")))
-
-(add-to-list 'org-agenda-custom-commands
-             `("Ry" "Yesterday in review"
-                agenda ""
-                ;; agenda settings
-                ,(append
-                  bonz/org-agenda-review-settings
-                  '((org-agenda-span 'day)
-                    (org-agenda-start-day "-1d")
-                    (org-agenda-overriding-header "Yesterday in Review")))
-                ("/home/bonface/Self/org/review/yesterday.html")))
-
-(add-to-list 'org-agenda-custom-commands
-             `("Rm" "Month in review"
-               agenda ""
-               ;; agenda settings
-               ,(append
-                 bonz/org-agenda-review-settings
-                 '((org-agenda-span 'month)
-                   (org-agenda-start-day "01")
-                   (org-read-date-prefer-future nil)
-                   (org-agenda-overriding-header "Month in Review"))
-                 )
-               ("/home/bonface/Self/org/review/month.html")))
-
-(use-package org-journal
-  :bind (("C-c j" . org-journal-new-entry))
-  :config
-  (setq org-journal-dir "~/Self/org/journal/")
-  (setq org-journal-file-type 'yearly))
-
-
-(use-package org-tanglesync
-  :hook (org-mode-hook . org-tanglesync-mode)
-  :bind
-  (( "C-c M-i" . org-tanglesync-process-buffer-interactive))
-  ( "C-c M-a" . org-tanglesync-process-buffer-automatic))
-
-(setq org-tanglesync-skip-user-check nil)
-
-(global-prettify-symbols-mode -1)
-
-(defvar my-prettify-alist nil
-  "Musa's personal prettifications.")
-
-(push '("<=" . ?≤) my-prettify-alist)
-(push '("#+begin_example" . (?ℰ (Br . Bl) ?⇒)) my-prettify-alist) ;; ℰ⇒
-(push '("#+end_example" . ?⇐) my-prettify-alist)                  ;; ⇐
-
-(-let [modify (lambda ()
-                (setq prettify-symbols-alist
-                      (append my-prettify-alist prettify-symbols-alist)))]
-
-  (add-hook 'text-mode-hook modify)
-  (add-hook 'prog-mode-hook modify)
-  ;; For org-example blocks, “C-c '” to see the prettifications of language constructs.
-  ;; Or alter the particular hook directly.
-  )
-
-(use-package ox-reveal :ensure t
-  :config (setq org-reveal-root "https://cdn.jsdelivr.net/reveal.js/3.0.0/"))
-
-(use-package ox-gfm :ensure t
-  :config
-  (eval-after-load "org"
-    '(require 'ox-gfm nil t)))
-
-;; FIX: https://github.com/syl20bnr/spacemacs/issues/11798
-(when (version<= "9.2" (org-version))
-  (require 'org-tempo))
-
-
-;; src: https://emacs.stackexchange.com/questions/35784/org-edit-src-code-do-not-pop-a-new-window-use-the-current-one/35808#35808
-;; The idea is to open the src block in the current window
-(setq org-src-window-setup 'current-window)
-(setq auto-save-default t)
-
-(setq prettify-symbols-unprettify-at-point 'right-edge)
-
-;; src: https://bzg.fr/en/some-emacs-org-mode-features-you-may-not-know.html/1
-(setq org-tag-alist
-      '(("algorithm" . ?a) ("guix" . ?G)
-        ("genenetwork" . ?g) ("strathmore" . ?s)
-        ("personal" . ?p)
-        (:startgroup)
-        ("Blog" . ?b)
-        (:grouptags)
-        ("life-tips" . ?l) ("life" . ?L)
-        ("how_to" . ?h) ("weekly_reviews" . ?w)
-        ("programming" . ?p)
-        (:endgroup)
-        ))
-(setq org-agenda-compact-blocks nil)
-
-;; src: https://emacs.stackexchange.com/a/21128
-(defun my-org-confirm-babel-evaluate (lang body)
-  (not (member lang '("scheme" "python" "sh" "bash"))))
-
-(setq org-confirm-babel-evaluate 'my-org-confirm-babel-evaluate)
-
-(use-package el-patch :ensure t)
-
-(use-package org-download
-  :after org
-  :bind
-  (:map org-mode-map
-        (("s-Y" . org-download-screenshot)
-         ("s-y" . org-download-yank))))
-
-(setq org-journal-dir "/home/bonface/Self/org/journal/")
+  (add-to-list 'org-agenda-custom-commands
+               '("R" . "Review" ))
+  (add-to-list 'org-agenda-custom-commands
+               `("Rw" "Week in review"
+                 agenda ""
+                 ;; agenda settings
+                 ,(append
+                   munyoki/org-agenda-review-settings
+                   '((org-agenda-span 'week)
+                     (org-agenda-start-on-weekday 0)
+                     (org-agenda-overriding-header "Week in Review"))
+                   ) ;; journal.org
+                 ("/home/bonface/Self/org/review/week.html")))
+  (add-to-list 'org-agenda-custom-commands
+               `("Rl" "Last Week in review"
+                 agenda ""
+                 ;; agenda settings
+                 ,(append
+                   munyoki/org-agenda-review-settings
+                   '((org-agenda-span 'week)
+                     (org-agenda-start-on-weekday 0)
+                     (org-agenda-start-day "-7d")
+                     (org-agenda-overriding-header "Last Week in Review")))
+                 ("/home/bonface/Self/org/review/lastweek.html")))
+  (add-to-list 'org-agenda-custom-commands
+               `("Rd" "Day in review"
+                 agenda ""
+                 ;; agenda settings
+                 ,(append
+                   munyoki/org-agenda-review-settings
+                   '((org-agenda-span 'day)
+                     (org-agenda-overriding-header "Day in Review"))
+                   )
+                 ("/home/bonface/Self/org/review/day.html")))
+  (add-to-list 'org-agenda-custom-commands
+               `("Ry" "Yesterday in review"
+                 agenda ""
+                 ;; agenda settings
+                 ,(append
+                   munyoki/org-agenda-review-settings
+                   '((org-agenda-span 'day)
+                     (org-agenda-start-day "-1d")
+                     (org-agenda-overriding-header "Yesterday in Review")))
+                 ("/home/bonface/Self/org/review/yesterday.html")))
+  (add-to-list 'org-agenda-custom-commands
+               `("Rm" "Month in review"
+                 agenda ""
+                 ;; agenda settings
+                 ,(append
+                   munyoki/org-agenda-review-settings
+                   '((org-agenda-span 'month)
+                     (org-agenda-start-day "01")
+                     (org-read-date-prefer-future nil)
+                     (org-agenda-overriding-header "Month in Review"))
+                   )
+                 ("/home/bonface/Self/org/review/month.html")))
+  :custom
+  (munyoki/org-agenda-review-settings
+   '((org-agenda-show-all-dates t)
+     (org-agenda-start-with-log-mode t)
+     (org-agenda-start-with-clockreport-mode t)
+     (org-agenda-archives-mode t)
+     ;; I don't care if an entry was archived
+     (org-agenda-hide-tags-regexp
+      (concat org-agenda-hide-tags-regexp
+              "\\|ARCHIVE"))))
+  (org-agenda-files
+   '("~/Self/org/journal.org"
+     "~/Self/org/archive/2022_personal.org_archive"
+     "~/Self/org/archive/2022_email.org_archive"
+     "~/Self/org/archive/2022_genenetwork.org_archive"
+     "~/Self/org/archive/2021_strathmore.org_archive"
+     "~/Self/org/archive/2022_reading.org_archive"
+     "~/Self/org/archive/2022_guix.org_archive"
+     "~/Self/org/archive/2022_blog.org_archive"))
+  (org-agenda-custom-commands
+   '(("a" "Agenda"
+      ((agenda "" ((org-agenda-sorting-strategy '(habit-down time-up priority-down category-keep user-defined-up))))
+       (org-time-budgets-in-agenda-maybe)))))
+  (org-agenda-ndays 7)
+  (org-agenda-show-all-dates nil)
+  (org-agenda-skip-deadline-if-done nil)
+  (org-agenda-skip-scheduled-if-done t)
+  (org-agenda-start-on-weekday nil)
+  (org-agenda-compact-blocks nil)
+  :bind(("C-c a" . org-agenda)))
 
 (use-package org-roam
   :ensure t
+  :requires org
   :init
   (setq org-roam-v2-ack t)
   :custom
@@ -2572,38 +2368,32 @@ PATH should be a topic that can be thrown at the man command."
   (require 'org-roam-dailies) ;; Ensure the keymap is available
   (org-roam-db-autosync-mode))
 
-(require 'time-stamp)
-(add-hook 'write-file-functions 'time-stamp)
-
-
-;; allow for export=>beamer by placing
-(require 'ox-beamer)
-;; #+LaTeX_CLASS: beamer in org files
-(unless (boundp 'org-export-latex-classes)
-  (setq org-export-latex-classes nil))
-
-(add-to-list 'org-latex-classes
-             '("apa6"
-               "\\documentclass{apa6}"
-               ("\\section{%s}" . "\\section*{%s}")
-               ("\\subsection{%s}" . "\\subsection*{%s}")
-               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-               ("\\paragraph{%s}" . "\\paragraph*{%s}")
-               ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-
-(add-to-list 'org-latex-classes
-             '("apa7"
-               "\\documentclass{apa6}"
-               ("\\section{%s}" . "\\section*{%s}")
-               ("\\subsection{%s}" . "\\subsection*{%s}")
-               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-               ("\\paragraph{%s}" . "\\paragraph*{%s}")
-               ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-
-(add-to-list 'org-export-latex-classes
-             ;; beamer class, for presentations
-             '("beamer"
-               "\\documentclass[11pt]{beamer}\n
+(use-package munyoki/org-latex
+  :requires org
+  :init
+  (require 'ox-beamer)
+  (unless (boundp 'org-export-latex-classes)
+    (setq org-export-latex-classes nil))
+  (add-to-list 'org-latex-classes
+               '("apa6"
+                 "\\documentclass{apa6}"
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+  (add-to-list 'org-latex-classes
+               '("apa7"
+                 "\\documentclass{apa6}"
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+  (add-to-list 'org-export-latex-classes
+               ;; beamer class, for presentations
+               '("beamer"
+                 "\\documentclass[11pt]{beamer}\n
       \\mode<{{{beamermode}}}>\n
       \\usetheme{{{{beamertheme}}}}\n
       \\usecolortheme{{{{beamercolortheme}}}}\n
@@ -2626,38 +2416,86 @@ PATH should be a topic that can be thrown at the man command."
       \\institute{{{{beamerinstitute}}}}\n
        \\subject{{{{beamersubject}}}}\n"
 
-               ("\\section{%s}" . "\\section*{%s}")
+                 ("\\section{%s}" . "\\section*{%s}")
 
-               ("\\begin{frame}[fragile]\\frametitle{%s}"
-                "\\end{frame}"
-                "\\begin{frame}[fragile]\\frametitle{%s}"
-                "\\end{frame}")))
+                 ("\\begin{frame}[fragile]\\frametitle{%s}"
+                  "\\end{frame}"
+                  "\\begin{frame}[fragile]\\frametitle{%s}"
+                  "\\end{frame}"))))
 
 ;; letter class, for formal letters
-
-(use-package org-edna :ensure t
-  :after (org-mode)
-  :config
-  (org-edna-mode)
-  (setq org-edna-finder-use-cache t))
-
-(use-package org-mime
+(use-package org-edna
   :ensure t
+  :after (org-mode)
+  :custom
+  (org-edna-finder-use-cache t)
   :config
-  (setq org-mime-export-ascii 'ascii))
+  (org-edna-mode))
 
-(setq org-fontify-done-headline t)
-(set-face-attribute 'org-done nil :strike-through t)
-(set-face-attribute 'org-headline-done nil
-                    :strike-through t
-                    :foreground "light gray")
-(require 'oc-csl)
-(require 'oc-biblatex)
-(setq org-cite-export-processors
+(use-package org-cite
+  :init
+  (require 'oc-csl)
+  (require 'oc-biblatex)
+  :config
+  (org-cite-export-processors
       '((beamer natbib)
         (latex biblatex)
-        (t csl)))
-(require 'org-habit)
+        (t csl))))
+
+(use-package munyoki/ol
+  :custom
+  (org-link-keep-stored-after-insertion nil)
+  :bind (:map org-mode-map
+              ("C-c l" . org-store-link)
+              ("C-c S-l" . org-toggle-link-display)
+              ("C-c C-S-l" . org-insert-last-stored-link)))
+
+(use-package munyoki/gopher-store-link
+  :init
+  (require 'ol)
+  :config
+  (defcustom org-elpher-command 'elpher
+    "The Emacs command to be used to display a gemini page."
+    :group 'org-link
+    :type '(choice (const gemini) (const gopher)))
+
+  (defun org-elpher-open (path _)
+    "Visit the gemini/ gopher page on PATH.
+PATH should be a topic that can be thrown at the man command."
+    (funcall org-elpher-command path))
+
+  (defun org-elpher-store-link ()
+    "Store a link to an elpher page."
+    (when (memq major-mode '(elpher-mode))
+      ;; This is a elpher page, we do make this link.
+      (let* ((page (elpher-copy-current-url))
+             (link (elpher-copy-current-url))
+             (description page))
+        (org-link-store-props
+         :type "elpher"
+         :link link
+         :description description))))
+  (defun org-elpher-get-page-name ()
+    "Extract the page name from the buffer name."
+    (if (string-match " \\(\\S-+\\)\\*" (buffer-name))
+        (match-string 1 (buffer-name))
+      (error "Cannot create link to this man page")))
+  (org-link-set-parameters "gemini"
+                           :follow #'org-elpher-open
+                           :store #'org-elpher-store-link)
+  (org-link-set-parameters "gopher"
+                           :follow #'org-elpher-open
+                           :store #'org-elpher-store-link))
+
+(use-package munyoki/org-time-budget
+  :init
+  (setq org-time-budgets
+   '((:title "Genenetwork/ Weekday" :tags "+genenetwork+weekday" :budget "25:00" :blocks (workday week))
+     (:title "Genenetwork/ Weekend" :tags "+genenetwork+weekend" :budget "6:00" :blocks (nil week))
+     (:title "Algorithms" :match "+algorithms" :budget "3:30" :blocks (day week))
+     (:title "Strathmore/ Weekday" :match "+strathmore+weekday" :budget "5:00" :blocks (workday week))
+     (:title "Strathmore/ Weekend" :match "+strathmore+weekend" :budget "4:00" :blocks (day week))
+     (:title "Guix" :match "+guix" :budget "5:00" :blocks (nil week)))))
 
 (provide 'setup-org)
 ;;; setup-org.el ends here
