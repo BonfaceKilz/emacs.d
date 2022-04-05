@@ -1791,6 +1791,18 @@ agenda."
 ;;; setup-org.el
 
 ;; Org-mode
+(use-package citeproc
+  :ensure t
+  :init
+  (require 'citeproc)
+  (require 'org-habit)
+  (require 'oc-csl)
+  (require 'oc-biblatex)
+  (setq org-cite-export-processors
+	'((beamer natbib)
+          (latex biblatex)
+          (t csl))))
+
 (use-package org
   :mode (("\\.org\\'" . org-mode)
 	 ("\\.org_archive\\'" . org-mode))
