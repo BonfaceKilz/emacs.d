@@ -546,6 +546,7 @@ Configure the packages.
 (use-package f
   :ensure t)
 
+
 (use-package haskell-mode
   :ensure t
   :delight
@@ -614,11 +615,11 @@ Configure the packages.
 
 (use-package lispy
   :ensure t
-  :hook ((emacs-lisp-mode-hook . lispy-mode)
-	 (lisp-mode-hook . lispy-mode)
-	 (clojure-mode-hook . lispy-mode)
-	 (scheme-mode-hook . lispy-mode)
-	 (sly-mrepl-mode-hook . lispy-mode)))
+  :hook ((emacs-lisp-mode-hook
+	  lisp-mode-hook
+	  clojure-mode-hook
+	  scheme-mode-hook
+	  sly-mrepl-mode-hook) . lispy-mode))
 
 (use-package magit
   :requires (diff-hl magit-patch-changelog org orgit-rev orgit)
@@ -826,7 +827,7 @@ Configure the packages.
 (use-package smartparens
   :ensure t
   :delight
-  :config
+  :init
   (require 'smartparens-config)
   (smartparens-mode))
 
@@ -1807,7 +1808,6 @@ agenda."
   :mode (("\\.org\\'" . org-mode)
 	 ("\\.org_archive\\'" . org-mode))
   :init
-  (require 'org-habit)
   ;; From Jason
   (defun clone-and-narrow-org-element ()
     (interactive)
@@ -2161,18 +2161,18 @@ agenda."
   :requires org
   :init
   (setq org-agenda-custom-commands
-      '(("A" "Agenda with Time Budgets"
-         ((agenda "" ((org-agenda-sorting-strategy '(habit-down time-up priority-down category-keep user-defined-up))))
-          (org-time-budgets-in-agenda-maybe)))))
+	'(("A" "Agenda with Time Budgets"
+           ((agenda "" ((org-agenda-sorting-strategy '(habit-down time-up priority-down category-keep user-defined-up))))
+            (org-time-budgets-in-agenda-maybe)))))
   (setq munyoki/org-agenda-review-settings
-   '((org-agenda-show-all-dates t)
-     (org-agenda-start-with-log-mode t)
-     (org-agenda-start-with-clockreport-mode t)
-     (org-agenda-archives-mode t)
-     ;; I don't care if an entry was archived
-     (org-agenda-hide-tags-regexp
-      (concat org-agenda-hide-tags-regexp
-              "\\|ARCHIVE"))))
+	'((org-agenda-show-all-dates t)
+	  (org-agenda-start-with-log-mode t)
+	  (org-agenda-start-with-clockreport-mode t)
+	  (org-agenda-archives-mode t)
+	  ;; I don't care if an entry was archived
+	  (org-agenda-hide-tags-regexp
+	   (concat org-agenda-hide-tags-regexp
+		   "\\|ARCHIVE"))))
   (add-to-list 'org-src-lang-modes
 	       '("plantuml" . plantuml))
   (add-to-list 'org-agenda-custom-commands
@@ -2349,13 +2349,6 @@ agenda."
   :config
   (org-edna-mode))
 
-(require 'oc-csl)
-(require 'oc-biblatex)
-(setq org-cite-export-processors
-      '((beamer natbib)
-        (latex biblatex)
-        (t csl)))
-
 (use-package munyoki/ol
   :config
   (setq org-link-keep-stored-after-insertion nil)
@@ -2427,7 +2420,6 @@ PATH should be a topic that can be thrown at the man command."
                                 (progn
                                   (setq-local writegood-mode 1)
                                   (setq-local fill-column 50))))
-(add-hook 'prog-mode-hook #'ace-jump-mode)
 
 (defun munyoki/auth-get-field (host prop)
   "Find PROP in `auth-sources' for HOST entry."
