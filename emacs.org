@@ -1917,6 +1917,8 @@ agenda."
       (setq munyoki/org-log-into-drawer nil)
       ret))
   :custom
+  (org-export-with-drawers
+   (not "NOTES" "LOGBOOK"))
   (org-latex-pdf-process
    (list "latexmk -f -pdf -interaction=nonstopmode -output-directory=%o %f"))
   (org-src-window-setup 'current-window)
