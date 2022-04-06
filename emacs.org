@@ -330,955 +330,942 @@ Configure the packages.
 "Sane" defaults go here. Also ad-hoc packages that don't warrant their own section go here.
 
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/sane-defaults.el
-  ;;; sane-defaults.el
-;; https://github.com/lukhas/buffer-move
-;; autocomplete
-(use-package ace-window
-  :ensure t
-  :delight
-  :custom
-  (aw-dispatch-always nil)
-  (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
-  :custom-face
-  (aw-leading-char-face
-   ((t (:inherit ace-jump-face-foreground :height 2.0))))
-  :config
-  (ace-window-display-mode 1)
-  :bind (("M-o" . ace-window)))
-
-(use-package auto-complete
-  :ensure t
-  :delight
-  :custom
-  (auto-complete-mode)
-  (ac-show-menu-immediately-on-auto-complete t)
-  :config
-  (ac-config-default))
-
-(use-package avy
-  :ensure t
-  :delight
-  :init
-  (defun dictionary-search-dwim (&optional arg)
-    "Search for definition of word at point. If region is active,
-  search for contents of region instead. If called with a prefix
-  argument, query for word to search."
-    (interactive "P")
-    (if arg
-	(dictionary-search nil)
-      (if (use-region-p)
-	  (dictionary-search (buffer-substring-no-properties
-			      (region-beginning)
-			      (region-end)))
-	(if (thing-at-point 'word)
-	    (dictionary-lookup-definition)
-	  (dictionary-search-dwim '(4))))))
-
-  (defun avy-action-helpful (pt)
-    (save-excursion
-      (goto-char pt)
-      (helpful-at-point))
-    (select-window
-     (cdr (ring-ref avy-ring 0)))
-    t)
-  
-  (defun avy-show-dispatch-help ()
-    (let* ((len (length "avy-action-"))
-	   (fw (frame-width))
-	   (raw-strings (mapcar
-			 (lambda (x)
-			   (format "%2s: %-19s"
-				   (propertize
-				    (char-to-string (car x))
-				    'face 'aw-key-face)
-				   (substring (symbol-name (cdr x)) len)))
-			 avy-dispatch-alist))
-	   (max-len (1+ (apply #'max (mapcar #'length raw-strings))))
-	   (strings-len (length raw-strings))
-	   (per-row (floor fw max-len))
-	   display-strings)
-      (cl-loop for string in raw-strings
-	       for N from 1 to strings-len do
-	       (push (concat string " ") display-strings)
-	       (when (= (mod N per-row) 0) (push "\n" display-strings)))
-      (message "%s" (apply #'concat (nreverse display-strings)))))
-  
-  ;; Kill text
-  (defun avy-action-kill-whole-line (pt)
-    (save-excursion
-      (goto-char pt)
-      (kill-whole-line))
-    (select-window
-     (cdr
-      (ring-ref avy-ring 0)))
-    t)
-
-  (defun avy-action-copy-whole-line (pt)
-    (save-excursion
-      (goto-char pt)
-      (cl-destructuring-bind (start . end)
-	  (bounds-of-thing-at-point 'line)
-	(copy-region-as-kill start end)))
-    (select-window
-     (cdr
-      (ring-ref avy-ring 0)))
-    t)
-  
-  (defun avy-action-yank-whole-line (pt)
-    (avy-action-copy-whole-line pt)
-    (save-excursion (yank))
-    t)
-
-  (defun avy-action-teleport-whole-line (pt)
-    (avy-action-kill-whole-line pt)
-    (save-excursion (yank)) t)
-  
-  ;; Mark text
-  (defun avy-action-mark-to-char (pt)
-    (activate-mark)
-    (goto-char pt))
-  
-  (defun avy-action-define (pt)
-    (save-excursion
-      (goto-char pt)
-      (dictionary-search-dwim))
-    (select-window
-     (cdr (ring-ref avy-ring 0)))
-    t)
-  
-  (defun avy-action-embark (pt)
-    (unwind-protect
-	(save-excursion
-	  (goto-char pt)
-	  (embark-act))
-      (select-window
-       (cdr (ring-ref avy-ring 0))))
-    t)
-  :commands (avy-goto-word-1 avy-goto-char-2 avy-goto-char-timer)
-  :custom
-  (avy-keys '(?q ?e ?r ?u ?o ?p
-		 ?a ?s ?d ?f ?g ?h ?j
-		 ?l ?' ?c ?v ?b
-		 ?n ?, ?/))
-  (avy-timeout-seconds 0.3)
-  :config
-  (setf (alist-get ?k avy-dispatch-alist) 'avy-action-kill-stay
-	(alist-get ?K avy-dispatch-alist) 'avy-action-kill-whole-line
-	(alist-get ?w avy-dispatch-alist) 'avy-action-copy
-	(alist-get ?W avy-dispatch-alist) 'avy-action-copy-whole-line
-	(alist-get ?y avy-dispatch-alist) 'avy-action-yank
-	(alist-get ?Y avy-dispatch-alist) 'avy-action-yank-whole-line
-	(alist-get ?t avy-dispatch-alist) 'avy-action-teleport
-	(alist-get ?T avy-dispatch-alist) 'avy-action-teleport-whole-line
-	(alist-get ?  avy-dispatch-alist) 'avy-action-mark-to-char
-	(alist-get ?= avy-dispatch-alist) 'dictionary-search-dwim
-	(alist-get ?H avy-dispatch-alist) 'avy-action-helpful
-	(alist-get ?. avy-dispatch-alist) 'avy-action-embark
-	)
-
-  :chords ((",," . avy-goto-char-timer))
-  :bind (:map isearch-mode-map
-	      ("M-j" . avy-isearch)))
-
-(use-package buffer-move
-  :ensure t)
-
-(use-package cl-lib
-  :ensure t)
-
-(use-package consult
-  :ensure t
-  ;; Replace bindings. Lazily loaded due by `use-package'.
-  :bind (;; C-c bindings (mode-specific-map)
-         ("C-c h h" . consult-history)
-         ("C-c m" . consult-mode-command)
-         ("C-c k" . consult-kmacro)
-         ;; C-x bindings (ctl-x-map)
-         ("C-x M-:" . consult-complex-command)     ;; orig. repeat-complex-command
-         ("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
-         ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
-         ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
-         ("C-x r b" . consult-bookmark)            ;; orig. bookmark-jump
-         ("C-x p b" . consult-project-buffer)      ;; orig. project-switch-to-buffer
-         ;; Custom M-# bindings for fast register access
-         ("M-#" . consult-register-load)
-         ("M-'" . consult-register-store)          ;; orig. abbrev-prefix-mark (unrelated)
-         ("C-M-#" . consult-register)
-         ;; Other custom bindings
-         ("M-y" . consult-yank-pop)                ;; orig. yank-pop
-         ("<help> a" . consult-apropos)            ;; orig. apropos-command
-         ;; M-g bindings (goto-map)
-         ("M-g e" . consult-compile-error)
-         ("M-g f" . consult-flymake)               ;; Alternative: consult-flycheck
-         ("M-g g" . consult-goto-line)             ;; orig. goto-line
-         ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
-         ("M-g o" . consult-outline)               ;; Alternative: consult-org-heading
-         ("M-g m" . consult-mark)
-         ("M-g k" . consult-global-mark)
-         ("M-g i" . consult-imenu)
-         ("M-g I" . consult-imenu-multi)
-         ;; M-s bindings (search-map)
-         ("M-s d" . consult-find)
-         ("M-s D" . consult-locate)
-         ("M-s g" . consult-grep)
-         ("M-s G" . consult-git-grep)
-         ("M-s r" . consult-ripgrep)
-         ("M-s l" . consult-line)
-         ("M-s L" . consult-line-multi)
-         ("M-s m" . consult-multi-occur)
-         ("M-s k" . consult-keep-lines)
-         ("M-s u" . consult-focus-lines)
-         ;; Isearch integration
-         ("M-s e" . consult-isearch-history)
-         :map isearch-mode-map
-         ("M-e" . consult-isearch-history)         ;; orig. isearch-edit-string
-         ("M-s e" . consult-isearch-history)       ;; orig. isearch-edit-string
-         ("M-s l" . consult-line)                  ;; needed by consult-line to detect isearch
-         ("M-s L" . consult-line-multi)            ;; needed by consult-line to detect isearch
-         ;; Minibuffer history
-         :map minibuffer-local-map
-         ("M-s" . consult-history)                 ;; orig. next-matching-history-element
-         ("M-r" . consult-history))                ;; orig. previous-matching-history-element
-
-  ;; Enable automatic preview at point in the *Completions* buffer. This is
-  ;; relevant when you use the default completion UI.
-  :hook (completion-list-mode . consult-preview-at-point-mode)
-
-  ;; The :init configuration is always executed (Not lazy)
-  :init
-
-  ;; Optionally configure the register formatting. This improves the register
-  ;; preview for `consult-register', `consult-register-load',
-  ;; `consult-register-store' and the Emacs built-ins.
-  (setq register-preview-delay 0.5
-        register-preview-function #'consult-register-format)
-
-  ;; Optionally tweak the register preview window.
-  ;; This adds thin lines, sorting and hides the mode line of the window.
-  (advice-add #'register-preview :override #'consult-register-window)
-
-  ;; Optionally replace `completing-read-multiple' with an enhanced version.
-  (advice-add #'completing-read-multiple :override #'consult-completing-read-multiple)
-
-  ;; Use Consult to select xref locations with preview
-  (setq xref-show-xrefs-function #'consult-xref
-        xref-show-definitions-function #'consult-xref)
-
-  ;; Configure other variables and modes in the :config section,
-  ;; after lazily loading the package.
-  :config
-
-  ;; Optionally configure preview. The default value
-  ;; is 'any, such that any key triggers the preview.
-  ;; (setq consult-preview-key 'any)
-  ;; (setq consult-preview-key (kbd "M-."))
-  ;; (setq consult-preview-key (list (kbd "<S-down>") (kbd "<S-up>")))
-  ;; For some commands and buffer sources it is useful to configure the
-  ;; :preview-key on a per-command basis using the `consult-customize' macro.
-  (consult-customize
-   consult-theme
-   :preview-key '(:debounce 0.2 any)
-   consult-ripgrep consult-git-grep consult-grep
-   consult-bookmark consult-recent-file consult-xref
-   consult--source-bookmark consult--source-recent-file
-   consult--source-project-recent-file
-   :preview-key (kbd "M-."))
-
-  ;; Optionally configure the narrowing key.
-  ;; Both < and C-+ work reasonably well.
-  (setq consult-narrow-key "<") ;; (kbd "C-+")
-
-  ;; Optionally make narrowing help available in the minibuffer.
-  ;; You may want to use `embark-prefix-help-command' or which-key instead.
-  ;; (define-key consult-narrow-map (vconcat consult-narrow-key "?") #'consult-narrow-help)
-
-  ;; By default `consult-project-function' uses `project-root' from project.el.
-  ;; Optionally configure a different project root function.
-  ;; There are multiple reasonable alternatives to chose from.
-  ;;;; 1. project.el (the default)
-  ;; (setq consult-project-function #'consult--default-project--function)
-  ;;;; 2. projectile.el (projectile-project-root)
-  ;; (autoload 'projectile-project-root "projectile")
-  ;; (setq consult-project-function (lambda (_) (projectile-project-root)))
-  ;;;; 3. vc.el (vc-root-dir)
-  ;; (setq consult-project-function (lambda (_) (vc-root-dir)))
-  ;;;; 4. locate-dominating-file
-  ;; (setq consult-project-function (lambda (_) (locate-dominating-file "." ".git")))
-)
-
-(use-package debbugs
-  :custom
-  (debbugs-gnu-default-packages '("guix-patches" "guix")))
-
-(use-package dictionary
-  :ensure t)
-
-(use-package diminish
-  :ensure t
-  :after use-package
-  :config
-  (diminish 'eldoc-mode)
-  (diminish 'org-indent-mode)
-  (diminish 'subword-mode)
-  (diminish 'visual-line-mode "")
-  (diminish 'isearch-mode "?"))
-
-(use-package diff-hl
-  :ensure t
-  :config
-  (global-diff-hl-mode))
-
-(use-package elpy
-  :requires yasnippet
-  :ensure t
-  :init
-  (elpy-enable))
-
-(use-package embark
-  :ensure t
-  :bind
-  (;; pick some comfortable binding
-   ;; ("C-;" . embark-dwim)        ;; good alternative: M-.
-   ("C-." . embark-act)
-   ;; alternative for `describe-bindings'
-   ("C-h B" . embark-bindings)) 
-  :custom
-  ;; Optionally replace the key help with a completing-read interface
-  (prefix-help-command #'embark-prefix-help-command)
-  :config
-  ;; Hide the mode line of the Embark live/completions buffers
-  (add-to-list 'display-buffer-alist
-	       '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
-		 nil
-		 (window-parameters (mode-line-format . none)))))
-
-(use-package emmet-mode
-  :mode ("\\.html\\'" "\\.hbs\\'" "\\.erb\\'")
-  :ensure t
-  :delight
-  :hook ((sgml-mode-hook . emmet-mode)
-	 (web-mode-hook . emmet-mode)
-	 (css-mode-hook . emmet-mode)))
-
-(use-package emojify
-  :ensure t)
-
-(use-package f
-  :ensure t)
-
-
-(use-package haskell-mode
-  :ensure t
-  :delight
-  :mode "\\.hs\\'")
-
-(use-package helpful
-  :ensure t)
-
-(use-package highlight-escape-sequences
-  :ensure t
-  :config
-  (hes-mode))
-
-(use-package hledger-mode
-  :ensure t
-  :mode ("\\.journal\\'" "\\.hledger\\'")
-  :custom
-  (hledger-jfile (concat user-home-directory
-			 "Self/finances/hledger.journal")))
-
-(use-package hl-todo
-  :ensure t
-  :config
-  ;; Adding a new keyword: TEST.
-  (add-to-list 'hl-todo-keyword-faces '("TEST" . "#dc8cc3"))
-  :hook ((text-mode-hook . (lambda () (hl-todo-mode t)))))
-
-(use-package hyperbole
-  :ensure t
-  :bind (("C-c C-w"  . hycontrol-windows)))
-
-(use-package imenu
-  :ensure t
-  :custom
-  (imenu-use-markers t)
-  (imenu-auto-rescan t)
-  (imenu-auto-rescan-maxout 600000)
-  (imenu-max-item-length 100)
-  (imenu-use-popup-menu nil)
-  (imenu-eager-completion-buffer t)
-  (imenu-space-replacement " ")
-  (imenu-level-separator "/")
-  :bind
-  (("M-i" . imenu)))
-
-(use-package imenu-list
-  :ensure
-  :after imenu
-  :init
-  (defun munyoki/imenu-list-dwim (&optional arg)
-    "Convenience wrapper for `imenu-list'.
-  Move between the current buffer and a dedicated window with the
-  contents of `imenu'.
-
-  The dedicated window is created if it does not exist, while it is
-  updated once it is focused again through this command.
-
-  With \\[universal-argument] toggle the display of the window."
-    (interactive "P")
-    (if arg
-	(imenu-list-smart-toggle)
-      (with-current-buffer
-	  (if (eq major-mode 'imenu-list-major-mode)
-	      (pop-to-buffer (other-buffer (current-buffer) t))
-	    (imenu-list))))))
-
-(use-package lispy
-  :ensure t
-  :hook ((emacs-lisp-mode-hook
-	  lisp-mode-hook
-	  clojure-mode-hook
-	  scheme-mode-hook
-	  sly-mrepl-mode-hook) . lispy-mode))
-
-(use-package magit
-  :requires (diff-hl magit-patch-changelog org orgit-rev orgit)
-  :ensure t
-  :init
-  (defun magit-status-fullscreen (prefix)
-    (interactive "P")
-    (magit-status)
-    (unless prefix
-      (delete-other-windows)))
-  :custom
-  (magit-pushq-always-verify nil)
-  ;; (set-default 'magit-revert-buffers 'silent)
-  (magit-no-confirm '(stage-all-changes
-		      unstage-all-changes))
-  (magit-diff-refine-hunk t)
-  :config
-  (with-eval-after-load 'magit
-    (require 'magit-patch-changelog))
-  :hook ((git-commit-mode-hook . (lambda ()
-				   (beginning-of-buffer)
-				   (when (looking-at "#")
-				     (forward-line 2))))
-	 (magit-post-refresh-hook . diff-hl-magit-post-refresh))
-  :bind (("C-x g" . magit-status)
-	 ("C-x M-g" . magit-dispatch)))
-
-(use-package magit-patch-changelog
-  :requires magit
-  :ensure t)
-
-
-(use-package marginalia
-  :after vertico
-  :ensure t
-  :custom
-  (marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil))
-  :init
-  (marginalia-mode)
-  :bind (("M-A" . marginalia-cycle)
-	 :map minibuffer-local-map
-	 ("M-A" . marginalia-cycle)))
-
-(use-package markdown-mode
-  :ensure t
-  :delight
-  :mode "\\.md\\'")
-
-(use-package magit-todos
-  :ensure t
-  :after magit
-  :after hl-todo)
-
-(use-package move-text
-  :ensure t
-  :config
-  (move-text-default-bindings))
-
-(use-package multiple-cursors
-  :ensure t
-  :bind (("C-S-c C-S-c" . mc/edit-lines)
-	 ("C->" . mc/mark-next-like-this)
-	 ("C-<" . mc/mark-previous-like-this)
-	 ("C-c C-<" . mc/mark-all-like-this)
-	 ("C-S-<mouse-1>" . mc/add-cursor-on-click)))
-
-;; open epubs
-(use-package nov
-  :ensure t
-  :delight
-  :mode ("\\.epub\\'" . nov-mode)
-  :init
-  (require 'shrface)
-  :custom
-  (nov-text-width t)
-  (visual-fill-column-center-text t)
-  (nov-shr-rendering-functions
-   '((img . nov-render-img) (title . nov-render-title)))
-  (nov-shr-rendering-functions
-   (append nov-shr-rendering-functions shr-external-rendering-functions))
-  :hook ((nov-mode-hook . #'munyoki/set-50-char)
-	 (nov-mode-hook . #'shrface-mode)
-	 (nov-post-html-render-hook . #'munyoki/set-50-char)
-	 (nov-post-html-render-hook . #'shrface-mode)))
-
-(use-package orderless
-  :ensure t
-  :custom
-  (completion-styles '(orderless))
-  (completion-category-defaults nil)
-  (completion-category-overrides '((file (styles partial-completion)))))
-
-(use-package pass
-  :ensure t)
-
-(use-package password-generator
-  :ensure t)
-
-(use-package password-store
-  :ensure t
-  :bind (("C-c h p" . password-store-copy)))
-
-(use-package pdf-tools
-  :ensure t
-  :delight
-  :load-path "site-lisp/pdf-tools/lisp"
-  :mode ("\\.pdf\\'" . pdf-view-mode)
-  :magic ("%PDF" . pdf-view-mode)
-  :requires tablist
-  :bind (("M-g M-g" . pdf-view-goto-page))
-  :custom
-  (pdf-tools-enabled-modes         ; simplified from the defaults
-   '(pdf-history-minor-mode
-     pdf-isearch-minor-mode
-     pdf-links-minor-mode
-     pdf-outline-minor-mode
-     pdf-misc-size-indication-minor-mode
-     pdf-occur-global-minor-mode))
-  (pdf-view-display-size 'fit-height)
-  (pdf-view-continuous t)
-  (pdf-view-use-dedicated-register nil)
-  (pdf-view-max-image-width 4000)
-  (pdf-outline-imenu-use-flat-menus t)
-  :config
-  (pdf-tools-install :no-query)
-  (pdf-loader-install)
-  :hook ((pdf-view-mode-hook . (lambda() (linum-mode -1)))
-	 (TeX-after-compilation-finished-functions . #'TeX-revert-document-buffer)))
-
-;; This doubles as a quick way to avoid the common formula: C-x b RET
-;; *scratch*
-(use-package persistent-scratch
-  :ensure t
-  :config
-  (persistent-scratch-setup-default))
-
-(use-package perspective
-  :ensure t
-  :bind-keymap
-  ("C-x x" . perspective-map)
-  :bind (("C-x k" . persp-kill-buffer*))
-  :config
-  (persp-mode))
-
-(use-package projectile
-  :ensure t
-  :config
-  (projectile-mode)
-  :bind-keymap
-  ("C-c p" . projectile-command-map)
-  :chords ((",p" . projectile-command-map)))
-
-(use-package pylint
-  :ensure t)
-
-(use-package py-autopep8
-  :ensure t)
-
-(use-package rcirc
-  :ensure t
-  :init
-  (defun rcirc-handler-301 (process cmd sender args)
-    "/away message handler.")
-  :custom
-  (rcirc-debug-flag t)
-  ;; Include date in time stamp.
-  (rcirc-time-format "%Y-%m-%d %H:%M ")
-  ;; Change user info
-  (rcirc-default-nick "bonz060")
-  (rcirc-default-user-name "bonz060")
-  (rcirc-default-full-name "bonz060")
-
-  ;; Join these channels at startup.
-  (rcirc-startup-channels-alist
-   '(("\\.freenode\\.net$" "#emacs" "#nairobilug" "#lisp")))
-  :hook ((rcirc-mode-hook . (lambda ()
-			      (set (make-local-variable 'scroll-conservatively)
-				   8192)))
-	 (rcirc-mode-hook . (lambda ()
-			      (rcirc-track-minor-mode 1))))
-  :config
-  ;; Adjust the colours of one of the faces.
-  (set-face-foreground 'rcirc-my-nick "red" nil))
-
-(use-package savehist
-  :init
-  (savehist-mode))
-
-(use-package shrface
-  :ensure t
-  :defer t
-  :custom
-  (shrface-href-versatile t)
-  :config
-  (shrface-basic)
-  (shrface-trial))
-
-(use-package smart-forward
-  :ensure t
-  :bind (("M-S-<up>" . smart-up)
-	 ("M-S-<down>" . smart-down)
-	 ("M-S-<left>" . smart-backward)
-	 ("M-S-<right>" . smart-forward)))
-
-(use-package smartparens
-  :ensure t
-  :delight
-  :init
-  (require 'smartparens-config)
-  (smartparens-mode))
-
-(use-package smartparens-config
-  :ensure smartparens
-  :config
-  (show-smartparens-global-mode t)
-  :hook ((prog-mode-hook . #'turn-on-smartparens-strict-mode)
-	 (markdown-mode-hook . #'turn-on-smartparens-strict-mode)))
-
-(use-package switch-window
-  :ensure t
-  :bind (("C-x 1" . switch-window-then-maximize)
-	 ("C-x 2" . switch-window-then-split-below)
-	 ("C-x 3" . switch-window-then-split-right)
-	 ("C-x 0" . switch-window-then-delete)
-	 ("C-x 4 d" . switch-window-then-dired)
-	 ("C-x 4 f" . switch-window-then-find-file)
-	 ("C-x 4 m" . switch-window-then-compose-mail)
-	 ("C-x 4 r" . switch-window-then-find-file-read-only)
-	 ("C-x 4 C-f" . switch-window-then-find-file)
-	 ("C-x 4 C-o" . switch-window-then-display-buffer)
-	 ("C-x 4 0" . switch-window-then-kill-buffer)))
-
-(use-package consult
-  :ensure t)
-
-(use-package vertico
-  :ensure t
-  :init
-  (vertico-mode)
-  (defun +vertico-restrict-to-matches ()
-    (interactive)
-    (let ((inhibit-read-only t))
-      (goto-char (point-max))
-      (insert " ")
-      (add-text-properties (minibuffer-prompt-end) (point-max)
-                           '(invisible t read-only t cursor-intangible t rear-nonsticky t))))
-
-  :custom
-  (vertico-cycle t)
-  (completion-styles '(substring orderless))
-  (completion-in-region-function
-   (lambda (&rest args)
-     (apply (if vertico-mode
-		#'consult-completion-in-region
-	      #'completion--in-region)
-	    args)))
-  :bind (:map vertico-map
-	      ("?" . minibuffer-completion-help)
-	      ("M-RET" . minibuffer-force-complete-and-exit)
-	      ("M-TAB" . minibuffer-complete)
-	      ("S-SPC" . +vertico-restrict-to-matches)
-	      :map minibuffer-local-map
-              ("M-h" . backward-kill-word)))
-
-;; Configure directory extension.
-(use-package vertico-directory
-  :after vertico
-  :ensure nil
-  ;; More convenient directory navigation commands
-  :bind (:map vertico-map
-              ("RET" . vertico-directory-enter)
-              ("M-l" . vertico-directory-delete-char)
-              ("C-l" . vertico-directory-delete-word))
-  ;; Tidy shadowed file names
-  :hook (rfn-eshadow-update-overlay . vertico-directory-tidy))
-
-(use-package web-mode
-  :mode ("\\.html\\'" "\\.hbs\\'" "\\.erb\\'")
-  :delight
-  :ensure t
-  :hook ((web-mode-hook . visual-line-mode)))
-
-(use-package which-key
-  :ensure t
-  :delight
-  :custom
-  (which-key-show-early-on-C-h t)
-  (which-key-idle-delay 10000)
-  (which-key-idle-secondary-delay 0.05)
-  :init (which-key-mode)
-  :config (which-key-setup-side-window-bottom))
-
-(use-package writegood-mode
-  :ensure t)
-
-(use-package writeroom-mode
-  :ensure t)
-
-(use-package wordnut
-  :ensure t)
-
-(use-package xclip
-  :ensure t
-  :delight
-  :config
-  (xclip-mode 1))
-
-(use-package yaml-mode
-  :mode ("\\.yml\\'" . yaml-mode)
-  :ensure t)
-
-(use-package yasnippet
-  :ensure t
-  :diminish yas-minor-mode
-  :custom
-  (yas-indent-line 'fixed)
-  :config
-  (yas-global-mode 1))
-
-(use-package yasnippet-snippets
-  :ensure t)
-
-(use-package zoom-window
-  :ensure t
-  :bind (("C-x C-z" . zoom-window-zoom)))
-
-
-;; Custom Configs
-(use-package eshell
-  :init
-  ;; Prompt with a bit of help from http://www.emacswiki.org/emacs/EshellPrompt
-  (defmacro with-face (str &rest properties)
-    `(propertize ,str 'face (list ,@properties)))
-  (defun eshell/abbr-pwd ()
-    (let ((home (getenv "HOME"))
-	  (path (eshell/pwd)))
-      (cond
-       ((string-equal home path) "~")
-       ((f-ancestor-of? home path) (concat "~/" (f-relative path home)))
-       (path))))
-
-  (defun eshell/my-prompt ()
-    (let ((header-bg "#161616"))
-      (concat
-       (with-face (eshell/abbr-pwd) :foreground "#008700")
-       (if (= (user-uid) 0)
-	   (with-face "#" :foreground "red")
-	 (with-face "$" :foreground "#2345ba"))
-       " ")))
-  :custom
-  (eshell-visual-commands
-   '("less" "tmux" "htop" "top" "bash" "zsh" "fish"))
-  (eshell-visual-subcommands
-   '(("git" "log" "l" "diff" "show")))
-  (eshell-prompt-function 'eshell/my-prompt)
-  (eshell-highlight-prompt nil)
-  (eshell-prompt-regexp "^[^#$\n]+[#$] ")
-  (eshell-cmpl-cycle-completions nil)
-  :config
-  (eval-after-load 'eshell
-    '(require 'eshell-autojump nil t)))
-
-(use-package munyok/eww
-  :defer t
-  :init
-  (require 'shrface)
-  :hook
-  ((eww-mode-hook . munyoki/set-50-char)
-   (eww-after-render-hook . #'shrface-mode)))
-
-(use-package munyoki/isearch
-  :init
-  ;; Isearch in other windows
-  (defun isearch-forward-other-window (prefix)
-    "Function to isearch-forward in other-window."
-    (interactive "P")
-    (unless (one-window-p)
-      (save-excursion
-	(let ((next (if prefix -1 1)))
-	  (other-window next)
-	  (isearch-forward)
-	  (other-window (- next))))))
-  
-  (defun isearch-backward-other-window (prefix)
-    "Function to isearch-backward in other-window."
-    (interactive "P")
-    (unless (one-window-p)
-      (save-excursion
-	(let ((next (if prefix 1 -1)))
-	  (other-window next)
-	  (isearch-backward)
-	  (other-window (- next))))))
-  :bind (("C-M-s" . isearch-forward-other-window)
-	 ("C-M-r" . isearch-backward-other-window)))
-
-
-(use-package munyoki/slime
-  :mode ("\\.hledger\\'")
-  :custom
-  (inferior-lisp-program "sbcl")
-  :config
-  (load (expand-file-name "~/.quicklisp/slime-helper.el"))
-  :hook ((lisp-mode-hook . (lambda () (slime-mode t)))
-	 (inferior-lisp-mode-hook . (lambda () (inferior-slime-mode t)))))
-
-
-(use-package emacs
-  :init
-  (require 'magit-git)
-  (defun munyoki/magit-check-file-and-popup ()
-    "If the file is version controlled with git
-    and has uncommitted changes, open the magit status popup."
-    (let ((file (buffer-file-name)))
-      (when (and file (magit-anything-modified-p t file))
-	(message "This file has uncommited changes!")
-	(when nil ;; Became annoying after some time.
-	  (split-window-below)
-	  (other-window 1)
-	  (magit-status)))))
-
-  (defun crm-indicator (args)
-    (cons (concat "[CRM] " (car args)) (cdr args)))
-  (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
-  :custom
-  (auto-revert-verbose t)
-  (column-number-mode t)
-  (custom-safe-themes t)
-  (default-input-method 'TeX)
-  (delete-by-moving-to-trash t)
-  (enable-recursive-minibuffers t)
-  (epa-pinentry-mode 'loopback)
-  (fill-column 50)
-  (gc-cons-threshold 100000000)
-  (geiser-default-implementation 'racket)
-  (geiser-racket-binary
-   (concat user-home-directory ".guix-profile/bin/racket"))
-  (global-auto-revert-non-file-buffers nil)
-  (history-length 100)
-  (ibuffer-show-empty-filter-groups -1)
-  (indicate-empty-lines 1)
-  (inhibit-splash-screen t)
-  (initial-major-mode 'org-mode)
-  (initial-scratch-message (concat
-			    "#+Title: Persistent Scratch Buffer\n#\n"
-			    "# There is no system but GNU and Linux "
-			    "is one of it's kernels\n"))
-  (inhibit-splash-screen 1)
-  (jump-char-lazy-highlight-face -1)
-  (line-number-mode t)
-  (make-backup-files -1)
-  (minibuffer-prompt-properties
-   '(read-only t cursor-intangible t face minibuffer-prompt))
-  (python-indent 4)
-  (read-process-output-max (* 1024 1024)) ;; 1mb
-  (recentf-max-menu-items 25)
-  (recentf-max-saved-items 100)
-  (require-final-newline t)
-  (set-mark-command-repeat-pop t)
-  (shell-file-name
-   (concat user-home-directory
-	   ".guix-profile/bin/zsh"))
-  (show-trailing-whitespace 1)
-  (shr-width 50)
-  (size-indication-mode t)
-  (sp-autoescape-string-quote nil)
-  (tramp-chunksize 500)
-  (tramp-default-method "ssh")
-  (use-dialog-box nil)
-  (use-file-dialog nil)
-  (use-short-answers t)
-  (visible-bell t)
-  (w3m-fill-column 50)
-  (w3m-search-default-engine "duckduckgo")
-  (x-select-enable-clipboard t)
-  (world-clock-list
-   '(("CET-1CDT" "Amsterdam/ Paris")
-     ("CDT+5" "Memphis")
-     ("EST5EDT" "New York/ Miami")
-     ("GMT0BST" "London")
-     ("IST-5:30" "Bangalore")
-     ("PST8PDT" "Seattle")
-     ("JST-9" "Tokyo")))
-  :init
-  (auto-compression-mode 1)
-					; (auto-save-default t)
-  (column-number-mode nil)
-  (delete-selection-mode 1)
-  (display-battery-mode)
-  (display-time)
-  (display-time-mode t)
-  (doom-modeline-mode)
-  (fringe-mode 7)
-  (global-auto-revert-mode 1)
-  (global-hl-line-mode t)
-  (global-linum-mode -1)
-  (global-prettify-symbols-mode -1)
-  (global-subword-mode 1)
-  (global-visual-line-mode)
-  (menu-bar-mode -1)
-					; (prettify-symbols-unprettify-at-point 'right-edge)
-  (scroll-bar-mode -1)
-  (show-paren-mode 1)
-  (size-indication-mode 1)
-  (tab-bar-mode 1)
-  (tool-bar-mode -1)
-  (transient-mark-mode 1)
-  (winner-mode 1) ; Undo/redo window configuration with C-c <left>/<right>
-  :hook ((minibuffer-setup-hook . cursor-intangible-mode)
-	 (after-save-hook . executable-make-buffer-file-executable-if-script-p)
-	 (find-file-hook . (lambda ()
-			     (add-hook 'hack-local-variables-hook 'munyoki/magit-check-file-and-popup)))
-	 (server-switch-hook . magit-commit-diff))
-  :config
-  ;; make a shell script executable automatically on save
-  (add-to-list 'auto-mode-alist '("\\.zsh$" . shell-script-mode))
-  ;; conf-mode
-  (add-to-list 'auto-mode-alist '("\\.gitconfig$" . conf-mode))
-  ;; yaml
-  (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
-  (add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))
-  ;; PHP
-  (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
-  ;; Golang
-  (add-to-list 'auto-mode-alist '("\\.go\\'" . go-mode))
-  (add-to-list 'auto-mode-alist '("\\info.gz$" . info-mode))
-  (add-to-list 'auto-mode-alist '("\\.\\(org\\|org_archive\\)$" . org-mode))
-  (define-key ac-mode-map (kbd "M-TAB") 'auto-complete)
-  :bind (("C-g" . keyboard-quit-strong)
-	 ("C-+" . text-scale-increase)
-	 ("C--" . text-scale-decrease)
-	 ("C-x C-b" . ibuffer)
-	 ("C-x f" . recentf-open-files)
-	 ("s-n" . rename-buffer)))
-
-;; Aliases
-(defalias 'yes-or-no-p 'y-or-n-p) ; y or n is enough
-
-(provide 'sane-defaults)
-;;; sane-defaults.el ends here
+     ;;; sane-defaults.el
+   ;; https://github.com/lukhas/buffer-move
+   ;; autocomplete
+   (use-package ace-window
+     :ensure t
+     :delight
+     :custom
+     (aw-dispatch-always nil)
+     (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+     :custom-face
+     (aw-leading-char-face
+      ((t (:inherit ace-jump-face-foreground :height 2.0))))
+     :config
+     (ace-window-display-mode 1)
+     :bind (("M-o" . ace-window)))
+
+   (use-package auto-complete
+     :ensure t
+     :delight
+     :custom
+     (auto-complete-mode)
+     (ac-show-menu-immediately-on-auto-complete t)
+     :config
+     (ac-config-default))
+
+   (use-package avy
+     :ensure t
+     :delight
+     :init
+     (defun dictionary-search-dwim (&optional arg)
+       "Search for definition of word at point. If region is active,
+     search for contents of region instead. If called with a prefix
+     argument, query for word to search."
+       (interactive "P")
+       (if arg
+	   (dictionary-search nil)
+	 (if (use-region-p)
+	     (dictionary-search (buffer-substring-no-properties
+				 (region-beginning)
+				 (region-end)))
+	   (if (thing-at-point 'word)
+	       (dictionary-lookup-definition)
+	     (dictionary-search-dwim '(4))))))
+
+     (defun avy-action-helpful (pt)
+       (save-excursion
+	 (goto-char pt)
+	 (helpful-at-point))
+       (select-window
+	(cdr (ring-ref avy-ring 0)))
+       t)
+
+     (defun avy-show-dispatch-help ()
+       (let* ((len (length "avy-action-"))
+	      (fw (frame-width))
+	      (raw-strings (mapcar
+			    (lambda (x)
+			      (format "%2s: %-19s"
+				      (propertize
+				       (char-to-string (car x))
+				       'face 'aw-key-face)
+				      (substring (symbol-name (cdr x)) len)))
+			    avy-dispatch-alist))
+	      (max-len (1+ (apply #'max (mapcar #'length raw-strings))))
+	      (strings-len (length raw-strings))
+	      (per-row (floor fw max-len))
+	      display-strings)
+	 (cl-loop for string in raw-strings
+		  for N from 1 to strings-len do
+		  (push (concat string " ") display-strings)
+		  (when (= (mod N per-row) 0) (push "\n" display-strings)))
+	 (message "%s" (apply #'concat (nreverse display-strings)))))
+
+     ;; Kill text
+     (defun avy-action-kill-whole-line (pt)
+       (save-excursion
+	 (goto-char pt)
+	 (kill-whole-line))
+       (select-window
+	(cdr
+	 (ring-ref avy-ring 0)))
+       t)
+
+     (defun avy-action-copy-whole-line (pt)
+       (save-excursion
+	 (goto-char pt)
+	 (cl-destructuring-bind (start . end)
+	     (bounds-of-thing-at-point 'line)
+	   (copy-region-as-kill start end)))
+       (select-window
+	(cdr
+	 (ring-ref avy-ring 0)))
+       t)
+
+     (defun avy-action-yank-whole-line (pt)
+       (avy-action-copy-whole-line pt)
+       (save-excursion (yank))
+       t)
+
+     (defun avy-action-teleport-whole-line (pt)
+       (avy-action-kill-whole-line pt)
+       (save-excursion (yank)) t)
+
+     ;; Mark text
+     (defun avy-action-mark-to-char (pt)
+       (activate-mark)
+       (goto-char pt))
+
+     (defun avy-action-define (pt)
+       (save-excursion
+	 (goto-char pt)
+	 (dictionary-search-dwim))
+       (select-window
+	(cdr (ring-ref avy-ring 0)))
+       t)
+
+     (defun avy-action-embark (pt)
+       (unwind-protect
+	   (save-excursion
+	     (goto-char pt)
+	     (embark-act))
+	 (select-window
+	  (cdr (ring-ref avy-ring 0))))
+       t)
+     :commands (avy-goto-word-1 avy-goto-char-2 avy-goto-char-timer)
+     :custom
+     (avy-keys '(?q ?e ?r ?u ?o ?p
+		    ?a ?s ?d ?f ?g ?h ?j
+		    ?l ?' ?c ?v ?b
+		    ?n ?, ?/))
+     (avy-timeout-seconds 0.3)
+     :config
+     (setf (alist-get ?k avy-dispatch-alist) 'avy-action-kill-stay
+	   (alist-get ?K avy-dispatch-alist) 'avy-action-kill-whole-line
+	   (alist-get ?w avy-dispatch-alist) 'avy-action-copy
+	   (alist-get ?W avy-dispatch-alist) 'avy-action-copy-whole-line
+	   (alist-get ?y avy-dispatch-alist) 'avy-action-yank
+	   (alist-get ?Y avy-dispatch-alist) 'avy-action-yank-whole-line
+	   (alist-get ?t avy-dispatch-alist) 'avy-action-teleport
+	   (alist-get ?T avy-dispatch-alist) 'avy-action-teleport-whole-line
+	   (alist-get ?  avy-dispatch-alist) 'avy-action-mark-to-char
+	   (alist-get ?= avy-dispatch-alist) 'dictionary-search-dwim
+	   (alist-get ?H avy-dispatch-alist) 'avy-action-helpful
+	   (alist-get ?. avy-dispatch-alist) 'avy-action-embark
+	   )
+
+     :chords ((",," . avy-goto-char-timer))
+     :bind (:map isearch-mode-map
+		 ("M-j" . avy-isearch)))
+
+   (use-package buffer-move
+     :ensure t)
+
+   (use-package cl-lib
+     :ensure t)
+
+   (use-package consult
+     :ensure t
+     ;; Replace bindings. Lazily loaded due by `use-package'.
+     :bind (;; C-c bindings (mode-specific-map)
+	    ("C-c h h" . consult-history)
+	    ("C-c m" . consult-mode-command)
+	    ("C-c k" . consult-kmacro)
+	    ;; C-x bindings (ctl-x-map)
+	    ("C-x M-:" . consult-complex-command)     ;; orig. repeat-complex-command
+	    ("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
+	    ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
+	    ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
+	    ("C-x r b" . consult-bookmark)            ;; orig. bookmark-jump
+	    ("C-x p b" . consult-project-buffer)      ;; orig. project-switch-to-buffer
+	    ;; Custom M-# bindings for fast register access
+	    ("M-#" . consult-register-load)
+	    ("M-'" . consult-register-store)          ;; orig. abbrev-prefix-mark (unrelated)
+	    ("C-M-#" . consult-register)
+	    ;; Other custom bindings
+	    ("M-y" . consult-yank-pop)                ;; orig. yank-pop
+	    ("<help> a" . consult-apropos)            ;; orig. apropos-command
+	    ;; M-g bindings (goto-map)
+	    ("M-g e" . consult-compile-error)
+	    ("M-g f" . consult-flymake)               ;; Alternative: consult-flycheck
+	    ("M-g g" . consult-goto-line)             ;; orig. goto-line
+	    ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
+	    ("M-g o" . consult-outline)               ;; Alternative: consult-org-heading
+	    ("M-g m" . consult-mark)
+	    ("M-g k" . consult-global-mark)
+	    ("M-g i" . consult-imenu)
+	    ("M-g I" . consult-imenu-multi)
+	    ;; M-s bindings (search-map)
+	    ("M-s d" . consult-find)
+	    ("M-s D" . consult-locate)
+	    ("M-s g" . consult-grep)
+	    ("M-s G" . consult-git-grep)
+	    ("M-s r" . consult-ripgrep)
+	    ("M-s l" . consult-line)
+	    ("M-s L" . consult-line-multi)
+	    ("M-s m" . consult-multi-occur)
+	    ("M-s k" . consult-keep-lines)
+	    ("M-s u" . consult-focus-lines)
+	    ;; Isearch integration
+	    ("M-s e" . consult-isearch-history)
+	    :map isearch-mode-map
+	    ("M-e" . consult-isearch-history)         ;; orig. isearch-edit-string
+	    ("M-s e" . consult-isearch-history)       ;; orig. isearch-edit-string
+	    ("M-s l" . consult-line)                  ;; needed by consult-line to detect isearch
+	    ("M-s L" . consult-line-multi)            ;; needed by consult-line to detect isearch
+	    ;; Minibuffer history
+	    :map minibuffer-local-map
+	    ("M-s" . consult-history)                 ;; orig. next-matching-history-element
+	    ("M-r" . consult-history))                ;; orig. previous-matching-history-element
+
+     ;; Enable automatic preview at point in the *Completions* buffer. This is
+     ;; relevant when you use the default completion UI.
+     :hook (completion-list-mode . consult-preview-at-point-mode)
+
+
+     :config
+
+     ;; Optionally configure preview. The default value
+     ;; is 'any, such that any key triggers the preview.
+     ;; (setq consult-preview-key 'any)
+     ;; (setq consult-preview-key (kbd "M-."))
+     ;; (setq consult-preview-key (list (kbd "<S-down>") (kbd "<S-up>")))
+     ;; For some commands and buffer sources it is useful to configure the
+     ;; :preview-key on a per-command basis using the `consult-customize' macro.
+     (consult-customize
+      consult-theme consult-buffer
+      :preview-key (kbd "M-."))
+
+     ;; Optionally configure the narrowing key.
+     ;; Both < and C-+ work reasonably well.
+     (setq consult-narrow-key "<") ;; (kbd "C-+")
+
+     ;; Optionally make narrowing help available in the minibuffer.
+     ;; You may want to use `embark-prefix-help-command' or which-key instead.
+     ;; (define-key consult-narrow-map (vconcat consult-narrow-key "?") #'consult-narrow-help)
+
+     ;; By default `consult-project-function' uses `project-root' from project.el.
+     ;; Optionally configure a different project root function.
+     ;; There are multiple reasonable alternatives to chose from.
+     ;;;; 1. project.el (the default)
+     ;; (setq consult-project-function #'consult--default-project--function)
+     ;;;; 2. projectile.el (projectile-project-root)
+     ;; (autoload 'projectile-project-root "projectile")
+     ;; (setq consult-project-function (lambda (_) (projectile-project-root)))
+     ;;;; 3. vc.el (vc-root-dir)
+     ;; (setq consult-project-function (lambda (_) (vc-root-dir)))
+     ;;;; 4. locate-dominating-file
+     ;; (setq consult-project-function (lambda (_) (locate-dominating-file "." ".git")))
+   )
+
+   (use-package debbugs
+     :custom
+     (debbugs-gnu-default-packages '("guix-patches" "guix")))
+
+   (use-package dictionary
+     :ensure t)
+
+   (use-package diminish
+     :ensure t
+     :after use-package
+     :config
+     (diminish 'eldoc-mode)
+     (diminish 'org-indent-mode)
+     (diminish 'subword-mode)
+     (diminish 'visual-line-mode "")
+     (diminish 'isearch-mode "?"))
+
+   (use-package diff-hl
+     :ensure t
+     :config
+     (global-diff-hl-mode))
+
+   (use-package elpy
+     :requires yasnippet
+     :ensure t
+     :init
+     (elpy-enable))
+
+   (use-package embark
+     :ensure t
+     :bind
+     (;; pick some comfortable binding
+      ;; ("C-;" . embark-dwim)        ;; good alternative: M-.
+      ("C-." . embark-act)
+      ;; alternative for `describe-bindings'
+      ("C-h B" . embark-bindings)) 
+     :custom
+     ;; Optionally replace the key help with a completing-read interface
+     (prefix-help-command #'embark-prefix-help-command)
+     :config
+     ;; Hide the mode line of the Embark live/completions buffers
+     (add-to-list 'display-buffer-alist
+		  '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+		    nil
+		    (window-parameters (mode-line-format . none)))))
+
+   (use-package emmet-mode
+     :mode ("\\.html\\'" "\\.hbs\\'" "\\.erb\\'")
+     :ensure t
+     :delight
+     :hook ((sgml-mode-hook . emmet-mode)
+	    (web-mode-hook . emmet-mode)
+	    (css-mode-hook . emmet-mode)))
+
+   (use-package emojify
+     :ensure t)
+
+   (use-package f
+     :ensure t)
+
+
+   (use-package haskell-mode
+     :ensure t
+     :delight
+     :mode "\\.hs\\'")
+
+   (use-package helpful
+     :ensure t)
+
+   (use-package highlight-escape-sequences
+     :ensure t
+     :config
+     (hes-mode))
+
+   (use-package hledger-mode
+     :ensure t
+     :mode ("\\.journal\\'" "\\.hledger\\'")
+     :custom
+     (hledger-jfile (concat user-home-directory
+			    "Self/finances/hledger.journal")))
+
+   (use-package hl-todo
+     :ensure t
+     :config
+     ;; Adding a new keyword: TEST.
+     (add-to-list 'hl-todo-keyword-faces '("TEST" . "#dc8cc3"))
+     :hook ((text-mode-hook . (lambda () (hl-todo-mode t)))))
+
+   (use-package hyperbole
+     :ensure t
+     :bind (("C-c C-w"  . hycontrol-windows)))
+
+   (use-package imenu
+     :ensure t
+     :custom
+     (imenu-use-markers t)
+     (imenu-auto-rescan t)
+     (imenu-auto-rescan-maxout 600000)
+     (imenu-max-item-length 100)
+     (imenu-use-popup-menu nil)
+     (imenu-eager-completion-buffer t)
+     (imenu-space-replacement " ")
+     (imenu-level-separator "/")
+     :bind
+     (("M-i" . imenu)))
+
+   (use-package imenu-list
+     :ensure
+     :after imenu
+     :init
+     (defun munyoki/imenu-list-dwim (&optional arg)
+       "Convenience wrapper for `imenu-list'.
+     Move between the current buffer and a dedicated window with the
+     contents of `imenu'.
+
+     The dedicated window is created if it does not exist, while it is
+     updated once it is focused again through this command.
+
+     With \\[universal-argument] toggle the display of the window."
+       (interactive "P")
+       (if arg
+	   (imenu-list-smart-toggle)
+	 (with-current-buffer
+	     (if (eq major-mode 'imenu-list-major-mode)
+		 (pop-to-buffer (other-buffer (current-buffer) t))
+	       (imenu-list))))))
+
+   (use-package lispy
+     :ensure t
+     :hook ((emacs-lisp-mode-hook
+	     lisp-mode-hook
+	     clojure-mode-hook
+	     scheme-mode-hook
+	     sly-mrepl-mode-hook) . lispy-mode))
+
+   (use-package magit
+     :requires (diff-hl magit-patch-changelog org orgit-rev orgit)
+     :ensure t
+     :init
+     (defun magit-status-fullscreen (prefix)
+       (interactive "P")
+       (magit-status)
+       (unless prefix
+	 (delete-other-windows)))
+     :custom
+     (magit-pushq-always-verify nil)
+     ;; (set-default 'magit-revert-buffers 'silent)
+     (magit-no-confirm '(stage-all-changes
+			 unstage-all-changes))
+     (magit-diff-refine-hunk t)
+     :config
+     (with-eval-after-load 'magit
+       (require 'magit-patch-changelog))
+     :hook ((git-commit-mode-hook . (lambda ()
+				      (beginning-of-buffer)
+				      (when (looking-at "#")
+					(forward-line 2))))
+	    (magit-post-refresh-hook . diff-hl-magit-post-refresh))
+     :bind (("C-x g" . magit-status)
+	    ("C-x M-g" . magit-dispatch)))
+
+   (use-package magit-patch-changelog
+     :requires magit
+     :ensure t)
+
+
+   (use-package marginalia
+     :after vertico
+     :ensure t
+     :custom
+     (marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil))
+     :init
+     (marginalia-mode)
+     :bind (("M-A" . marginalia-cycle)
+	    :map minibuffer-local-map
+	    ("M-A" . marginalia-cycle)))
+
+   (use-package markdown-mode
+     :ensure t
+     :delight
+     :mode "\\.md\\'")
+
+   (use-package magit-todos
+     :ensure t
+     :after magit
+     :after hl-todo)
+
+   (use-package move-text
+     :ensure t
+     :config
+     (move-text-default-bindings))
+
+   (use-package multiple-cursors
+     :ensure t
+     :bind (("C-S-c C-S-c" . mc/edit-lines)
+	    ("C->" . mc/mark-next-like-this)
+	    ("C-<" . mc/mark-previous-like-this)
+	    ("C-c C-<" . mc/mark-all-like-this)
+	    ("C-S-<mouse-1>" . mc/add-cursor-on-click)))
+
+   ;; open epubs
+   (use-package nov
+     :ensure t
+     :delight
+     :mode ("\\.epub\\'" . nov-mode)
+     :init
+     (require 'shrface)
+     :custom
+     (nov-text-width t)
+     (visual-fill-column-center-text t)
+     (nov-shr-rendering-functions
+      '((img . nov-render-img) (title . nov-render-title)))
+     (nov-shr-rendering-functions
+      (append nov-shr-rendering-functions shr-external-rendering-functions))
+     :hook ((nov-mode-hook . #'munyoki/set-50-char)
+	    (nov-mode-hook . #'shrface-mode)
+	    (nov-post-html-render-hook . #'munyoki/set-50-char)
+	    (nov-post-html-render-hook . #'shrface-mode)))
+
+   (use-package orderless
+     :ensure t
+     :custom
+     (completion-styles '(orderless))
+     (completion-category-defaults nil)
+     (completion-category-overrides '((file (styles partial-completion)))))
+
+   (use-package pass
+     :ensure t)
+
+   (use-package password-generator
+     :ensure t)
+
+   (use-package password-store
+     :ensure t
+     :bind (("C-c h p" . password-store-copy)))
+
+   (use-package pdf-tools
+     :ensure t
+     :delight
+     :load-path "site-lisp/pdf-tools/lisp"
+     :mode ("\\.pdf\\'" . pdf-view-mode)
+     :magic ("%PDF" . pdf-view-mode)
+     :requires tablist
+     :bind (("M-g M-g" . pdf-view-goto-page))
+     :custom
+     (pdf-tools-enabled-modes         ; simplified from the defaults
+      '(pdf-history-minor-mode
+	pdf-isearch-minor-mode
+	pdf-links-minor-mode
+	pdf-outline-minor-mode
+	pdf-misc-size-indication-minor-mode
+	pdf-occur-global-minor-mode))
+     (pdf-view-display-size 'fit-height)
+     (pdf-view-continuous t)
+     (pdf-view-use-dedicated-register nil)
+     (pdf-view-max-image-width 4000)
+     (pdf-outline-imenu-use-flat-menus t)
+     :config
+     (pdf-tools-install :no-query)
+     (pdf-loader-install)
+     :hook ((pdf-view-mode-hook . (lambda() (linum-mode -1)))
+	    (TeX-after-compilation-finished-functions . #'TeX-revert-document-buffer)))
+
+   ;; This doubles as a quick way to avoid the common formula: C-x b RET
+   ;; *scratch*
+   (use-package persistent-scratch
+     :ensure t
+     :config
+     (persistent-scratch-setup-default))
+
+   (use-package perspective
+     :ensure t
+     :bind-keymap
+     ("C-x x" . perspective-map)
+     :bind (("C-x k" . persp-kill-buffer*))
+     :config
+     (persp-mode))
+
+   (use-package projectile
+     :ensure t
+     :config
+     (projectile-mode)
+     :bind-keymap
+     ("C-c p" . projectile-command-map)
+     :chords ((",p" . projectile-command-map)))
+
+   (use-package pylint
+     :ensure t)
+
+   (use-package py-autopep8
+     :ensure t)
+
+   (use-package rcirc
+     :ensure t
+     :init
+     (defun rcirc-handler-301 (process cmd sender args)
+       "/away message handler.")
+     :custom
+     (rcirc-debug-flag t)
+     ;; Include date in time stamp.
+     (rcirc-time-format "%Y-%m-%d %H:%M ")
+     ;; Change user info
+     (rcirc-default-nick "bonz060")
+     (rcirc-default-user-name "bonz060")
+     (rcirc-default-full-name "bonz060")
+
+     ;; Join these channels at startup.
+     (rcirc-startup-channels-alist
+      '(("\\.freenode\\.net$" "#emacs" "#nairobilug" "#lisp")))
+     :hook ((rcirc-mode-hook . (lambda ()
+				 (set (make-local-variable 'scroll-conservatively)
+				      8192)))
+	    (rcirc-mode-hook . (lambda ()
+				 (rcirc-track-minor-mode 1))))
+     :config
+     ;; Adjust the colours of one of the faces.
+     (set-face-foreground 'rcirc-my-nick "red" nil))
+
+   (use-package savehist
+     :init
+     (savehist-mode))
+
+   (use-package shrface
+     :ensure t
+     :defer t
+     :custom
+     (shrface-href-versatile t)
+     :config
+     (shrface-basic)
+     (shrface-trial))
+
+   (use-package smart-forward
+     :ensure t
+     :bind (("M-S-<up>" . smart-up)
+	    ("M-S-<down>" . smart-down)
+	    ("M-S-<left>" . smart-backward)
+	    ("M-S-<right>" . smart-forward)))
+
+   (use-package smartparens
+     :ensure t
+     :delight
+     :init
+     (require 'smartparens-config)
+     (smartparens-global-mode))
+
+   (use-package smartparens-config
+     :ensure smartparens
+     :config
+     (show-smartparens-global-mode t)
+     :hook ((prog-mode-hook . #'turn-on-smartparens-strict-mode)
+	    (markdown-mode-hook . #'turn-on-smartparens-strict-mode)))
+
+   (use-package switch-window
+     :ensure t
+     :bind (("C-x 1" . switch-window-then-maximize)
+	    ("C-x 2" . switch-window-then-split-below)
+	    ("C-x 3" . switch-window-then-split-right)
+	    ("C-x 0" . switch-window-then-delete)
+	    ("C-x 4 d" . switch-window-then-dired)
+	    ("C-x 4 f" . switch-window-then-find-file)
+	    ("C-x 4 m" . switch-window-then-compose-mail)
+	    ("C-x 4 r" . switch-window-then-find-file-read-only)
+	    ("C-x 4 C-f" . switch-window-then-find-file)
+	    ("C-x 4 C-o" . switch-window-then-display-buffer)
+	    ("C-x 4 0" . switch-window-then-kill-buffer)))
+
+   (use-package vertico
+     :ensure t
+     :init
+     (vertico-mode)
+     (defun +vertico-restrict-to-matches ()
+       (interactive)
+       (let ((inhibit-read-only t))
+	 (goto-char (point-max))
+	 (insert " ")
+	 (add-text-properties (minibuffer-prompt-end) (point-max)
+			      '(invisible t read-only t cursor-intangible t rear-nonsticky t))))
+
+     :custom
+     (vertico-cycle t)
+     (completion-styles '(substring orderless))
+     (completion-in-region-function
+      (lambda (&rest args)
+	(apply (if vertico-mode
+		   #'consult-completion-in-region
+		 #'completion--in-region)
+	       args)))
+     :bind (:map vertico-map
+		 ("?" . minibuffer-completion-help)
+		 ("M-RET" . minibuffer-force-complete-and-exit)
+		 ("M-TAB" . minibuffer-complete)
+		 ("S-SPC" . +vertico-restrict-to-matches)
+		 :map minibuffer-local-map
+		 ("M-h" . backward-kill-word)))
+
+   (defvar-local consult-toggle-preview-orig nil)
+
+   (defun consult-toggle-preview ()
+     "Command to enable/disable preview."
+     (interactive)
+     (if consult-toggle-preview-orig
+	 (setq consult--preview-function consult-toggle-preview-orig
+	       consult-toggle-preview-orig nil)
+       (setq consult-toggle-preview-orig consult--preview-function
+	     consult--preview-function #'ignore)))
+
+   ;; Bind to `vertico-map' or `selectrum-minibuffer-map'
+   (define-key vertico-map (kbd "M-P") #'consult-toggle-preview)
+
+   ;; Configure directory extension.
+   (use-package vertico-directory
+     :after vertico
+     :ensure nil
+     ;; More convenient directory navigation commands
+     :bind (:map vertico-map
+		 ("RET" . vertico-directory-enter)
+		 ("M-l" . vertico-directory-delete-char)
+		 ("C-l" . vertico-directory-delete-word))
+     ;; Tidy shadowed file names
+     :hook (rfn-eshadow-update-overlay . vertico-directory-tidy))
+
+   (use-package web-mode
+     :mode ("\\.html\\'" "\\.hbs\\'" "\\.erb\\'")
+     :delight
+     :ensure t
+     :hook ((web-mode-hook . visual-line-mode)))
+
+   (use-package which-key
+     :ensure t
+     :delight
+     :custom
+     (which-key-show-early-on-C-h t)
+     (which-key-idle-delay 10000)
+     (which-key-idle-secondary-delay 0.05)
+     :init (which-key-mode)
+     :config (which-key-setup-side-window-bottom))
+
+   (use-package writegood-mode
+     :ensure t)
+
+   (use-package writeroom-mode
+     :ensure t)
+
+   (use-package wordnut
+     :ensure t)
+
+   (use-package xclip
+     :ensure t
+     :delight
+     :config
+     (xclip-mode 1))
+
+   (use-package yaml-mode
+     :mode ("\\.yml\\'" . yaml-mode)
+     :ensure t)
+
+   (use-package yasnippet
+     :ensure t
+     :diminish yas-minor-mode
+     :custom
+     (yas-indent-line 'fixed)
+     :config
+     (yas-global-mode 1))
+
+   (use-package yasnippet-snippets
+     :ensure t)
+
+   (use-package zoom-window
+     :custom
+     (zoom-window-mode-line-color "DarkGreen")
+     :ensure t
+     :bind (("C-x C-z" . zoom-window-zoom)))
+
+
+   ;; Custom Configs
+   (use-package eshell
+     :init
+     ;; Prompt with a bit of help from http://www.emacswiki.org/emacs/EshellPrompt
+     (defmacro with-face (str &rest properties)
+       `(propertize ,str 'face (list ,@properties)))
+     (defun eshell/abbr-pwd ()
+       (let ((home (getenv "HOME"))
+	     (path (eshell/pwd)))
+	 (cond
+	  ((string-equal home path) "~")
+	  ((f-ancestor-of? home path) (concat "~/" (f-relative path home)))
+	  (path))))
+
+     (defun eshell/my-prompt ()
+       (let ((header-bg "#161616"))
+	 (concat
+	  (with-face (eshell/abbr-pwd) :foreground "#008700")
+	  (if (= (user-uid) 0)
+	      (with-face "#" :foreground "red")
+	    (with-face "$" :foreground "#2345ba"))
+	  " ")))
+     :custom
+     (eshell-visual-commands
+      '("less" "tmux" "htop" "top" "bash" "zsh" "fish"))
+     (eshell-visual-subcommands
+      '(("git" "log" "l" "diff" "show")))
+     (eshell-prompt-function 'eshell/my-prompt)
+     (eshell-highlight-prompt nil)
+     (eshell-prompt-regexp "^[^#$\n]+[#$] ")
+     (eshell-cmpl-cycle-completions nil)
+     :config
+     (eval-after-load 'eshell
+       '(require 'eshell-autojump nil t)))
+
+   (use-package eww
+     :defer t
+     :init
+     (require 'shrface)
+     :hook
+     ((eww-mode-hook . munyoki/set-50-char)
+      (eww-after-render-hook . #'shrface-mode)))
+
+   (use-package munyoki/isearch
+     :init
+     ;; Isearch in other windows
+     (defun isearch-forward-other-window (prefix)
+       "Function to isearch-forward in other-window."
+       (interactive "P")
+       (unless (one-window-p)
+	 (save-excursion
+	   (let ((next (if prefix -1 1)))
+	     (other-window next)
+	     (isearch-forward)
+	     (other-window (- next))))))
+
+     (defun isearch-backward-other-window (prefix)
+       "Function to isearch-backward in other-window."
+       (interactive "P")
+       (unless (one-window-p)
+	 (save-excursion
+	   (let ((next (if prefix 1 -1)))
+	     (other-window next)
+	     (isearch-backward)
+	     (other-window (- next))))))
+     :bind (("C-M-s" . isearch-forward-other-window)
+	    ("C-M-r" . isearch-backward-other-window)))
+
+
+   (use-package munyoki/slime
+     :mode ("\\.hledger\\'")
+     :custom
+     (inferior-lisp-program "sbcl")
+     :config
+     (load (expand-file-name "~/.quicklisp/slime-helper.el"))
+     :hook ((lisp-mode-hook . (lambda () (slime-mode t)))
+	    (inferior-lisp-mode-hook . (lambda () (inferior-slime-mode t)))))
+
+
+   (use-package emacs
+     :init
+     (require 'magit-git)
+     (defun munyoki/magit-check-file-and-popup ()
+       "If the file is version controlled with git
+       and has uncommitted changes, open the magit status popup."
+       (let ((file (buffer-file-name)))
+	 (when (and file (magit-anything-modified-p t file))
+	   (message "This file has uncommited changes!")
+	   (when nil ;; Became annoying after some time.
+	     (split-window-below)
+	     (other-window 1)
+	     (magit-status)))))
+
+     (defun crm-indicator (args)
+       (cons (concat "[CRM] " (car args)) (cdr args)))
+     (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
+     :custom
+     (auto-revert-verbose t)
+     (column-number-mode t)
+     (custom-safe-themes t)
+     (default-input-method 'TeX)
+     (delete-by-moving-to-trash t)
+     (enable-recursive-minibuffers t)
+     (epa-pinentry-mode 'loopback)
+     (fill-column 50)
+     (gc-cons-threshold 100000000)
+     (geiser-default-implementation 'racket)
+     (geiser-racket-binary
+      (concat user-home-directory ".guix-profile/bin/racket"))
+     (global-auto-revert-non-file-buffers nil)
+     (history-length 100)
+     (ibuffer-show-empty-filter-groups -1)
+     (indicate-empty-lines 1)
+     (inhibit-splash-screen t)
+     (initial-major-mode 'org-mode)
+     (initial-scratch-message (concat
+			       "#+Title: Persistent Scratch Buffer\n#\n"
+			       "# There is no system but GNU and Linux "
+			       "is one of it's kernels\n"))
+     (inhibit-splash-screen 1)
+     (jump-char-lazy-highlight-face -1)
+     (line-number-mode t)
+     (make-backup-files -1)
+     (minibuffer-prompt-properties
+      '(read-only t cursor-intangible t face minibuffer-prompt))
+     (python-indent 4)
+     (read-process-output-max (* 1024 1024)) ;; 1mb
+     (recentf-max-menu-items 25)
+     (recentf-max-saved-items 100)
+     (require-final-newline t)
+     (set-mark-command-repeat-pop t)
+     (shell-file-name
+      (concat user-home-directory
+	      ".guix-profile/bin/zsh"))
+     (show-trailing-whitespace 1)
+     (shr-width 50)
+     (size-indication-mode t)
+     (sp-autoescape-string-quote nil)
+     (tramp-chunksize 500)
+     (tramp-default-method "ssh")
+     (use-dialog-box nil)
+     (use-file-dialog nil)
+     (use-short-answers t)
+     (visible-bell t)
+     (w3m-fill-column 50)
+     (w3m-search-default-engine "duckduckgo")
+     (x-select-enable-clipboard t)
+     (world-clock-list
+      '(("CET-1CDT" "Amsterdam/ Paris")
+	("CDT+5" "Memphis")
+	("EST5EDT" "New York/ Miami")
+	("GMT0BST" "London")
+	("IST-5:30" "Bangalore")
+	("PST8PDT" "Seattle")
+	("JST-9" "Tokyo")))
+     :init
+     (auto-compression-mode 1)
+					   ; (auto-save-default t)
+     (column-number-mode nil)
+     (delete-selection-mode 1)
+     (display-battery-mode)
+     (display-time)
+     (display-time-mode t)
+     (doom-modeline-mode)
+     (fringe-mode 7)
+     (global-auto-revert-mode 1)
+     (global-hl-line-mode t)
+     (global-linum-mode -1)
+     (global-prettify-symbols-mode -1)
+     (global-subword-mode 1)
+     (global-visual-line-mode)
+     (menu-bar-mode -1)
+					   ; (prettify-symbols-unprettify-at-point 'right-edge)
+     (scroll-bar-mode -1)
+     (show-paren-mode 1)
+     (size-indication-mode 1)
+     (tab-bar-mode 1)
+     (tool-bar-mode -1)
+     (transient-mark-mode 1)
+     (winner-mode 1) ; Undo/redo window configuration with C-c <left>/<right>
+     :hook ((minibuffer-setup-hook . cursor-intangible-mode)
+	    (after-save-hook . executable-make-buffer-file-executable-if-script-p)
+	    (find-file-hook . (lambda ()
+				(add-hook 'hack-local-variables-hook 'munyoki/magit-check-file-and-popup)))
+	    (server-switch-hook . magit-commit-diff))
+     :config
+     ;; make a shell script executable automatically on save
+     (add-to-list 'auto-mode-alist '("\\.zsh$" . shell-script-mode))
+     ;; conf-mode
+     (add-to-list 'auto-mode-alist '("\\.gitconfig$" . conf-mode))
+     ;; yaml
+     (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
+     (add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))
+     ;; PHP
+     (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
+     ;; Golang
+     (add-to-list 'auto-mode-alist '("\\.go\\'" . go-mode))
+     (add-to-list 'auto-mode-alist '("\\info.gz$" . info-mode))
+     (add-to-list 'auto-mode-alist '("\\.\\(org\\|org_archive\\)$" . org-mode))
+     (define-key ac-mode-map (kbd "M-TAB") 'auto-complete)
+     :bind (("C-g" . keyboard-quit-strong)
+	    ("C-+" . text-scale-increase)
+	    ("C--" . text-scale-decrease)
+	    ("C-x C-b" . ibuffer)
+	    ("C-x f" . recentf-open-files)
+	    ("s-n" . rename-buffer)))
+
+   ;; Aliases
+   (defalias 'yes-or-no-p 'y-or-n-p) ; y or n is enough
+
+   (provide 'sane-defaults)
+   ;;; sane-defaults.el ends here
 #+END_SRC
 
 ** appearance.el
@@ -1747,164 +1734,164 @@ Configure the packages.
 
 ** org-time-budgets
 #+begin_src emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/org-time-budgets.el
-(require 'org)
-(require 'org-clock)
-(require 'org-table)
-(require 'org-agenda)
+  (require 'org)
+  (require 'org-clock)
+  (require 'org-table)
+  (require 'org-agenda)
 
-(defgroup org-time-budgets nil
-  "Org time budgets customization."
-  :tag "Org Time Budgets"
-  :group 'org-progress)
+  (defgroup org-time-budgets nil
+    "Org time budgets customization."
+    :tag "Org Time Budgets"
+    :group 'org-progress)
 
-(defcustom org-time-budgets nil
-  "The list of time budgets.
-See this example:
-'((:title \"Business\" :match \"+business\" :budget \"30:00\" :blocks (workday week))
-  (:title \"Practice Music\" :match \"+practice+music\" :budget \"4:00\" :blocks (nil week))
-  (:title \"Exercise\" :match \"+exercise\" :budget \"5:00\" :blocks (day)))"
-  :group 'org-time-budgets
-  :type 'list)
+  (defcustom org-time-budgets nil
+    "The list of time budgets.
+  See this example:
+  '((:title \"Business\" :match \"+business\" :budget \"30:00\" :blocks (workday week))
+    (:title \"Practice Music\" :match \"+practice+music\" :budget \"4:00\" :blocks (nil week))
+    (:title \"Exercise\" :match \"+exercise\" :budget \"5:00\" :blocks (day)))"
+    :group 'org-time-budgets
+    :type 'list)
 
-(defvar org-time-budgets-show-budgets t
-  "If non-nil, show time-budgets in agenda buffers.")
+  (defvar org-time-budgets-show-budgets t
+    "If non-nil, show time-budgets in agenda buffers.")
 
-(defface org-time-budgets-done-face
-  '((((background light)) (:foreground "#4df946"))
-    (((background dark)) (:foreground "#228b22")))
-  "Face for budgets which are fulfilled."
-  :group 'org-time-budgets
-  :group 'org-faces)
+  (defface org-time-budgets-done-face
+    '((((background light)) (:foreground "#4df946"))
+      (((background dark)) (:foreground "#228b22")))
+    "Face for budgets which are fulfilled."
+    :group 'org-time-budgets
+    :group 'org-faces)
 
-(defface org-time-budgets-close-face
-  '((((background light)) (:foreground "#ffc500"))
-    (((background dark)) (:foreground "#b8860b")))
-  "Face for budgets which are close to being fulfilled."
-  :group 'org-time-budgets
-  :group 'org-faces)
+  (defface org-time-budgets-close-face
+    '((((background light)) (:foreground "#ffc500"))
+      (((background dark)) (:foreground "#b8860b")))
+    "Face for budgets which are close to being fulfilled."
+    :group 'org-time-budgets
+    :group 'org-faces)
 
-(defface org-time-budgets-todo-face
-  '((((background light)) (:foreground "#fc7560"))
-    (((background dark)) (:foreground "#8b0000")))
-  "Face for budgets which are not yet fulfilled."
-  :group 'org-time-budgets
-  :group 'org-faces)
+  (defface org-time-budgets-todo-face
+    '((((background light)) (:foreground "#fc7560"))
+      (((background dark)) (:foreground "#8b0000")))
+    "Face for budgets which are not yet fulfilled."
+    :group 'org-time-budgets
+    :group 'org-faces)
 
-(defun org-time-budgets-minutes-to-string (minutes)
-  "Return the given MINUTES as string HH:MM."
-  (let ((secs0 (abs (* minutes 60))))
-    (org-format-seconds "%.2h:%.2m" secs0)))
+  (defun org-time-budgets-minutes-to-string (minutes)
+    "Return the given MINUTES as string HH:MM."
+    (let ((secs0 (abs (* minutes 60))))
+      (org-format-seconds "%.2h:%.2m" secs0)))
 
-(defun org-time-budgets-string-to-minutes (string)
-  "Return the given STRING of format HH:MM as minutes."
-  (/ (string-to-number
-      (org-table-time-string-to-seconds string))
-     60))
+  (defun org-time-budgets-string-to-minutes (string)
+    "Return the given STRING of format HH:MM as minutes."
+    (/ (string-to-number
+	(org-table-time-string-to-seconds string))
+       60))
 
-(defun org-time-budgets-bar (width progress goal)
-  "Create a simple progress bar with WIDTH, displaying the PROGRESS relative to the set GOAL."
-  (let* ((progress-percent (/ (float progress) (float goal)))
-         (progress-width (floor (* progress-percent width)))
-         (progress (make-string (min (max 0 progress-width) width) ?|))
-         (spacer (make-string (max 0 (- width progress-width)) ?.))
-         (face (cond
-                ((>= progress-percent 1.0) 'org-time-budgets-done-face)
-                ((> progress-percent 0.7) 'org-time-budgets-close-face)
-                (t 'org-time-budgets-todo-face))))
-    (concat
-     (propertize progress 'face face)
-     spacer)))
+  (defun org-time-budgets-bar (width progress goal)
+    "Create a simple progress bar with WIDTH, displaying the PROGRESS relative to the set GOAL."
+    (let* ((progress-percent (/ (float progress) (float goal)))
+	   (progress-width (floor (* progress-percent width)))
+	   (progress (make-string (min (max 0 progress-width) width) ?|))
+	   (spacer (make-string (max 0 (- width progress-width)) ?.))
+	   (face (cond
+		  ((>= progress-percent 1.0) 'org-time-budgets-done-face)
+		  ((> progress-percent 0.7) 'org-time-budgets-close-face)
+		  (t 'org-time-budgets-todo-face))))
+      (concat
+       (propertize progress 'face face)
+       spacer)))
 
-(defun org-time-budgets-time (filters)
-  "Return the clocked time matching FILTERS in agenda files."
-  (apply '+
-         (mapcar (lambda (file)
-                   (nth 1 (save-window-excursion
-                            (find-file file)
-                            (org-clock-get-table-data file filters))))
-                 (org-agenda-files))))
+  (defun org-time-budgets-time (filters)
+    "Return the clocked time matching FILTERS in agenda files."
+    (apply '+
+	   (mapcar (lambda (file)
+		     (nth 1 (save-window-excursion
+			      (find-file file)
+			      (org-clock-get-table-data file filters))))
+		   (org-agenda-files))))
 
-(defun org-time-budgets-format-block (block)
-  (let ((current (case block
-                   (day     (org-time-budgets-time `(:match ,match :block today)))
-                   (workday (org-time-budgets-time `(:match ,match :block today)))
-                   (week    (org-time-budgets-time `(:match ,match :tstart ,tstart-s :tend ,tend-s)))))
-        (budget (case block
-                  (day     (/ range-budget 7))
-                  (workday (/ range-budget 5))
-                  (week    range-budget))))
-    (if (and current budget)
-        (format "[%s] %s / %s"
-                (org-time-budgets-bar 14 current budget)
-                (org-time-budgets-minutes-to-string current)
-                (org-time-budgets-minutes-to-string budget))
-      "                              ")))
+  (defun org-time-budgets-format-block (block)
+    (let ((current (case block
+		     (day     (org-time-budgets-time `(:match ,match :block today)))
+		     (workday (org-time-budgets-time `(:match ,match :block today)))
+		     (week    (org-time-budgets-time `(:match ,match :tstart ,tstart-s :tend ,tend-s)))))
+	  (budget (case block
+		    (day     (/ range-budget 7))
+		    (workday (/ range-budget 5))
+		    (week    range-budget))))
+      (if (and current budget)
+	  (format "[%s] %s / %s"
+		  (org-time-budgets-bar 14 current budget)
+		  (org-time-budgets-minutes-to-string current)
+		  (org-time-budgets-minutes-to-string budget))
+	"                              ")))
 
-(defun org-time-budgets-table ()
-  "List the time budgets in a table."
-  (let ((title-column-width (apply #'max
-                                   (mapcar #'(lambda (budget) (string-width (plist-get budget :title)))
-                                           org-time-budgets))))
-    (mapconcat #'(lambda (budget)
-                  (let* ((title (plist-get budget :title))
-                         (match (or (plist-get budget :match)
-                                    (plist-get budget :tags))) ;; support for old :tags syntax
-                         (blocks (or (plist-get budget :blocks)
-                                     (case (plist-get budget :block) ;; support for old :block syntax
-                                       (week '(day week))
-                                       (workweek '(workday week)))
-                                     '(day week)))
-                         (trange (org-clock-special-range 'thisweek))
-                         (tstart (nth 0 trange))
-                         (tstart-s (format-time-string "[%Y-%m-%d]" tstart))
-                         (tend (nth 1 trange))
-                         (tend-s (format-time-string "[%Y-%m-%d]" tend))
-                         (days-til-week-ends (ceiling
-                                              (time-to-number-of-days
-                                               (time-subtract tend (current-time)))))
-                         (range-budget (org-time-budgets-string-to-minutes (plist-get budget :budget))))
-                    (format "%s  %s"
-                             (concat
-                              title
-                              (make-string (max 0 (- title-column-width (string-width title))) ?\s))
-                             (mapconcat
-                              #'org-time-budgets-format-block
-                              blocks
-                              "  "))))
-               org-time-budgets
-               "\n")))
+  (defun org-time-budgets-table ()
+    "List the time budgets in a table."
+    (let ((title-column-width (apply #'max
+				     (mapcar #'(lambda (budget) (string-width (plist-get budget :title)))
+					     org-time-budgets))))
+      (mapconcat #'(lambda (budget)
+		    (let* ((title (plist-get budget :title))
+			   (match (or (plist-get budget :match)
+				      (plist-get budget :tags))) ;; support for old :tags syntax
+			   (blocks (or (plist-get budget :blocks)
+				       (case (plist-get budget :block) ;; support for old :block syntax
+					 (week '(day week))
+					 (workweek '(workday week)))
+				       '(day week)))
+			   (trange (org-clock-special-range 'thisweek))
+			   (tstart (nth 0 trange))
+			   (tstart-s (format-time-string "[%Y-%m-%d]" tstart))
+			   (tend (nth 1 trange))
+			   (tend-s (format-time-string "[%Y-%m-%d]" tend))
+			   (days-til-week-ends (ceiling
+						(time-to-number-of-days
+						 (time-subtract tend (current-time)))))
+			   (range-budget (org-time-budgets-string-to-minutes (plist-get budget :budget))))
+		      (format "%s  %s"
+			       (concat
+				title
+				(make-string (max 0 (- title-column-width (string-width title))) ?\s))
+			       (mapconcat
+				#'org-time-budgets-format-block
+				blocks
+				"  "))))
+		 org-time-budgets
+		 "\n")))
 
-(defun org-time-budgets-in-agenda (arg)
-  "Insert the `org-time-budget-table' at the top of the current
-agenda."
-  (save-excursion
-    (let ((agenda-start-day (nth 1 (get-text-property (point) 'org-last-args)))
-          (inhibit-read-only t))
-      ;; find top of agenda
-      (while (not (and (get-text-property (point) 'org-date-line)
-                       (equal (get-text-property (point) 'day) agenda-start-day)))
-        (forward-line -1))
-      (insert (org-time-budgets-table) "\n\n"))))
+  (defun org-time-budgets-in-agenda (arg)
+    "Insert the `org-time-budget-table' at the top of the current
+  agenda."
+    (save-excursion
+      (let ((agenda-start-day (nth 1 (get-text-property (point) 'org-last-args)))
+	    (inhibit-read-only t))
+	;; find top of agenda
+	(while (not (and (get-text-property (point) 'org-date-line)
+			 (equal (get-text-property (point) 'day) agenda-start-day)))
+	  (forward-line -1))
+	(insert (org-time-budgets-table) "\n\n"))))
 
-(defun org-time-budgets-in-agenda-maybe (arg)
-  "Return budgets table if org-time-budgets-show-budgets is set."
-  (when org-time-budgets-show-budgets
-    (org-time-budgets-in-agenda arg)))
+  (defun org-time-budgets-in-agenda-maybe (arg)
+    "Return budgets table if org-time-budgets-show-budgets is set."
+    (when org-time-budgets-show-budgets
+      (org-time-budgets-in-agenda arg)))
 
-(defun org-time-budgets-toggle-time-budgets ()
-  "Toggle display of time-budgets in an agenda buffer."
-  (interactive)
-  (org-agenda-check-type t 'agenda)
-  (setq org-time-budgets-show-budgets (not org-time-budgets-show-budgets))
-  (org-agenda-redo)
-  (org-agenda-set-mode-name)
-  (message "Time-Budgets turned %s"
-           (if org-time-budgets-show-budgets "on" "off")))
+  (defun org-time-budgets-toggle-time-budgets ()
+    "Toggle display of time-budgets in an agenda buffer."
+    (interactive)
+    (org-agenda-check-type t 'agenda)
+    (setq org-time-budgets-show-budgets (not org-time-budgets-show-budgets))
+    (org-agenda-redo)
+    (org-agenda-set-mode-name)
+    (message "Time-Budgets turned %s"
+	     (if org-time-budgets-show-budgets "on" "off")))
 
-;; free agenda-mode-map keys are rare
-(org-defkey org-agenda-mode-map "V" 'org-time-budgets-toggle-time-budgets)
+  ;; free agenda-mode-map keys are rare
+  (org-defkey org-agenda-mode-map "V" 'org-time-budgets-toggle-time-budgets)
 
-(provide 'org-time-budgets)
+  (provide 'org-time-budgets)
 #+end_src
 
 ** setup-org.el
@@ -1913,9 +1900,8 @@ agenda."
 
 ;; Org-mode
 (use-package citeproc
-  :ensure t
   :init
-  (require 'citeproc)
+  ;(require 'citeproc)
   (require 'org-habit)
   (require 'oc-csl)
   (require 'oc-biblatex)
@@ -2038,7 +2024,7 @@ agenda."
       ret))
   :custom
   (org-export-with-drawers
-   (not "NOTES" "LOGBOOK"))
+   '(not "NOTES" "LOGBOOK"))
   (org-latex-pdf-process
    (list "latexmk -f -pdf -interaction=nonstopmode -output-directory=%o %f"))
   (org-src-window-setup 'current-window)
