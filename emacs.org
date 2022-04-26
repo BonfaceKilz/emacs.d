@@ -593,6 +593,17 @@ Configure the packages.
   :config
   (global-diff-hl-mode))
 
+(use-package dired-dragon
+  :straight (:host github
+             :repo "jeetelongname/dired-dragon")
+  :after dired
+
+  ;; if you use use-package for bindings
+  :bind (:map dired-mode-map
+         ("C-d d" . dired-dragon)
+         ("C-d s" . dired-dragon-stay)
+         ("C-d i" . dired-dragon-individual)))
+
 (use-package dired-filter
   :ensure t)
 
