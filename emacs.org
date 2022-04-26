@@ -827,11 +827,12 @@ Configure the packages.
   :requires tablist
   :bind (("M-g M-g" . pdf-view-goto-page))
   :custom
-  (pdf-tools-enabled-modes         ; simplified from the defaults
+  (pdf-tools-enabled-modes ; simplified from the defaults
    '(pdf-history-minor-mode
      pdf-isearch-minor-mode
      pdf-links-minor-mode
      pdf-outline-minor-mode
+     pdf-annot-minor-mode
      pdf-misc-size-indication-minor-mode
      pdf-occur-global-minor-mode))
   (pdf-view-display-size 'fit-height)
