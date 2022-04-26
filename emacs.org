@@ -1971,10 +1971,10 @@ Configure the packages.
       (cond
        ((and (member (org-get-todo-state) (list "TODO" "WIP" "ON_HOLD"))
              (munyoki/is-task-p))
-        "STARTED")
+        "IN-PROGRESS")
        ((and (member (org-get-todo-state) (list "TODO" "WIP" "ON_HOLD"))
              (munyoki/is-project-p))
-        "STARTED"))))
+        "IN-PROGRESS"))))
 
   (cl-defun my/make/org-capture-template
       (shortcut heading &optional (no-todo nil) (description heading) (category heading))
