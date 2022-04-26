@@ -1920,6 +1920,9 @@ Configure the packages.
 (use-package orgit
   :ensure t)
 
+(use-package org-noter-pdftools
+  :ensure t)
+
 (use-package org
   :mode (("\\.org\\'" . org-mode)
 	 ("\\.org_archive\\'" . org-mode))
