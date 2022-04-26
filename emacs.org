@@ -1730,8 +1730,16 @@ Configure the packages.
      ([?\C-v] . [next])
      ([?\C-d] . [delete])
      ([?\C-k] . [S-end delete])))
-  :hook ((exwm-update-class-hook .  (lambda ()
-				      (exwm-workspace-rename-buffer exwm-class-name))))
+  :hook
+  ((exwm-update-class-hook . (lambda ()
+			       (unless (or (string-prefix-p "sun-awt-X11-" exwm-instance-name)
+					   (string= "gimp" exwm-instance-name))
+				 (exwm-workspace-rename-buffer exwm-class-name))))
+   (exwm-update-title-hook . (lambda ()
+			       (when (or (not exwm-instance-name)
+					 (string-prefix-p "sun-awt-X11-" exwm-instance-name)
+					 (string= "gimp" exwm-instance-name))
+				 (exwm-workspace-rename-buffer exwm-title)))))
   :bind (("C-x C-c" . exwm-logout)
 	 ("C-c C-l" . exwm-input-release-keyboard)))
 
