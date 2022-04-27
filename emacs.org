@@ -894,6 +894,16 @@ Configure the packages.
   (defun rcirc-handler-301 (process cmd sender args)
     "/away message handler.")
   :custom
+  (rcirc-server-alist
+      '(("irc.libera.chat"
+         :port 6697
+         :encryption tls
+         :channels ("#guix"
+                    "#nairobilug"
+                    "#whereiseveryone"
+		    "#nonguix")
+         :user-name "bonz060"
+         :nick "bonz060")))
   (rcirc-debug-flag t)
   ;; Include date in time stamp.
   (rcirc-time-format "%Y-%m-%d %H:%M ")
@@ -901,10 +911,6 @@ Configure the packages.
   (rcirc-default-nick "bonz060")
   (rcirc-default-user-name "bonz060")
   (rcirc-default-full-name "bonz060")
-
-  ;; Join these channels at startup.
-  (rcirc-startup-channels-alist
-   '(("\\.freenode\\.net$" "#emacs" "#nairobilug" "#lisp")))
   :hook ((rcirc-mode-hook . (lambda ()
 			      (set (make-local-variable 'scroll-conservatively)
 				   8192)))
