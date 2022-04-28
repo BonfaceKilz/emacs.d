@@ -607,6 +607,11 @@ Configure the packages.
 (use-package dired-filter
   :ensure t)
 
+(use-package dmenu
+  :ensure t
+  :bind
+  (("C-c d" . dmenu)))
+
 (use-package elpher
   :ensure t)
 
