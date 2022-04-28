@@ -1965,6 +1965,11 @@ Configure the packages.
 
 (use-package org-noter
   :ensure t
+  :custom
+  (org-noter-notes-search-path
+   (concat
+    user-home-directory
+    "Self/org/pdf-notes/"))
   :config
   ;; Your org-noter config ........
   (require 'org-noter-pdftools))
