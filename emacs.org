@@ -1938,9 +1938,20 @@ Configure the packages.
 ;;; setup-org.el
 
 ;; Org-mode
+(use-package citar
+  :ensure t
+  :custom
+  (org-cite-insert-processor 'citar)
+  (org-cite-follow-processor 'citar)
+  (org-cite-activate-processor 'citar)
+  (citar-at-point-function 'embark-act)
+  :bind (("C-c b" . citar-insert-citation)
+         :map minibuffer-local-map
+         ("M-b" . citar-insert-preset)))
+
 (use-package citeproc
   :init
-  ;(require 'citeproc)
+					;(require 'citeproc)
   (require 'org-habit)
   (require 'oc-csl)
   (require 'oc-biblatex)
