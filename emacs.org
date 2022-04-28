@@ -2072,6 +2072,7 @@ With a prefix ARG, remove start location."
                 :empty-lines 1))
 
   :custom
+  (org-image-actual-width nil)
   (org-export-with-drawers
    '(not "NOTES" "LOGBOOK"))
   (org-latex-pdf-process
