@@ -1186,6 +1186,7 @@ Configure the packages.
   (custom-safe-themes t)
   (default-input-method 'TeX)
   (delete-by-moving-to-trash t)
+  (ediff-window-setup-function 'ediff-setup-windows-plain)
   (enable-recursive-minibuffers t)
   (epa-pinentry-mode 'loopback)
   (fill-column 50)
