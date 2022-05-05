@@ -625,7 +625,7 @@ Configure the packages.
   :ensure t
   :bind
   (;; pick some comfortable binding
-   ;; ("C-;" . embark-dwim)        ;; good alternative: M-.
+   ("C-;" . embark-dwim) ;; good alternative: M-.
    ("C-." . embark-act)
    ;; alternative for `describe-bindings'
    ("C-h B" . embark-bindings)) 
