@@ -1978,9 +1978,9 @@ Configure the packages.
   :ensure t
   :custom
   (org-noter-notes-search-path
-   (concat
-    user-home-directory
-    "Self/org/pdf-notes/"))
+   `(,(concat
+       user-home-directory
+       "Self/org/pdf-notes/")))
   :config
   ;; Your org-noter config ........
   (require 'org-noter-pdftools))
