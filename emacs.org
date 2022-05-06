@@ -632,6 +632,7 @@ Configure the packages.
   :custom
   ;; Optionally replace the key help with a completing-read interface
   (prefix-help-command #'embark-prefix-help-command)
+  (embark-indicators '(embark-minimal-indicator))
   :config
   ;; Hide the mode line of the Embark live/completions buffers
   (add-to-list 'display-buffer-alist
