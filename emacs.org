@@ -324,6 +324,9 @@ Configure the packages.
 
 (global-set-key (kbd "C-c D")  #'munyoki/delete-file-and-buffer)
 
+(use-package 0x0
+  :ensure t)
+
 (use-package ace-window
   :ensure t
   :delight
