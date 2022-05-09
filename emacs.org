@@ -2023,9 +2023,9 @@ Configure the packages.
 
 (use-package citeproc
   :init
-					;(require 'citeproc)
   (require 'org-habit)
   (require 'oc-csl)
+  (require 'oc-natbib)
   (require 'oc-biblatex)
   (setq org-cite-export-processors
 	'((beamer natbib)
