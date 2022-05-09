@@ -2414,7 +2414,7 @@ With a prefix ARG, remove start location."
   :requires org
   :init
   (setq org-agenda-custom-commands
-	'(("A" "Agenda with Time Budgets"
+	'(("b" "Agenda with Time Budgets"
            ((agenda "" ((org-agenda-sorting-strategy '(habit-down time-up priority-down category-keep user-defined-up))))
             (org-time-budgets-in-agenda-maybe)))))
   (setq munyoki/org-agenda-review-settings
