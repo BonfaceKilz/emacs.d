@@ -866,6 +866,17 @@ Configure the packages.
   :config
   (move-text-default-bindings))
 
+(use-package mpv
+  :ensure t
+  :config
+  (org-add-link-type "mpv" #'mpv-play)
+  (defun org-mpv-complete-link (&optional arg)
+    (replace-regexp-in-string
+     "file:" "mpv:"
+     (org-file-complete-link arg)
+     t t))
+  (add-hook 'org-open-at-point-functions #'mpv-seek-to-position-at-point))
+
 (use-package multiple-cursors
   :ensure t
   :bind (("C-S-c C-S-c" . mc/edit-lines)
