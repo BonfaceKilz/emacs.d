@@ -921,7 +921,7 @@ Configure the packages.
   :ensure t
   :bind (("C-c h p" . password-store-copy)))
 
-
+(add-to-list 'auto-mode-alist '("\\.pdf\\'" . pdf-view-mode))
 (use-package pdf-tools
   :ensure t
   :delight
@@ -947,7 +947,6 @@ Configure the packages.
   :config
   (pdf-tools-install :no-query)
   (pdf-loader-install)
-  (add-to-list 'auto-mode-alist '("\\.pdf\\'" . pdf-view-mode))
   :hook ((pdf-view-mode-hook . (lambda() (linum-mode -1)))
 	 (TeX-after-compilation-finished-functions . #'TeX-revert-document-buffer)))
 
