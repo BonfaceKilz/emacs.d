@@ -582,6 +582,7 @@ Configure the packages.
          ("C-x C-j" . consult-dir-jump-file)))
 
 (use-package debbugs
+  :ensure t
   :custom
   (debbugs-gnu-default-packages '("guix-patches" "guix")))
 
