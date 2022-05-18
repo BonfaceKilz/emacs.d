@@ -724,6 +724,13 @@ Configure the packages.
 	 (web-mode-hook . emmet-mode)
 	 (css-mode-hook . emmet-mode)))
 
+(use-package emms
+  :ensure t
+  :config
+  (require 'emms-setup)
+  (emms-all)
+  (emms-default-players))
+
 (use-package emojify
   :ensure t)
 
