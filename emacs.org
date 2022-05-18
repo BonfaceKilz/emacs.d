@@ -661,7 +661,16 @@ Configure the packages.
   :custom
   ;; Optionally replace the key help with a completing-read interface
   (prefix-help-command #'embark-prefix-help-command)
-  (embark-indicators '(embark-minimal-indicator))
+  (embark-indicators '(embark-mixed-indicator
+		       embark-highlight-indicator))
+  (embark-verbose-indicator-excluded-actions
+   '("\\`customize-" "\\(local\\|global\\)-set-key"
+     set-variable embark-cycle embark-keymap-help embark-isearch))
+  (embark-verbose-indicator-buffer-sections
+   `(target "\n" shadowed-targets " " cycle "\n" bindings))
+  (embark-mixed-indicator-both nil)
+  (embark-mixed-indicator-delay 5)
+  (embark-verbose-indicator-display-action nil)
   :config
   (define-key embark-file-map
     (kbd "o") (my/embark-ace-action find-file))
