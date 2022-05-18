@@ -648,6 +648,9 @@ Configure the packages.
    ("C-." . embark-act)
    ;; alternative for `describe-bindings'
    ("C-h B" . embark-bindings)
+   :map minibuffer-local-completion-map
+   ("C-." . embark-act)
+   ("C->" . embark-become)
    :map embark-region-map
    ("U" . 0x0-dwim)
    :map embark-buffer-map
