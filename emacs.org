@@ -635,6 +635,10 @@ Configure the packages.
 (use-package embark
   :ensure t
   :init
+  (defun embark-magit-status (file)
+    "Run `magit-status` on repo containing the embark target."
+    (interactive "GFile: ")
+    (magit-status (locate-dominating-file file ".git")))
   (eval-when-compile
     (defmacro my/embark-ace-action (fn)
       `(defun ,(intern (concat "my/embark-ace-" (symbol-name fn))) ()
@@ -675,7 +679,10 @@ Configure the packages.
    ("C-h B" . embark-bindings)
    :map embark-region-map
    ("U" . 0x0-dwim)
+   :map embark-buffer-map
+   ("g" . embark-magit-status)
    :map embark-file-map
+   ("g" . embark-magit-status)
    ("s" . sudo-find-file))
   :custom
   ;; Optionally replace the key help with a completing-read interface
