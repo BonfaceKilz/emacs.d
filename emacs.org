@@ -2024,30 +2024,24 @@ Configure the packages.
 
 ** setup-org.el
 #+BEGIN_SRC emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/setup-org.el
-;;; setup-org.el
+  ;;; setup-org.el
 
 ;; Org-mode
+
 (use-package citar
   :ensure t
+  :requires citeproc
   :custom
   (org-cite-insert-processor 'citar)
   (org-cite-follow-processor 'citar)
   (org-cite-activate-processor 'citar)
   (citar-at-point-function 'embark-act)
   :bind (("C-c b" . citar-insert-citation)
-         :map minibuffer-local-map
-         ("M-b" . citar-insert-preset)))
+	 :map minibuffer-local-map
+	 ("M-b" . citar-insert-preset)))
 
-(use-package citeproc
-  :init
-  (require 'org-habit)
-  (require 'oc-csl)
-  (require 'oc-natbib)
-  (require 'oc-biblatex)
-  (setq org-cite-export-processors
-	'((beamer natbib)
-          (latex biblatex)
-          (t csl))))
+(use-package org-emms
+  :ensure t)
 
 (use-package orgit
   :ensure t)
@@ -2074,28 +2068,28 @@ Configure the packages.
     (interactive "P")
     (org-noter--with-valid-session
      (let ((org-noter-insert-note-no-questions (if toggle-no-questions
-                                                   (not org-noter-insert-note-no-questions)
-                                                 org-noter-insert-note-no-questions))
-           (org-pdftools-use-isearch-link t)
-           (org-pdftools-use-freepointer-annot t))
+						   (not org-noter-insert-note-no-questions)
+						 org-noter-insert-note-no-questions))
+	   (org-pdftools-use-isearch-link t)
+	   (org-pdftools-use-freepointer-annot t))
        (org-noter-insert-note (org-noter--get-precise-info)))))
 
   ;; fix https://github.com/weirdNox/org-noter/pull/93/commits/f8349ae7575e599f375de1be6be2d0d5de4e6cbf
   (defun org-noter-set-start-location (&optional arg)
     "When opening a session with this document, go to the current location.
-With a prefix ARG, remove start location."
+  With a prefix ARG, remove start location."
     (interactive "P")
     (org-noter--with-valid-session
      (let ((inhibit-read-only t)
-           (ast (org-noter--parse-root))
-           (location (org-noter--doc-approx-location (when (called-interactively-p 'any) 'interactive))))
+	   (ast (org-noter--parse-root))
+	   (location (org-noter--doc-approx-location (when (called-interactively-p 'any) 'interactive))))
        (with-current-buffer (org-noter--session-notes-buffer session)
-         (org-with-wide-buffer
-          (goto-char (org-element-property :begin ast))
-          (if arg
-              (org-entry-delete nil org-noter-property-note-location)
-            (org-entry-put nil org-noter-property-note-location
-                           (org-noter--pretty-print-location location))))))))
+	 (org-with-wide-buffer
+	  (goto-char (org-element-property :begin ast))
+	  (if arg
+	      (org-entry-delete nil org-noter-property-note-location)
+	    (org-entry-put nil org-noter-property-note-location
+			   (org-noter--pretty-print-location location))))))))
   (with-eval-after-load 'pdf-annot
     (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
 
@@ -2121,70 +2115,70 @@ With a prefix ARG, remove start location."
     (save-restriction
       (widen)
       (let ((has-subtask)
-            (subtree-end (save-excursion (org-end-of-subtree t)))
-            (is-a-task (member (nth 2 (org-heading-components)) org-todo-keywords-1)))
-        (save-excursion
-          (forward-line 1)
-          (while (and (not has-subtask)
-                      (< (point) subtree-end)
-                      (re-search-forward "^\*+ " subtree-end t))
-            (when (member (org-get-todo-state) org-todo-keywords-1)
-              (setq has-subtask t))))
-        (and is-a-task (not has-subtask)))))
+	    (subtree-end (save-excursion (org-end-of-subtree t)))
+	    (is-a-task (member (nth 2 (org-heading-components)) org-todo-keywords-1)))
+	(save-excursion
+	  (forward-line 1)
+	  (while (and (not has-subtask)
+		      (< (point) subtree-end)
+		      (re-search-forward "^\*+ " subtree-end t))
+	    (when (member (org-get-todo-state) org-todo-keywords-1)
+	      (setq has-subtask t))))
+	(and is-a-task (not has-subtask)))))
 
   (defun munyoki/is-project-p ()
     "Any task with a todo keyword subtask"
     (save-restriction
       (widen)
       (let ((has-subtask)
-            (subtree-end (save-excursion (org-end-of-subtree t)))
-            (is-a-task (member (nth 2 (org-heading-components)) org-todo-keywords-1)))
-        (save-excursion
-          (forward-line 1)
-          (while (and (not has-subtask)
-                      (< (point) subtree-end)
-                      (re-search-forward "^\*+ " subtree-end t))
-            (when (member (org-get-todo-state) org-todo-keywords-1)
-              (setq has-subtask t))))
-        (and is-a-task has-subtask))))
+	    (subtree-end (save-excursion (org-end-of-subtree t)))
+	    (is-a-task (member (nth 2 (org-heading-components)) org-todo-keywords-1)))
+	(save-excursion
+	  (forward-line 1)
+	  (while (and (not has-subtask)
+		      (< (point) subtree-end)
+		      (re-search-forward "^\*+ " subtree-end t))
+	    (when (member (org-get-todo-state) org-todo-keywords-1)
+	      (setq has-subtask t))))
+	(and is-a-task has-subtask))))
 
   (defun clock-in-to-inprogress (kw)
     "Switch a task from NEXT to INPROGRESS when clocking in.
-   Skips capture tasks, projects, and subprojects.
-    Switch projects and subprojects from NEXT back to TODO"
+     Skips capture tasks, projects, and subprojects.
+      Switch projects and subprojects from NEXT back to TODO"
     (when (not (and (boundp 'org-capture-mode) org-capture-mode))
       (cond
        ((and (member (org-get-todo-state) (list "TODO" "WIP" "ON_HOLD"))
-             (munyoki/is-task-p))
-        "IN-PROGRESS")
+	     (munyoki/is-task-p))
+	"IN-PROGRESS")
        ((and (member (org-get-todo-state) (list "TODO" "WIP" "ON_HOLD"))
-             (munyoki/is-project-p))
-        "IN-PROGRESS"))))
+	     (munyoki/is-project-p))
+	"IN-PROGRESS"))))
 
   (cl-defun my/make/org-capture-template
       (shortcut heading &optional (no-todo nil) (description heading) (category heading))
     "Quickly produce an org-capture-template.
 
-      After adding the result of this function to ‘org-capture-templates’,
-      we will be able perform a capture with “C-c c ‘shortcut’”
-      which will have description ‘description’.
-      It will be added to the tasks file under heading ‘heading’
-      and be marked with category  ‘category’.
+	After adding the result of this function to ‘org-capture-templates’,
+	we will be able perform a capture with “C-c c ‘shortcut’”
+	which will have description ‘description’.
+	It will be added to the tasks file under heading ‘heading’
+	and be marked with category  ‘category’.
 
-      ‘no-todo’ omits the ‘TODO’ tag from the resulting item; e.g.,
-      when it's merely an interesting note that needn't be acted upon.
-      ─Probably a bad idea─
+	‘no-todo’ omits the ‘TODO’ tag from the resulting item; e.g.,
+	when it's merely an interesting note that needn't be acted upon.
+	─Probably a bad idea─
 
-      Defaults for ‘description’ and ‘category’ are set to the same as
-      the ‘heading’. Default for ‘no-todo’ is ‘nil’.
-      "
+	Defaults for ‘description’ and ‘category’ are set to the same as
+	the ‘heading’. Default for ‘no-todo’ is ‘nil’.
+	"
     `(,shortcut ,description entry
-                (file+headline org-default-notes-file
-                               ,(concat heading "")
-                               ;; ,(concat heading "\n#+CATEGORY: " category)
-                               )
-                , (concat "*" (unless no-todo " TODO") " %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n\n")
-                :empty-lines 1))
+		(file+headline org-default-notes-file
+			       ,(concat heading "")
+			       ;; ,(concat heading "\n#+CATEGORY: " category)
+			       )
+		, (concat "*" (unless no-todo " TODO") " %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n\n")
+		:empty-lines 1))
 
   :custom
   (org-image-actual-width nil)
@@ -2244,19 +2238,19 @@ With a prefix ARG, remove start location."
   (org-yank-adjusted-subtrees t)
   (org-todo-keywords
    (quote ((sequence "TODO(t)" "IN-PROGRESS(s@/!)" "|" "DONE(d/!)")
-           (sequence "WIP(w@/!)" "ON_HOLD(h@/!)" "|" "CANCELLED(c@/!)")
-           (sequence "MEETING(m)" "IN-PROGRESS(i@/!)" "FINISHED(f/!)" "|" "DROPPED(d@/!)"))))
+	   (sequence "WIP(w@/!)" "ON_HOLD(h@/!)" "|" "CANCELLED(c@/!)")
+	   (sequence "MEETING(m)" "IN-PROGRESS(i@/!)" "FINISHED(f/!)" "|" "DROPPED(d@/!)"))))
   (org-todo-keyword-faces (quote (("TODO" :foreground "green" :weight bold)
-                                  ("IN-PROGRESS" :foreground "yellow" :weight bold)
-                                  ("DONE" :foreground "orange" :weight bold)
-                                  ("WIP" :foreground "brown" :weight bold)
-                                  ("ON_HOLD" :foreground "grey" :weight bold)
-                                  ("CANCELLED" :foreground "red" :weight bold))))
+				  ("IN-PROGRESS" :foreground "yellow" :weight bold)
+				  ("DONE" :foreground "orange" :weight bold)
+				  ("WIP" :foreground "brown" :weight bold)
+				  ("ON_HOLD" :foreground "grey" :weight bold)
+				  ("CANCELLED" :foreground "red" :weight bold))))
 
   (org-capture-templates-contexts
    '(("r" ((in-mode . "gnus-summary-mode")
-           (in-mode . "gnus-article-mode")
-           (in-mode . "message-mode")))))
+	   (in-mode . "gnus-article-mode")
+	   (in-mode . "message-mode")))))
   (add-hook 'org-after-todo-statistics-hook #'org-summary-todo)
   :config
   (setq org-capture-templates
@@ -2276,14 +2270,14 @@ With a prefix ARG, remove start location."
 	  ("n" "Note" entry (file (concat user-home-directory "Self/org/notes.org"))
 	   "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)))
   (add-to-list 'org-capture-templates
-               '("f" "Elfeed" entry (file "/home/bonface/Self/org/elfeed.org")
-                 "* %a\n%U" :empty-lines 1))
+	       '("f" "Elfeed" entry (file "/home/bonface/Self/org/elfeed.org")
+		 "* %a\n%U" :empty-lines 1))
   (add-to-list 'org-capture-templates
-               '("K" "Book" entry (file "/home/bonface/Self/org/books.org")
-                 "* %^{TITLE}\n:PROPERTIES:\n:ADDED: %<[%Y-%02m-%02d]>\n:END:%^{AUTHOR}p\n%?" :empty-lines 1))
+	       '("K" "Book" entry (file "/home/bonface/Self/org/books.org")
+		 "* %^{TITLE}\n:PROPERTIES:\n:ADDED: %<[%Y-%02m-%02d]>\n:END:%^{AUTHOR}p\n%?" :empty-lines 1))
   (add-to-list 'org-capture-templates
-               '("k" "Book log" item (function org-books-visit-book-log)
-                 "- %U %?" :prepend t))
+	       '("k" "Book log" item (function org-books-visit-book-log)
+		 "- %U %?" :prepend t))
   (org-clock-persistence-insinuate)
   (org-babel-do-load-languages
    'org-babel-load-languages
@@ -2313,17 +2307,17 @@ With a prefix ARG, remove start location."
    :foreground "light gray")
 
   :bind (("C-c C-x n" . clone-and-narrow-org-element)
-         ("C-c l" . org-store-link)
-         ("C-c b" . org-switchb)
-         ("C-c c" . org-capture) ;; Tasks get a 25 minute count down timer
-         :map org-mode-map
-         ("C-'" . avy-goto-char-timer)
-         ("s-p" . org-babel-previous-src-block)
-         ("s-n" . org-babel-next-src-block)
-         ("s-e" . org-edit-src-block)
-         ("C-c C-x C-r" . org-clock-report)
-         :map org-src-mode-map
-         ("s-e" . org-edit-src-block)))
+	 ("C-c l" . org-store-link)
+	 ("C-c b" . org-switchb)
+	 ("C-c c" . org-capture) ;; Tasks get a 25 minute count down timer
+	 :map org-mode-map
+	 ("C-'" . avy-goto-char-timer)
+	 ("s-p" . org-babel-previous-src-block)
+	 ("s-n" . org-babel-next-src-block)
+	 ("s-e" . org-edit-src-block)
+	 ("C-c C-x C-r" . org-clock-report)
+	 :map org-src-mode-map
+	 ("s-e" . org-edit-src-block)))
 
 (use-package toc-org
   :ensure t
@@ -2401,17 +2395,17 @@ With a prefix ARG, remove start location."
   :ensure t
   :requires org
   :hook ((org-present-mode-hook . (lambda ()
-                                    (org-present-big)
-                                    (org-display-inline-images)
-                                    (org-present-hide-cursor)
-                                    (org-present-read-only)))
-         (hide-line-hook . (lambda ()
-                             (hide-line-mode)))
-         (org-present-mode-quit-hook . (lambda ()
-                                         (org-present-small)
-                                         (org-remove-inline-images)
-                                         (org-present-show-cursor)
-                                         (org-present-read-write)))))
+				    (org-present-big)
+				    (org-display-inline-images)
+				    (org-present-hide-cursor)
+				    (org-present-read-only)))
+	 (hide-line-hook . (lambda ()
+			     (hide-line-mode)))
+	 (org-present-mode-quit-hook . (lambda ()
+					 (org-present-small)
+					 (org-remove-inline-images)
+					 (org-present-show-cursor)
+					 (org-present-read-write)))))
 
 (use-package org-tanglesync
   :requires org
@@ -2432,8 +2426,8 @@ With a prefix ARG, remove start location."
   :init
   (setq org-agenda-custom-commands
 	'(("b" "Agenda with Time Budgets"
-           ((agenda "" ((org-agenda-sorting-strategy '(habit-down time-up priority-down category-keep user-defined-up))))
-            (org-time-budgets-in-agenda-maybe)))))
+	   ((agenda "" ((org-agenda-sorting-strategy '(habit-down time-up priority-down category-keep user-defined-up))))
+	    (org-time-budgets-in-agenda-maybe)))))
   (setq munyoki/org-agenda-review-settings
 	'((org-agenda-show-all-dates t)
 	  (org-agenda-start-with-log-mode t)
@@ -2446,75 +2440,75 @@ With a prefix ARG, remove start location."
   (add-to-list 'org-src-lang-modes
 	       '("plantuml" . plantuml))
   (add-to-list 'org-agenda-custom-commands
-               '("c" todo "DONE|ON_HOLD|CANCELLED" nil))
+	       '("c" todo "DONE|ON_HOLD|CANCELLED" nil))
   (add-to-list 'org-agenda-custom-commands
-               '("U" "unscheduled tasks" tags "-SCHEDULED={.+}/!+TODO|+STARTED|+WIP"))
+	       '("U" "unscheduled tasks" tags "-SCHEDULED={.+}/!+TODO|+STARTED|+WIP"))
   (add-to-list 'org-agenda-custom-commands
-               '("%" "Appointments" agenda* "Today's appointments"
-                 ((org-agenda-span 1)
-                  (org-agenda-max-entries 3))))
+	       '("%" "Appointments" agenda* "Today's appointments"
+		 ((org-agenda-span 1)
+		  (org-agenda-max-entries 3))))
   (add-to-list 'org-agenda-custom-commands
-               '("u" alltodo ""
-                 ((org-agenda-skip-function
-                   (lambda ()
-                     (org-agenda-skip-entry-if 'scheduled 'deadline 'regexp  "\n]+>")))
-                  (org-agenda-overriding-header "Unscheduled TODO entries: "))))
+	       '("u" alltodo ""
+		 ((org-agenda-skip-function
+		   (lambda ()
+		     (org-agenda-skip-entry-if 'scheduled 'deadline 'regexp  "\n]+>")))
+		  (org-agenda-overriding-header "Unscheduled TODO entries: "))))
   (add-to-list 'org-agenda-custom-commands
-               '("R" . "Review" ))
+	       '("R" . "Review" ))
   (add-to-list 'org-agenda-custom-commands
-               `("Rw" "Week in review"
-                 agenda ""
-                 ;; agenda settings
-                 ,(append
-                   munyoki/org-agenda-review-settings
-                   '((org-agenda-span 'week)
-                     (org-agenda-start-on-weekday 0)
-                     (org-agenda-overriding-header "Week in Review"))
-                   ) ;; journal.org
-                 ("/home/bonface/Self/org/review/week.html")))
+	       `("Rw" "Week in review"
+		 agenda ""
+		 ;; agenda settings
+		 ,(append
+		   munyoki/org-agenda-review-settings
+		   '((org-agenda-span 'week)
+		     (org-agenda-start-on-weekday 0)
+		     (org-agenda-overriding-header "Week in Review"))
+		   ) ;; journal.org
+		 ("/home/bonface/Self/org/review/week.html")))
   (add-to-list 'org-agenda-custom-commands
-               `("Rl" "Last Week in review"
-                 agenda ""
-                 ;; agenda settings
-                 ,(append
-                   munyoki/org-agenda-review-settings
-                   '((org-agenda-span 'week)
-                     (org-agenda-start-on-weekday 0)
-                     (org-agenda-start-day "-7d")
-                     (org-agenda-overriding-header "Last Week in Review")))
-                 ("/home/bonface/Self/org/review/lastweek.html")))
+	       `("Rl" "Last Week in review"
+		 agenda ""
+		 ;; agenda settings
+		 ,(append
+		   munyoki/org-agenda-review-settings
+		   '((org-agenda-span 'week)
+		     (org-agenda-start-on-weekday 0)
+		     (org-agenda-start-day "-7d")
+		     (org-agenda-overriding-header "Last Week in Review")))
+		 ("/home/bonface/Self/org/review/lastweek.html")))
   (add-to-list 'org-agenda-custom-commands
-               `("Rd" "Day in review"
-                 agenda ""
-                 ;; agenda settings
-                 ,(append
-                   munyoki/org-agenda-review-settings
-                   '((org-agenda-span 'day)
-                     (org-agenda-overriding-header "Day in Review"))
-                   )
-                 ("/home/bonface/Self/org/review/day.html")))
+	       `("Rd" "Day in review"
+		 agenda ""
+		 ;; agenda settings
+		 ,(append
+		   munyoki/org-agenda-review-settings
+		   '((org-agenda-span 'day)
+		     (org-agenda-overriding-header "Day in Review"))
+		   )
+		 ("/home/bonface/Self/org/review/day.html")))
   (add-to-list 'org-agenda-custom-commands
-               `("Ry" "Yesterday in review"
-                 agenda ""
-                 ;; agenda settings
-                 ,(append
-                   munyoki/org-agenda-review-settings
-                   '((org-agenda-span 'day)
-                     (org-agenda-start-day "-1d")
-                     (org-agenda-overriding-header "Yesterday in Review")))
-                 ("/home/bonface/Self/org/review/yesterday.html")))
+	       `("Ry" "Yesterday in review"
+		 agenda ""
+		 ;; agenda settings
+		 ,(append
+		   munyoki/org-agenda-review-settings
+		   '((org-agenda-span 'day)
+		     (org-agenda-start-day "-1d")
+		     (org-agenda-overriding-header "Yesterday in Review")))
+		 ("/home/bonface/Self/org/review/yesterday.html")))
   (add-to-list 'org-agenda-custom-commands
-               `("Rm" "Month in review"
-                 agenda ""
-                 ;; agenda settings
-                 ,(append
-                   munyoki/org-agenda-review-settings
-                   '((org-agenda-span 'month)
-                     (org-agenda-start-day "01")
-                     (org-read-date-prefer-future nil)
-                     (org-agenda-overriding-header "Month in Review"))
-                   )
-                 ("/home/bonface/Self/org/review/month.html")))
+	       `("Rm" "Month in review"
+		 agenda ""
+		 ;; agenda settings
+		 ,(append
+		   munyoki/org-agenda-review-settings
+		   '((org-agenda-span 'month)
+		     (org-agenda-start-day "01")
+		     (org-read-date-prefer-future nil)
+		     (org-agenda-overriding-header "Month in Review"))
+		   )
+		 ("/home/bonface/Self/org/review/month.html")))
   :custom
   (org-agenda-files
    '("~/Self/org/journal.org"
@@ -2545,13 +2539,13 @@ With a prefix ARG, remove start location."
    '(("d" "default" entry "* %<%I:%M %p>: %?"
       :if-new (file+head "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n"))))
   :bind (("C-c n l" . org-roam-buffer-toggle)
-         ("C-c n f" . org-roam-node-find)
-         ("C-c n i" . org-roam-node-insert)
-         :map org-mode-map
-         ("C-M-i" . completion-at-point)
-         :map org-roam-dailies-map
-         ("Y" . org-roam-dailies-capture-yesterday)
-         ("T" . org-roam-dailies-capture-tomorrow))
+	 ("C-c n f" . org-roam-node-find)
+	 ("C-c n i" . org-roam-node-insert)
+	 :map org-mode-map
+	 ("C-M-i" . completion-at-point)
+	 :map org-roam-dailies-map
+	 ("Y" . org-roam-dailies-capture-yesterday)
+	 ("T" . org-roam-dailies-capture-tomorrow))
   :bind-keymap
   ("C-c n d" . org-roam-dailies-map)
   :config
@@ -2562,53 +2556,53 @@ With a prefix ARG, remove start location."
 (unless (boundp 'org-export-latex-classes)
   (setq org-export-latex-classes nil))
 (add-to-list 'org-latex-classes
-             '("apa6"
-               "\\documentclass{apa6}"
-               ("\\section{%s}" . "\\section*{%s}")
-               ("\\subsection{%s}" . "\\subsection*{%s}")
-               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-               ("\\paragraph{%s}" . "\\paragraph*{%s}")
-               ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+	     '("apa6"
+	       "\\documentclass{apa6}"
+	       ("\\section{%s}" . "\\section*{%s}")
+	       ("\\subsection{%s}" . "\\subsection*{%s}")
+	       ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+	       ("\\paragraph{%s}" . "\\paragraph*{%s}")
+	       ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 (add-to-list 'org-latex-classes
-             '("apa7"
-               "\\documentclass{apa6}"
-               ("\\section{%s}" . "\\section*{%s}")
-               ("\\subsection{%s}" . "\\subsection*{%s}")
-               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-               ("\\paragraph{%s}" . "\\paragraph*{%s}")
-               ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+	     '("apa7"
+	       "\\documentclass{apa6}"
+	       ("\\section{%s}" . "\\section*{%s}")
+	       ("\\subsection{%s}" . "\\subsection*{%s}")
+	       ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+	       ("\\paragraph{%s}" . "\\paragraph*{%s}")
+	       ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 (add-to-list 'org-export-latex-classes
-             ;; beamer class, for presentations
-             '("beamer"
-               "\\documentclass[11pt]{beamer}\n
-      \\mode<{{{beamermode}}}>\n
-      \\usetheme{{{{beamertheme}}}}\n
-      \\usecolortheme{{{{beamercolortheme}}}}\n
-      \\beamertemplateballitem\n
-      \\setbeameroption{show notes}
-      \\usepackage[utf8]{inputenc}\n
-      \\usepackage[T1]{fontenc}\n
-      \\usepackage{hyperref}\n
-      \\usepackage{color}
-      \\usepackage{listings}
-      \\lstset{numbers=none,language=[ISO]C++,tabsize=4,
-  frame=single,
-  basicstyle=\\small,
-  showspaces=false,showstringspaces=false,
-  showtabs=false,
-  keywordstyle=\\color{blue}\\bfseries,
-  commentstyle=\\color{red},
-  }\n
-      \\usepackage{verbatim}\n
-      \\institute{{{{beamerinstitute}}}}\n
-       \\subject{{{{beamersubject}}}}\n"
+	     ;; beamer class, for presentations
+	     '("beamer"
+	       "\\documentclass[11pt]{beamer}\n
+	\\mode<{{{beamermode}}}>\n
+	\\usetheme{{{{beamertheme}}}}\n
+	\\usecolortheme{{{{beamercolortheme}}}}\n
+	\\beamertemplateballitem\n
+	\\setbeameroption{show notes}
+	\\usepackage[utf8]{inputenc}\n
+	\\usepackage[T1]{fontenc}\n
+	\\usepackage{hyperref}\n
+	\\usepackage{color}
+	\\usepackage{listings}
+	\\lstset{numbers=none,language=[ISO]C++,tabsize=4,
+    frame=single,
+    basicstyle=\\small,
+    showspaces=false,showstringspaces=false,
+    showtabs=false,
+    keywordstyle=\\color{blue}\\bfseries,
+    commentstyle=\\color{red},
+    }\n
+	\\usepackage{verbatim}\n
+	\\institute{{{{beamerinstitute}}}}\n
+	 \\subject{{{{beamersubject}}}}\n"
 
-               ("\\section{%s}" . "\\section*{%s}")
+	       ("\\section{%s}" . "\\section*{%s}")
 
-               ("\\begin{frame}[fragile]\\frametitle{%s}"
-                "\\end{frame}"
-                "\\begin{frame}[fragile]\\frametitle{%s}"
-                "\\end{frame}")))
+	       ("\\begin{frame}[fragile]\\frametitle{%s}"
+		"\\end{frame}"
+		"\\begin{frame}[fragile]\\frametitle{%s}"
+		"\\end{frame}")))
 
 ;; letter class, for formal letters
 (use-package org-edna
@@ -2623,9 +2617,9 @@ With a prefix ARG, remove start location."
   :config
   (setq org-link-keep-stored-after-insertion nil)
   :bind (:map org-mode-map
-              ("C-c l" . org-store-link)
-              ("C-c S-l" . org-toggle-link-display)
-              ("C-c C-S-l" . org-insert-last-stored-link)))
+	      ("C-c l" . org-store-link)
+	      ("C-c S-l" . org-toggle-link-display)
+	      ("C-c C-S-l" . org-insert-last-stored-link)))
 
 (require 'ol)
 (defcustom org-elpher-command 'elpher
@@ -2635,7 +2629,7 @@ With a prefix ARG, remove start location."
 
 (defun org-elpher-open (path _)
   "Visit the gemini/ gopher page on PATH.
-PATH should be a topic that can be thrown at the man command."
+  PATH should be a topic that can be thrown at the man command."
   (funcall org-elpher-command path))
 
 (defun org-elpher-store-link ()
@@ -2643,8 +2637,8 @@ PATH should be a topic that can be thrown at the man command."
   (when (memq major-mode '(elpher-mode))
     ;; This is a elpher page, we do make this link.
     (let* ((page (elpher-copy-current-url))
-           (link (elpher-copy-current-url))
-           (description page))
+	   (link (elpher-copy-current-url))
+	   (description page))
       (org-link-store-props
        :type "elpher"
        :link link
@@ -2655,11 +2649,11 @@ PATH should be a topic that can be thrown at the man command."
       (match-string 1 (buffer-name))
     (error "Cannot create link to this man page")))
 (org-link-set-parameters "gemini"
-                         :follow #'org-elpher-open
-                         :store #'org-elpher-store-link)
+			 :follow #'org-elpher-open
+			 :store #'org-elpher-store-link)
 (org-link-set-parameters "gopher"
-                         :follow #'org-elpher-open
-                         :store #'org-elpher-store-link)
+			 :follow #'org-elpher-open
+			 :store #'org-elpher-store-link)
 
 (setq org-time-budgets
       '((:title "Genenetwork/ Weekday" :tags "+genenetwork+weekday" :budget "25:00" :blocks (workday week))
@@ -2670,7 +2664,7 @@ PATH should be a topic that can be thrown at the man command."
 	(:title "Guix" :match "+guix" :budget "5:00" :blocks (nil week))))
 
 (provide 'setup-org)
-;;; setup-org.el ends here
+  ;;; setup-org.el ends here
 #+END_SRC
 
 * Email
