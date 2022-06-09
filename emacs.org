@@ -955,16 +955,6 @@ Configure the packages.
   :config
   (persistent-scratch-setup-default))
 
-(use-package perspective
-  :ensure t
-  :bind-keymap
-  ("C-x x" . perspective-map)
-  :bind (("C-x k" . persp-kill-buffer*))
-  :config
-  (persp-mode)
-  (consult-customize consult--source-buffer :hidden t :default nil)
-  (add-to-list 'consult-buffer-sources persp-consult-source))
-
 (use-package projectile
   :ensure t
   :config
@@ -1430,8 +1420,6 @@ Configure the packages.
   (doom-modeline-checker-simple-format t)
   (doom-modeline-number-limit 99)
   (doom-modeline-vcs-max-length 12)
-  (doom-modeline-persp-name nil)
-  (doom-modeline-display-default-persp-name t)
   (doom-modeline-lsp nil)
   (doom-modeline-modal-icon nil)
   (doom-modeline-irc t)
