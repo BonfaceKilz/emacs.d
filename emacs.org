@@ -949,7 +949,9 @@ Configure the packages.
   :mode ("\\.pdf\\'" . pdf-view-mode)
   :magic ("%PDF" . pdf-view-mode)
   :requires tablist
-  :bind (("M-g M-g" . pdf-view-goto-page))
+  :bind (:map pdf-view-mode-map
+	      (("M-g g" . pdf-view-goto-page)
+	       ("M-g M-g" . pdf-view-goto-page)))
   :custom
   (pdf-tools-enabled-modes ; simplified from the defaults
    '(pdf-history-minor-mode
