@@ -2018,6 +2018,8 @@ Configure the packages.
   ;;; setup-org.el
 
 ;; Org-mode
+(use-package org-arbeitszeit
+  :ensure t)
 
 (use-package citar
   :ensure t
