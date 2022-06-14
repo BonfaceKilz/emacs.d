@@ -1843,7 +1843,9 @@ Configure the packages.
 					 (string= "gimp" exwm-instance-name))
 				 (exwm-workspace-rename-buffer exwm-title)))))
   :bind (("C-x C-c" . exwm-logout)
-	 ("C-c C-l" . exwm-input-release-keyboard)))
+	 ("C-c C-l" . exwm-input-release-keyboard)
+	 :map exwm-mode-map
+	 ("C-c C-r" . exwm-input-send-next-key)))
 
 (provide 'setup-exwm)
 ;;; setup-exwm.el ends here
