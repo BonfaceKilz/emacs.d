@@ -1398,7 +1398,8 @@ Configure the packages.
 
 ;; Aliases
 (defalias 'yes-or-no-p 'y-or-n-p) ; y or n is enough
-
+(setq browse-url-browser-function 'browse-url-generic
+      browse-url-generic-program "qutebrowser")
 (provide 'sane-defaults)
    ;;; sane-defaults.el ends here
 #+END_SRC
