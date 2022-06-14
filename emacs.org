@@ -266,6 +266,7 @@ Configure the packages.
 (setq package-quickstart t)
 
 ;; Setting up straight
+(setq straight-disable-native-compilation t)
 (defvar bootstrap-version)
 (let ((bootstrap-file
        (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
