@@ -969,7 +969,10 @@ Configure the packages.
   :config
   (pdf-tools-install :no-query)
   (pdf-loader-install)
-  :hook ((pdf-view-mode-hook . (lambda() (linum-mode -1)))
+  :hook ((pdf-view-mode-hook . (lambda() (progn
+					   (linum-mode -1)
+					   (pdf-outline-minor-mode 1)
+					   (pdf-isearch-minor-mode 1))))
 	 (TeX-after-compilation-finished-functions . #'TeX-revert-document-buffer)))
 
 ;; This doubles as a quick way to avoid the common formula: C-x b RET
