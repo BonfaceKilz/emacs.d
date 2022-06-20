@@ -2659,7 +2659,7 @@ Configure the packages.
   ;;; setup-org.el ends here
 #+END_SRC
 
-* Email
+* Email/ GNUs
 ** Initial setup
 
 #+NAME: gnus
