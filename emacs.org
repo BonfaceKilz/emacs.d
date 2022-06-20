@@ -291,6 +291,13 @@ Configure the packages.
 (use-package use-package-ensure-system-package
   :ensure t)
 
+(use-package esup
+  :ensure t
+  ;; To use MELPA Stable use ":pin melpa-stable",
+  :pin melpa
+  :init
+  (setq esup-depth 0))
+
 (provide 'setup-package)
 
     ;;; setup-package.el
