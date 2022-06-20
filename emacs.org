@@ -238,8 +238,6 @@ Configure the packages.
 			 ("elpa"      . "http://elpa.gnu.org/packages/")
 			 ("melpa"     . "https://melpa.org/packages/")))
 ;; Initialise the packages, avoiding a re-initialisation.
-(unless (bound-and-true-p package--initialized)
-  (setq package-enable-at-startup nil))
 
 ;; Make sure `use-package' is available.
 (unless (package-installed-p 'use-package)
@@ -254,16 +252,11 @@ Configure the packages.
   ;;
   ;; This is to empower help commands with their contextual awareness,
   ;; such as `describe-symbol'.
+  (setq use-package-expand-minimally t)
   (setq use-package-hook-name-suffix nil))
 
-(eval-when-compile
-  (require 'use-package))
-
-;; Do not initialise the package manager.  This is done in `init.el'.
-(setq package-enable-at-startup nil)
-
-;; Allow loading from the package cache.
-(setq package-quickstart t)
+(setq package--initialized t)
+(package-activate-all)
 
 ;; Setting up straight
 (setq straight-disable-native-compilation t)
