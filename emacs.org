@@ -75,7 +75,6 @@
   (server-start))
 
 (require 'sane-defaults)
-(require 'setup-email)
 (require 'appearance)
 (require 'setup-elfeed)
 (require 'setup-exwm)
