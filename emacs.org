@@ -2663,86 +2663,43 @@ Configure the packages.
 ** Initial setup
 
 #+NAME: gnus
-#+BEGIN_SRC elisp :tangle ~/.emacs.d/settings/setup-email.el
-(use-package ol-notmuch
-  :ensure t)
-
+#+BEGIN_SRC elisp :tangle ~/.gnus.el
+(require 'nnir)
 (require 'notmuch)
 
-(add-to-list 'mm-body-charset-encoding-alist '(utf-8 . base64))
-(add-hook 'message-setup-hook #'message-sort-headers)
-(add-hook 'message-setup-hook #'mml-secure-message-sign-pgpmime)
-(add-hook 'message-mode-hook #'(lambda ()
-                                (progn
-                                  (setq-local writegood-mode 1)
-                                  (setq-local fill-column 50))))
-
-(defun munyoki/auth-get-field (host prop)
-  "Find PROP in `auth-sources' for HOST entry."
-  (let* ((source (auth-source-search :host host))
-         (field (plist-get
-                 (flatten-list source)
-                 prop)))
-    (if source
-        field
-      (user-error "No entry in auth sources"))))
-
-(defun munyoki-common-auth-get-field (host prop)
-  "Find PROP in `auth-sources' for HOST entry."
-  (let* ((source (auth-source-search :host host))
-         (field (plist-get
-                 (flatten-list source)
-                 prop)))
-    (if source
-        field
-      (user-error "No entry in auth sources"))))
-
-(defun munyoki/message-insert-citation-line ()
-  "Insert a simple citation line."
-  (when message-reply-headers
-    (insert (mail-header-from message-reply-headers) " anaandika:")
-    (newline)
-    (newline)))
 
 (setq auth-sources '("~/authinfo.gpg"))
 (setq user-full-name "Munyoki Kilyungi")
 (setq user-mail-address "me@bonfacemunyoki.com")
-(setq mm-encrypt-option nil)
-(setq mm-sign-option nil)
-(setq mml-secure-openpgp-encrypt-to-self t)
-(setq mml-secure-openpgp-sign-with-sender t)
-(setq mml-secure-smime-encrypt-to-self t)
-(setq mml-secure-smime-sign-with-sender t)
-(setq epa-file-cache-passphrase-for-symmetric-encryption nil)
-(setq mail-user-agent 'message-user-agent)
-(setq compose-mail-user-agent-warnings nil)
-(setq message-mail-user-agent t)
-(setq message-confirm-send nil)
-(setq message-kill-buffer-on-exit t)
-(setq message-wide-reply-confirm-recipients t)
-(setq notmuch-fcc-dirs "Sent")
-(setq message-citation-line-function 'munyoki/message-insert-citation-line)
-(setq smtpmail-default-smtp-server "smtp.fastmail.com")
-(setq smtpmail-smtp-server "smtp.fastmail.com")
-(setq smtpmail-stream-type 'ssl)
-(setq smtpmail-smtp-service 587)
-(setq smtpmail-queue-mail nil)
-(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
-(setq mm-discouraged-alternatives '("text/html" "text/richtext"))
-(setq mm-automatic-display (remove "text/html" mm-automatic-display))
-(setq send-mail-function 'sendmail-send-it)
-(setq sendmail-program "/usr/bin/msmtp")
-(setq mail-specify-envelope-from t)
-(setq message-sendmail-envelope-from 'header)
-(setq mail-envelope-from 'header)
-(setq message-kill-buffer-on-exit t)
-(setq notmuch-search-oldest-first nil)
-(setq gnus-select-method
- '(nntp "localhost"
-        (gnus-search-engine gnus-search-notmuch
-                            (remove-prefix "/home/bonface/var/mail/"))))
 
-(provide 'setup-email)
+;; sort by most recent date
+(setq gnus-article-sort-functions (quote ((not gnus-article-sort-by-date))))
+(setq gnus-thread-sort-functions (quote ((not gnus-thread-sort-by-date))))
+
+;; More attractive Summary View
+;; http://groups.google.com/group/gnu.emacs.gnus/browse_thread/thread/a673a74356e7141f
+(when window-system
+ (setq gnus-sum-thread-tree-indent " ")
+ (setq gnus-sum-thread-tree-root "") ;; "● ")
+ (setq gnus-sum-thread-tree-false-root "") ;; "◯ ")
+ (setq gnus-sum-thread-tree-single-indent "") ;; "◎ ")
+ (setq gnus-sum-thread-tree-vertical    "│")
+ (setq gnus-sum-thread-tree-leaf-with-other "├─► ")
+ (setq gnus-sum-thread-tree-single-leaf   "╰─► "))
+
+(setq gnus-summary-display-arrow t)
+
+(require 'nnir)
+;; (setq nnir-method-default-engines '((nnimap . notmuch)
+;; 				    (nntp . notmuch)
+;; 				    (nnml . notmuch)
+;; 				    (nndraft . notmuch)))
+
+(setq gnus-select-method
+      '(nntp "localhost"
+	     (gnus-search-engine gnus-search-notmuch
+				 (remove-prefix "/home/bonface/.mail"))))
+
 #+END_SRC
 ** Password                                                           :crypt:
 -----BEGIN PGP MESSAGE-----
