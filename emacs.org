@@ -1121,6 +1121,34 @@ Configure the packages.
 ;; Bind to `vertico-map' or `selectrum-minibuffer-map'
 (define-key vertico-map (kbd "M-P") #'consult-toggle-preview)
 
+(use-package notmuch
+  :ensure t
+  :custom
+  (mm-encrypt-option nil)
+  (mm-sign-option nil)
+  (mml-secure-openpgp-encrypt-to-self t)
+  (mml-secure-openpgp-sign-with-sender t)
+  (mml-secure-smime-encrypt-to-self t)
+  (mml-secure-smime-sign-with-sender t)
+  (epa-file-cache-passphrase-for-symmetric-encryption nil)
+  (mail-user-agent 'message-user-agent)
+  (compose-mail-user-agent-warnings nil)
+  (message-mail-user-agent t)
+  (message-confirm-send nil)
+  (message-kill-buffer-on-exit t)
+  (message-wide-reply-confirm-recipients t)
+  (notmuch-fcc-dirs "Sent")
+  (gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+  (mm-discouraged-alternatives '("text/html" "text/richtext"))
+  (mm-automatic-display (remove "text/html" mm-automatic-display))
+  (send-mail-function 'message-send-mail-with-sendmail)
+  (sendmail-program "/usr/bin/msmtp")
+  (mail-specify-envelope-from t)
+  (message-sendmail-envelope-from 'header)
+  (mail-envelope-from 'header)
+  (message-kill-buffer-on-exit t)
+  (notmuch-search-oldest-first nil))
+
 ;; Configure directory extension.
 (use-package vertico-directory
   :after vertico
