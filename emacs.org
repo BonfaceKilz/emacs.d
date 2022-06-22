@@ -1311,7 +1311,7 @@ Configure the packages.
     (cons (concat "[CRM] " (car args)) (cdr args)))
   (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
   :custom
-  (page-break-lines-mode 1)
+  (global-page-break-lines-mode 1)
   (auto-revert-verbose t)
   (column-number-mode t)
   (custom-safe-themes t)
