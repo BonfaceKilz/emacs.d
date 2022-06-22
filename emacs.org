@@ -2702,18 +2702,37 @@ Configure the packages.
 
 ;; sort by most recent date
 (setq gnus-article-sort-functions (quote ((not gnus-article-sort-by-date))))
-(setq gnus-thread-sort-functions (quote ((not gnus-thread-sort-by-date))))
+(setq gnus-thread-sort-functions
+      '(gnus-thread-sort-by-most-recent-date
+        (not gnus-thread-sort-by-number)))
+
+; NO 'passive
+(setq gnus-use-cache t)
+
+;; {{ press "o" to view all groups
+(defun my-gnus-group-list-subscribed-groups ()
+  "List all subscribed groups with or without un-read messages"
+  (interactive)
+  (gnus-group-list-all-groups 5))
+
+(define-key gnus-group-mode-map
+  ;; list all the subscribed groups even they contain zero un-read messages
+  (kbd "o") 'my-gnus-group-list-subscribed-groups)
+
+;; Threads!  I hate reading un-threaded email -- especially mailing
+;; lists.  This helps a ton!
+(setq gnus-summary-thread-gathering-function 'gnus-gather-threads-by-subject)
 
 ;; More attractive Summary View
 ;; http://groups.google.com/group/gnu.emacs.gnus/browse_thread/thread/a673a74356e7141f
 (when window-system
- (setq gnus-sum-thread-tree-indent " ")
- (setq gnus-sum-thread-tree-root "") ;; "● ")
- (setq gnus-sum-thread-tree-false-root "") ;; "◯ ")
- (setq gnus-sum-thread-tree-single-indent "") ;; "◎ ")
- (setq gnus-sum-thread-tree-vertical    "│")
- (setq gnus-sum-thread-tree-leaf-with-other "├─► ")
- (setq gnus-sum-thread-tree-single-leaf   "╰─► "))
+  (setq gnus-sum-thread-tree-indent " ")
+  (setq gnus-sum-thread-tree-root "") ;; "● ")
+  (setq gnus-sum-thread-tree-false-root "") ;; "◯ ")
+  (setq gnus-sum-thread-tree-single-indent "") ;; "◎ ")
+  (setq gnus-sum-thread-tree-vertical    "│")
+  (setq gnus-sum-thread-tree-leaf-with-other "├─► ")
+  (setq gnus-sum-thread-tree-single-leaf   "╰─► "))
 
 (setq gnus-summary-display-arrow t)
 
@@ -2728,6 +2747,53 @@ Configure the packages.
 	     (gnus-search-engine gnus-search-notmuch
 				 (remove-prefix "/home/bonface/.mail"))))
 
+
+(add-to-list 'mm-body-charset-encoding-alist '(utf-8 . base64))
+(add-hook 'message-setup-hook #'message-sort-headers)
+(add-hook 'message-setup-hook #'mml-secure-message-sign-pgpmime)
+(add-hook 'message-mode-hook #'(lambda ()
+                                (progn
+                                  (setq-local writegood-mode 1)
+                                  (setq-local fill-column 50))))
+(setq epa-file-cache-passphrase-for-symmetric-encryption nil)
+(setq mm-encrypt-option nil)
+(setq mm-sign-option nil)
+(setq mml-secure-openpgp-encrypt-to-self t)
+(setq mml-secure-openpgp-sign-with-sender t)
+(setq mml-secure-smime-encrypt-to-self t)
+(setq mml-secure-smime-sign-with-sender t)
+(setq epa-file-cache-passphrase-for-symmetric-encryption t)
+(setq mail-user-agent 'message-user-agent)
+(setq compose-mail-user-agent-warnings nil)
+(setq message-mail-user-agent t)
+(setq message-confirm-send nil)
+(setq message-kill-buffer-on-exit t)
+(setq message-wide-reply-confirm-recipients t)
+(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+(setq mm-discouraged-alternatives '("text/html" "text/richtext"))
+(setq mm-automatic-display (remove "text/html" mm-automatic-display))
+(setq smtpmail-queue-mail nil)
+(setq message-send-mail-function 'message-send-mail-with-sendmail)
+(setq sendmail-program "/usr/bin/msmtp")
+(setq gnus-ignored-newsgroups "^to\\.\\|^[0-9. ]+\\( \\|$\\)\\|^[\"]\"[#'()]")
+
+(setq mail-specify-envelope-from t)
+(setq message-sendmail-envelope-from 'header)
+(setq mail-envelope-from 'header)
+(setq message-kill-buffer-on-exit t)
+(setq gnus-thread-hide-subtree t)
+(setq gnus-thread-ignore-subject t)
+(setq gc-cons-threshold 3500000)
+(eval-after-load 'mailcap
+  '(progn
+     (cond
+      ;; on macOS, maybe change mailcap-mime-data?
+      ((eq system-type 'darwin))
+      ;; on Windows, maybe change mailcap-mime-data?
+      ((eq system-type 'windows-nt))
+      (t
+       ;; Linux, read ~/.mailcap
+       (mailcap-parse-mailcaps)))))
 #+END_SRC
 ** Password                                                           :crypt:
 -----BEGIN PGP MESSAGE-----
