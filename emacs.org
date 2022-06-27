@@ -1321,7 +1321,6 @@ Configure the packages.
   (ediff-window-setup-function 'ediff-setup-windows-plain)
   (enable-recursive-minibuffers t)
   (epa-pinentry-mode 'loopback)
-  (fill-column 50)
   (gc-cons-threshold 100000000)
   (geiser-default-implementation 'racket)
   (geiser-racket-binary
