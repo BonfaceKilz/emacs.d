@@ -783,7 +783,8 @@ Configure the packages.
 
 (use-package hyperbole
   :ensure t
-  :bind (("C-c C-w"  . hycontrol-windows)))
+  :init
+  (hyperbole-mode 1))
 
 (use-package imenu
   :ensure t
