@@ -2698,10 +2698,6 @@ Configure the packages.
 
 #+NAME: gnus
 #+BEGIN_SRC elisp :tangle ~/.gnus.el
-(require 'nnir)
-(require 'notmuch)
-
-
 (setq auth-sources '("~/authinfo.gpg"))
 (setq user-full-name "Munyoki Kilyungi")
 (setq user-mail-address "me@bonfacemunyoki.com")
@@ -2743,15 +2739,12 @@ Configure the packages.
 (setq gnus-summary-display-arrow t)
 
 (require 'nnir)
-;; (setq nnir-method-default-engines '((nnimap . notmuch)
-;; 				    (nntp . notmuch)
-;; 				    (nnml . notmuch)
-;; 				    (nndraft . notmuch)))
 
 (setq gnus-select-method
       '(nntp "localhost"
-	     (gnus-search-engine gnus-search-notmuch
-				 (remove-prefix "/home/bonface/.mail"))))
+	     (gnus-search-engine
+	      gnus-search-notmuch
+	      (remove-prefix "/home/bonface/.mail/"))))
 
 
 (add-to-list 'mm-body-charset-encoding-alist '(utf-8 . base64))
