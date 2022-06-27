@@ -1149,6 +1149,12 @@ Configure the packages.
   (mail-envelope-from 'header)
   (message-kill-buffer-on-exit t)
   (notmuch-search-oldest-first nil))
+(add-hook 'message-setup-hook #'message-sort-headers)
+(add-hook 'message-setup-hook #'mml-secure-message-sign-pgpmime)
+(add-hook 'message-mode-hook #'(lambda ()
+                                (progn
+                                  (setq-local writegood-mode 1)
+                                  (setq-local fill-column 50))))
 
 ;; Configure directory extension.
 (use-package vertico-directory
