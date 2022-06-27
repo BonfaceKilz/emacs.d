@@ -345,6 +345,11 @@ Configure the packages.
 
 (global-set-key (kbd "C-c D")  #'munyoki/delete-file-and-buffer)
 
+(use-package geiser
+  :ensure t
+  :custom
+  (geiser-guile-binary "/home/bonface/.guix-profile/bin/guile"))
+
 (use-package 0x0
   :ensure t)
 
