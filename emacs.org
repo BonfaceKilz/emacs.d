@@ -826,6 +826,9 @@ Configure the packages.
 	      (pop-to-buffer (other-buffer (current-buffer) t))
 	    (imenu-list))))))
 
+(use-package legalese
+  :ensure t)
+
 (use-package lispy
   :ensure t
   :hook ((emacs-lisp-mode-hook
