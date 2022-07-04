@@ -2062,6 +2062,9 @@ Configure the packages.
 (use-package org-arbeitszeit
   :ensure t)
 
+(use-package org-tanglesync
+  :ensure t)
+
 (use-package citar
   :ensure t
   :requires citeproc
