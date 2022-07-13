@@ -1350,9 +1350,7 @@ Configure the packages.
   (enable-recursive-minibuffers t)
   (epa-pinentry-mode 'loopback)
   (gc-cons-threshold 100000000)
-  (geiser-default-implementation 'racket)
-  (geiser-racket-binary
-   (concat user-home-directory ".guix-profile/bin/racket"))
+
   (global-auto-revert-non-file-buffers nil)
   (history-length 100)
   (ibuffer-show-empty-filter-groups -1)
