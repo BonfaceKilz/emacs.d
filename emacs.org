@@ -1371,6 +1371,7 @@ Configure the packages.
   (read-process-output-max (* 1024 1024)) ;; 1mb
   (recentf-max-menu-items 25)
   (recentf-max-saved-items 100)
+  (repeat-mode t)
   (require-final-newline t)
   (set-mark-command-repeat-pop t)
   (shell-file-name
