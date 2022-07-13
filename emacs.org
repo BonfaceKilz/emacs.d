@@ -348,7 +348,7 @@ Configure the packages.
 (use-package geiser
   :ensure t
   :custom
-  (geiser-guile-binary "/home/bonface/.guix-profile/bin/guile"))
+  (geiser-guile-binary "guile"))
 
 (use-package 0x0
   :ensure t)
