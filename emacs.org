@@ -350,6 +350,14 @@ Configure the packages.
   :custom
   (geiser-guile-binary "guile"))
 
+(use-package pomm
+  :ensure t
+  :commands (pomm)
+  :custom
+  (alert-default-style 'libnotify)
+  :config
+  (pomm-mode-line-mode))
+
 (use-package 0x0
   :ensure t)
 
