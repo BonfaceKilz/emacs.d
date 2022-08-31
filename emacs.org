@@ -1197,11 +1197,12 @@ Configure the packages.
                                   (setq-local writegood-mode 1)
                                   (setq-local fill-column 50))))
 (defun munyoki/message-insert-citation-line ()
-  "Insert a simple citation line."
-  (when message-reply-headers
-    (insert (mail-header-from message-reply-headers) " anaandika:")
-    (newline)
-    (newline)))
+    "Insert a simple citation line."
+    (when message-reply-headers
+      (insert (mail-header-from message-reply-headers) " aliandika:")
+      (newline)
+      (newline)))
+
 (setq message-citation-line-function 'munyoki/message-insert-citation-line)
 
 
