@@ -2423,13 +2423,6 @@ Configure the packages.
   :hook
   ((toc-org-mode . org-mode-hook)))
 
-(use-package org-books
-  :ensure t
-  :requires org
-  :custom
-  (org-books-file
-   (concat user-home-directory "Self/org/books.org")))
-
 (use-package ob-async
   :ensure t
   :requires org)
