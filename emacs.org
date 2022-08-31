@@ -1019,15 +1019,18 @@ Configure the packages.
     "/away message handler.")
   :custom
   (rcirc-server-alist
-      '(("irc.libera.chat"
-         :port 6697
-         :encryption tls
-         :channels ("#guix"
-                    "#nairobilug"
-                    "#whereiseveryone"
-		    "#nonguix")
-         :user-name "bonz060"
-         :nick "bonz060")))
+   '(("irc.libera.chat"
+      :port 6697
+      :encryption tls
+      :channels ("#guix"
+		 "#nairobilug"
+		 "#whereiseveryone"
+		 "#nonguix"
+		 "#guile-steel"
+		 "#ilugc"
+		 "#fsf")
+      :user-name "bonz060"
+      :nick "bonz060")))
   (rcirc-debug-flag t)
   ;; Include date in time stamp.
   (rcirc-time-format "%Y-%m-%d %H:%M ")
