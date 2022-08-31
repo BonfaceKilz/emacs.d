@@ -2332,7 +2332,7 @@ Configure the packages.
   (org-src-preserve-indentation t)
   (org-src-tab-acts-natively t)
   (org-startup-indented t)
-  (org-tags-exclude-from-inheritance (quote ("crypt")))
+  (org-tags-exclude-from-inheritance (quote ("blog")))
   (org-timer-default-timer 45)
   (org-use-fast-todo-selection t)
   (org-use-speed-commands t)
