@@ -1189,13 +1189,18 @@ Configure the packages.
   (message-sendmail-envelope-from 'header)
   (mail-envelope-from 'header)
   (message-kill-buffer-on-exit t)
-  (notmuch-search-oldest-first nil))
-(add-hook 'message-setup-hook #'message-sort-headers)
+  (notmuch-search-oldest-first nil)
+  :bind (:map notmuch-show-part-map
+	      ("d" . munyoki/notmuch-show-view-as-patch)))
+
+(add-hook 'gnus-message-setup-hook #'mml-secure-message-sign-pgpmime)
 (add-hook 'message-setup-hook #'mml-secure-message-sign-pgpmime)
+(add-hook 'message-setup-hook #'message-sort-headers)
 (add-hook 'message-mode-hook #'(lambda ()
                                 (progn
                                   (setq-local writegood-mode 1)
                                   (setq-local fill-column 50))))
+
 (defun munyoki/message-insert-citation-line ()
     "Insert a simple citation line."
     (when message-reply-headers
