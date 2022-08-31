@@ -2747,12 +2747,9 @@ Configure the packages.
 			 :store #'org-elpher-store-link)
 
 (setq org-time-budgets
-      '((:title "Genenetwork/ Weekday" :tags "+genenetwork+weekday" :budget "25:00" :blocks (workday week))
-	(:title "Genenetwork/ Weekend" :tags "+genenetwork+weekend" :budget "6:00" :blocks (nil week))
-	(:title "Algorithms" :match "+algorithms" :budget "3:30" :blocks (day week))
-	(:title "Strathmore/ Weekday" :match "+strathmore+weekday" :budget "5:00" :blocks (workday week))
-	(:title "Strathmore/ Weekend" :match "+strathmore+weekend" :budget "4:00" :blocks (day week))
-	(:title "Guix" :match "+guix" :budget "5:00" :blocks (nil week))))
+      '((:title "Genenetwork" :tags "+genenetwork" :budget "35:00" :blocks (day week))
+	(:title "Strathmore" :match "+strathmore+weekend" :budget "9:00" :blocks (day week))
+	(:title "Guix" :match "+guix" :budget "10:00" :blocks (day week))))
 
 (provide 'setup-org)
   ;;; setup-org.el ends here
