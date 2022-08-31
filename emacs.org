@@ -2751,6 +2751,18 @@ Configure the packages.
 	(:title "Strathmore" :match "+strathmore+weekend" :budget "9:00" :blocks (day week))
 	(:title "Guix" :match "+guix" :budget "10:00" :blocks (day week))))
 
+(use-package org-contrib
+  :ensure t
+  :init
+  (require 'ox-extra)
+  (require 'oc-csl)
+  (require 'oc-natbib)
+  (require 'oc-biblatex)
+  (setq org-cite-export-processors
+	'((beamer natbib)
+	  (latex biblatex)
+	  (t csl))))
+
 (provide 'setup-org)
   ;;; setup-org.el ends here
 #+END_SRC
