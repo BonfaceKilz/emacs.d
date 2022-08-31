@@ -2813,9 +2813,9 @@ Configure the packages.
 (add-hook 'message-setup-hook #'message-sort-headers)
 (add-hook 'message-setup-hook #'mml-secure-message-sign-pgpmime)
 (add-hook 'message-mode-hook #'(lambda ()
-                                (progn
-                                  (setq-local writegood-mode 1)
-                                  (setq-local fill-column 50))))
+                                 (progn
+                                   (setq-local writegood-mode 1)
+                                   (setq-local fill-column 50))))
 (setq epa-file-cache-passphrase-for-symmetric-encryption nil)
 (setq mm-encrypt-option nil)
 (setq mm-sign-option nil)
