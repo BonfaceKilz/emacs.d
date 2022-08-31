@@ -2376,9 +2376,6 @@ Configure the packages.
   (add-to-list 'org-capture-templates
 	       '("K" "Book" entry (file "/home/bonface/Self/org/books.org")
 		 "* %^{TITLE}\n:PROPERTIES:\n:ADDED: %<[%Y-%02m-%02d]>\n:END:%^{AUTHOR}p\n%?" :empty-lines 1))
-  (add-to-list 'org-capture-templates
-	       '("k" "Book log" item (function org-books-visit-book-log)
-		 "- %U %?" :prepend t))
   (org-clock-persistence-insinuate)
   (org-babel-do-load-languages
    'org-babel-load-languages
