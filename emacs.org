@@ -355,11 +355,12 @@ Configure the packages.
   (let ((filename (buffer-file-name)))
     (when filename
       (if (vc-backend filename)
-          (vc-delete-file filename)
-        (progn
-          (delete-file filename)
-          (message "Deleted file %s" filename)
-          (kill-buffer))))))
+	  (vc-delete-file filename)
+	(progn
+	  (delete-file filename)
+	  (message "Deleted file %s" filename)
+	  (kill-buffer))))))
+
 
 (global-set-key (kbd "C-c D")  #'munyoki/delete-file-and-buffer)
 (global-set-key (kbd "C-c I")  #'munyoki/insert-string)
@@ -408,8 +409,8 @@ Configure the packages.
   :init
   (defun dictionary-search-dwim (&optional arg)
     "Search for definition of word at point. If region is active,
-     search for contents of region instead. If called with a prefix
-     argument, query for word to search."
+       search for contents of region instead. If called with a prefix
+       argument, query for word to search."
     (interactive "P")
     (if arg
 	(dictionary-search nil)
@@ -600,9 +601,9 @@ Configure the packages.
 (use-package consult-dir
   :ensure t
   :bind (("C-x C-d" . consult-dir)
-         :map vertico-map
-         ("C-x C-d" . consult-dir)
-         ("C-x C-j" . consult-dir-jump-file)))
+	 :map vertico-map
+	 ("C-x C-d" . consult-dir)
+	 ("C-x C-j" . consult-dir-jump-file)))
 
 (use-package debbugs
   :ensure t
@@ -629,14 +630,14 @@ Configure the packages.
 
 (use-package dired-dragon
   :straight (:host github
-             :repo "jeetelongname/dired-dragon")
+		   :repo "jeetelongname/dired-dragon")
   :after dired
 
   ;; if you use use-package for bindings
   :bind (:map dired-mode-map
-         ("C-d d" . dired-dragon)
-         ("C-d s" . dired-dragon-stay)
-         ("C-d i" . dired-dragon-individual)))
+	      ("C-d d" . dired-dragon)
+	      ("C-d s" . dired-dragon-stay)
+	      ("C-d i" . dired-dragon-individual)))
 
 (use-package dired-filter
   :ensure t)
@@ -676,10 +677,10 @@ Configure the packages.
   (eval-when-compile
     (defmacro my/embark-split-action (fn split-type)
       `(defun ,(intern (concat "my/embark-"
-                               (symbol-name fn)
-                               "-"
-                               (car (last  (split-string
-                                            (symbol-name split-type) "-"))))) ()
+			       (symbol-name fn)
+			       "-"
+			       (car (last  (split-string
+					    (symbol-name split-type) "-"))))) ()
 	 (interactive)
 	 (funcall #',split-type)
 	 (call-interactively #',fn))))
@@ -690,10 +691,10 @@ Configure the packages.
     (when (file-writable-p file)
       (user-error "File is user writeable, aborting sudo"))
     (find-file (if (file-remote-p file)
-                   (concat "/" (file-remote-p file 'method) ":"
-                           (file-remote-p file 'user) "@" (file-remote-p file 'host)
-                           "|sudo:root@"
-                           (file-remote-p file 'host) ":" (file-remote-p file 'localname))
+		   (concat "/" (file-remote-p file 'method) ":"
+			   (file-remote-p file 'user) "@" (file-remote-p file 'host)
+			   "|sudo:root@"
+			   (file-remote-p file 'host) ":" (file-remote-p file 'localname))
 		 (concat "/sudo:root@localhost:" file))))
   :bind
   (;; pick some comfortable binding
@@ -838,13 +839,13 @@ Configure the packages.
   :init
   (defun munyoki/imenu-list-dwim (&optional arg)
     "Convenience wrapper for `imenu-list'.
-     Move between the current buffer and a dedicated window with the
-     contents of `imenu'.
+       Move between the current buffer and a dedicated window with the
+       contents of `imenu'.
 
-     The dedicated window is created if it does not exist, while it is
-     updated once it is focused again through this command.
+       The dedicated window is created if it does not exist, while it is
+       updated once it is focused again through this command.
 
-     With \\[universal-argument] toggle the display of the window."
+       With \\[universal-argument] toggle the display of the window."
     (interactive "P")
     (if arg
 	(imenu-list-smart-toggle)
@@ -974,7 +975,8 @@ Configure the packages.
 
 (use-package password-store
   :ensure t
-  :bind (("C-c h p" . password-store-copy)))
+					; :bind (("C-c h p" . password-store-copy))
+  )
 
 (add-to-list 'auto-mode-alist '("\\.pdf\\'" . pdf-view-mode))
 (use-package pdf-tools
@@ -1182,7 +1184,7 @@ Configure the packages.
       (set-buffer-modified-p nil)
       (diff-mode)
       (lexical-let ((new-ro-bind (cons 'buffer-read-only map)))
-	(add-to-list 'minor-mode-overriding-map-alist new-ro-bind))
+		   (add-to-list 'minor-mode-overriding-map-alist new-ro-bind))
       (goto-char (point-min))))
   :custom
   (mm-encrypt-option nil)
@@ -1216,16 +1218,16 @@ Configure the packages.
 (add-hook 'message-setup-hook #'mml-secure-message-sign-pgpmime)
 (add-hook 'message-setup-hook #'message-sort-headers)
 (add-hook 'message-mode-hook #'(lambda ()
-                                (progn
-                                  (setq-local writegood-mode 1)
-                                  (setq-local fill-column 50))))
+				 (progn
+				   (setq-local writegood-mode 1)
+				   (setq-local fill-column 50))))
 
 (defun munyoki/message-insert-citation-line ()
-    "Insert a simple citation line."
-    (when message-reply-headers
-      (insert (mail-header-from message-reply-headers) " aliandika:")
-      (newline)
-      (newline)))
+  "Insert a simple citation line."
+  (when message-reply-headers
+    (insert (mail-header-from message-reply-headers) " aliandika:")
+    (newline)
+    (newline)))
 
 (setq message-citation-line-function 'munyoki/message-insert-citation-line)
 
@@ -1234,12 +1236,12 @@ Configure the packages.
   "View the the current message as a patch."
   (interactive)
   (let* ((id (notmuch-show-get-message-id))
-         (msg (notmuch-show-get-message-properties))
-         (part (notmuch-show-get-part-properties))
-         (subject (concat "Subject: " (notmuch-show-get-subject) "\n"))
-         (diff-default-read-only t)
-         (buf (get-buffer-create (concat "*notmuch-patch-" id "*")))
-         (map (make-sparse-keymap)))
+	 (msg (notmuch-show-get-message-properties))
+	 (part (notmuch-show-get-part-properties))
+	 (subject (concat "Subject: " (notmuch-show-get-subject) "\n"))
+	 (diff-default-read-only t)
+	 (buf (get-buffer-create (concat "*notmuch-patch-" id "*")))
+	 (map (make-sparse-keymap)))
     (define-key map "q" 'notmuch-bury-or-kill-this-buffer)
     (switch-to-buffer buf)
     (let ((inhibit-read-only t))
@@ -1249,7 +1251,7 @@ Configure the packages.
     (set-buffer-modified-p nil)
     (diff-mode)
     (lexical-let ((new-ro-bind (cons 'buffer-read-only map)))
-                 (add-to-list 'minor-mode-overriding-map-alist new-ro-bind))
+		 (add-to-list 'minor-mode-overriding-map-alist new-ro-bind))
     (goto-char (point-min))))
 
 ;; Configure directory extension.
@@ -1395,13 +1397,12 @@ Configure the packages.
   :hook ((lisp-mode-hook . (lambda () (slime-mode t)))
 	 (inferior-lisp-mode-hook . (lambda () (inferior-slime-mode t)))))
 
-
 (use-package emacs
   :init
   (require 'magit-git)
   (defun munyoki/magit-check-file-and-popup ()
     "If the file is version controlled with git
-       and has uncommitted changes, open the magit status popup."
+	 and has uncommitted changes, open the magit status popup."
     (let ((file (buffer-file-name)))
       (when (and file (magit-anything-modified-p t file))
 	(message "This file has uncommited changes!")
@@ -1531,7 +1532,7 @@ Configure the packages.
 (setq browse-url-browser-function 'browse-url-generic
       browse-url-generic-program "qutebrowser")
 (provide 'sane-defaults)
-   ;;; sane-defaults.el ends here
+     ;;; sane-defaults.el ends here
 #+END_SRC
 
 ** appearance.el
@@ -2138,7 +2139,7 @@ Configure the packages.
 	   (if org-time-budgets-show-budgets "on" "off")))
 
 ;; free agenda-mode-map keys are rare
-(org-defkey org-agenda-mode-map "V" 'org-time-budgets-toggle-time-budgets)
+;; (org-defkey org-agenda-mode-map "V" 'org-time-budgets-toggle-time-budgets)
 
 (provide 'org-time-budgets)
 #+end_src
@@ -3101,55 +3102,63 @@ exec dbus-launch emacs
 #+end_src
 
 #+begin_src text :tangle ~/.xinitrc
-   # You may need to comment out the next line to disable access control.
-   xhost +SI:localuser:$USER
-   eval $(ssh-agent)
+# You may need to comment out the next line to disable access control.
+xhost +SI:localuser:$USER
+eval $(ssh-agent)
+
+/usr/bin/xss-lock -- i3lock -n  -i  /home/munyoki/Desktop/saitama.png &
+# High Dpi work-arounds
+export PLASMA_USE_QT_SCALING=1
+export QT_AUTO_SCREEN_SCALE_FACTOR=1
+export GDK_SCALE=2
+export GDK_DPI_SCALE=0.5
+xrdb -merge $HOME/.Xresources
+export _JAVA_AWT_WM_NONREPARENTING=1
+
+# Set fallback cursor.
+xsetroot -cursor_name left_ptr
+
+# Set keyboard repeat rate.
+xset r rate 200 60
+
+source "$HOME/.guix-profile/etc/profile"
+source "$HOME/.config/guix/current/etc/profile"
+
+GUIX_PROFILE="/home/munyoki/.guix-profile"
+. "$GUIX_PROFILE/etc/profile"
+
+export SSL_CERT_DIR="$HOME/.guix-profile/etc/ssl/certs"
+export SSL_CERT_FILE="$HOME/.guix-profile/etc/ssl/certs/ca-certificates.crt"
+export GIT_SSL_CAINFO="$SSL_CERT_FILE"
 
 
-   # Set themes, etc.
-   # gnome-settings-daemon &
+# If Emacs is started in server mode, `emacsclient` is a convenient way to
+# edit files in place (used by e.g. `git commit`).
+export VISUAL=emacsclient
+export EDITOR="$VISUAL"
 
-   # Set fallback cursor.
-   xsetroot -cursor_name left_ptr
-
-   # Set keyboard repeat rate.
-   xset r rate 200 60
-
-   source "$HOME/.guix-profile/etc/profile"
-   source "$HOME/.config/guix/current/etc/profile"
-
-   GUIX_PROFILE="/home/bonface/.guix-profile"
-   . "$GUIX_PROFILE/etc/profile"
-
-   export SSL_CERT_DIR="$HOME/.guix-profile/etc/ssl/certs"
-   export SSL_CERT_FILE="$HOME/.guix-profile/etc/ssl/certs/ca-certificates.crt"
-   export GIT_SSL_CAINFO="$SSL_CERT_FILE"
+#setxkbmap -model asus_laptop -layout us -variant dvp -option caps:ctrl_modifier
+setxkbmap -layout us -variant dvp -option ctrl:nocaps
 
 
-   # If Emacs is started in server mode, `emacsclient` is a convenient way to
-   # edit files in place (used by e.g. `git commit`).
-   export VISUAL=emacsclient
-   export EDITOR="$VISUAL"
+export XDG_SESSION_TYPE=x11
+export GDK_BACKEND=x11
+nm-applet &
+volumeicon &
 
-   #setxkbmap -model asus_laptop -layout us -variant dvp -option caps:ctrl_modifier
-   setxkbmap -layout us -variant dvp -option ctrl:nocaps
+xbindkeys
 
-   # Finally launch emacs.
-   export XDG_SESSION_TYPE=x11
-   export GDK_BACKEND=x11
-   nm-applet &
-   volumeicon &
+# Keyboard repeat rate
+xset r rate 200 60
 
-   xbindkeys
+# Default backlight
+# xbacklight -set 50
 
-   # Keyboard repeat rate
-   xset r rate 200 60
+gpg-agent --daemon
 
-   # Default backlight
-   xbacklight -set 50
+# Finally launch emacs.
 
-   gpg-agent --daemon
-   exec emacs --debug-init
+exec emacs --debug-init
 #+end_src
 * GHCI
 [[https://wiki.haskell.org/GHC/GHCi][GHCi- Haskell Wiki]]
