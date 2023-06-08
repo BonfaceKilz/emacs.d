@@ -392,7 +392,7 @@ Configure the packages.
    ((t (:inherit ace-jump-face-foreground :height 2.0))))
   :config
   (ace-window-display-mode 1)
-  :bind (("M-o" . ace-window)))
+  :bind (("C-x x o" . ace-window)))
 
 (use-package auto-complete
   :ensure t
