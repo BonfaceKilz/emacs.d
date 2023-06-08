@@ -507,7 +507,7 @@ Configure the packages.
 		 ?a ?s ?d ?f ?g ?h ?j
 		 ?l ?' ?c ?v ?b
 		 ?n ?, ?/))
-  (avy-timeout-seconds 0.3)
+  (avy-timeout-seconds 0.1)
   :config
   (setf (alist-get ?k avy-dispatch-alist) 'avy-action-kill-stay
 	(alist-get ?K avy-dispatch-alist) 'avy-action-kill-whole-line
