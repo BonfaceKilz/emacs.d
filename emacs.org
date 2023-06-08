@@ -538,7 +538,6 @@ Configure the packages.
   ;; Replace bindings. Lazily loaded due by `use-package'.
   :bind (;; C-c bindings in `mode-specific-map'
 	 ("C-c M-x" . consult-mode-command)
-	 ("C-c h" . consult-history)
 	 ("C-c k" . consult-kmacro)
 	 ("C-c m" . consult-man)
 	 ("C-c i" . consult-info)
@@ -651,6 +650,7 @@ Configure the packages.
     ;;;; 5. No project support
   ;; (setq consult-project-function nil)
   )
+
 
 (use-package consult-dir
   :ensure t
@@ -1029,8 +1029,13 @@ Configure the packages.
 
 (use-package password-store
   :ensure t
-					; :bind (("C-c h p" . password-store-copy))
-  )
+  :bind (("C-c h p" . password-store-copy)
+	 ("C-c h e" . password-store-edit)
+	 ("C-c h i" . password-store-insert)
+	 ("C-c h r" . password-store-rename)
+	 ("C-c h g s" . password-generator-strong)
+	 ("C-c h g w" . password-generator-simple)
+	 ("C-c h g p" . password-generator-paranoid)))
 
 (add-to-list 'auto-mode-alist '("\\.pdf\\'" . pdf-view-mode))
 (use-package pdf-tools
