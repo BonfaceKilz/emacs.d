@@ -1515,6 +1515,8 @@ Configure the packages.
   (show-trailing-whitespace 1)
   (shr-width 50)
   (size-indication-mode t)
+  (display-line-numbers-mode t)
+  (display-line-numbers-type 'relative)
   (sp-autoescape-string-quote nil)
   (tramp-chunksize 500)
   (tramp-default-method "ssh")
