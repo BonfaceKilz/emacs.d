@@ -507,8 +507,9 @@ Configure the packages.
 	)
 
   :chords ((",," . avy-goto-char-timer))
-  :bind (:map isearch-mode-map
-	      ("M-j" . avy-isearch)))
+  :bind (("C-x ," . avy-goto-char-timer)
+	 :map isearch-mode-map
+	 ("M-j" . avy-isearch)))
 
 (use-package buffer-move
   :ensure t)
@@ -2492,7 +2493,6 @@ Configure the packages.
 	 ("C-c b" . org-switchb)
 	 ("C-c c" . org-capture) ;; Tasks get a 25 minute count down timer
 	 :map org-mode-map
-	 ("C-'" . avy-goto-char-timer)
 	 ("s-p" . org-babel-previous-src-block)
 	 ("s-n" . org-babel-next-src-block)
 	 ("s-e" . org-edit-src-block)
