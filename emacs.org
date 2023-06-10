@@ -2006,8 +2006,8 @@ Configure the packages.
   :custom
   (exwm-randr-workspace-output-plist
    '(0 "eDP1" 1 "eDP1" 2 "HDMI1" 3 "HDMI1"))
-  (exwm-layout-show-all-buffers nil)
-  (exwm-workspace-show-all-buffers nil)
+  (exwm-layout-show-all-buffers t)
+  (exwm-workspace-show-all-buffers t)
   (exwm-workspace-number 4)
   (exwm-input-simulation-keys
    '(([?\C-b] . [left])
