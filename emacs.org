@@ -223,6 +223,8 @@ when that buffer was created) URL
 
 (add-to-list 'find-file-not-found-functions 'munyoki/create-non-existent-directory)
 
+(defun geiser-racket--language ()
+  '())
 
 ;;; lisp-defuns.el ends here
 #+END_SRC
