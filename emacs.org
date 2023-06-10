@@ -333,22 +333,6 @@ Configure the packages.
 	(goto-char (point-min))
 	(forward-line (1- line-number))))))
 
-(defun munyoki/insert-string ()
-  (interactive)
-  (save-excursion
-    ;; (message "inserting string")
-    (insert (read-from-minibuffer "string: "))))
-
-(add-to-list 'embark--ignore-target 'munyoki/insert-string)
-
-(unless
-    (alist-get 'munyoki/insert-string
-	       embark-target-injection-hooks)
-  (push 'embark--ignore-target
-	(alist-get 'munyoki/insert-string
-		   embark-target-injection-hooks)))
-
-(alist-get 'munyoki/insert-string embark-target-injection-hooks)
 (defun munyoki/delete-file-and-buffer ()
   "Kill the current buffer and deletes the file it is visiting."
   (interactive)
@@ -361,9 +345,7 @@ Configure the packages.
 	  (message "Deleted file %s" filename)
 	  (kill-buffer))))))
 
-
 (global-set-key (kbd "C-c D")  #'munyoki/delete-file-and-buffer)
-(global-set-key (kbd "C-c I")  #'munyoki/insert-string)
 
 (use-package geiser
   :ensure t
@@ -710,6 +692,14 @@ Configure the packages.
   :init
   (elpy-enable))
 
+(defun munyoki/insert-string ()
+  (interactive)
+  (save-excursion
+    ;; (message "inserting string")
+    (insert (read-from-minibuffer "string: "))))
+
+(global-set-key (kbd "C-c I")  #'munyoki/insert-string)
+
 (use-package embark
   :ensure t
   :init
@@ -800,6 +790,12 @@ Configure the packages.
     (kbd "3") (my/embark-split-action switch-to-buffer split-window-right))
   (define-key embark-bookmark-map
     (kbd "3") (my/embark-split-action bookmark-jump split-window-right))
+  (unless
+      (alist-get 'munyoki/insert-string
+		 embark-target-injection-hooks)
+    (push 'embark--ignore-target
+	  (alist-get 'munyoki/insert-string
+		     embark-target-injection-hooks)))
   ;; Hide the mode line of the Embark live/completions buffers
   (add-to-list 'display-buffer-alist
 	       '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
