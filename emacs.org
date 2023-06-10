@@ -2994,7 +2994,6 @@ PassCmd "gpg2 -q --for-your-eyes-only --decrypt ~/.authinfo.gpg | awk -F ' ' '/f
 SSLType IMAPS
 SSLVersions TLSv1.2
 PipelineDepth 50
-CertificateFile ~/.guix-profile/etc/ssl/certs/ca-certificates.crt
 
 IMAPStore fastmail-remote
 Account fastmail
@@ -3017,7 +3016,6 @@ Host imap.gmail.com
 User bonfacemunyoki@gmail.com
 PassCmd "gpg2 -q --for-your-eyes-only --decrypt ~/.authinfo.gpg | awk -F ' ' '/gmail/ { print $6; exit; }'"
 SSLType IMAPS
-CertificateFile /home/bonface/.guix-profile/etc/ssl/certs/ca-certificates.crt
 
 IMAPStore gmail-remote
 Account gmail
@@ -3040,7 +3038,6 @@ Host imap.gmail.com
 User bonface.kilyungi@strathmore.edu
 PassCmd "gpg2 -q --for-your-eyes-only --decrypt ~/.authinfo.gpg | awk -F ' ' '/strathmore/ { print $6; exit; }'"
 SSLType IMAPS
-CertificateFile /home/bonface/.guix-profile/etc/ssl/certs/ca-certificates.crt
 
 IMAPStore strathmore-remote
 Account strathmore
