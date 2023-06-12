@@ -376,6 +376,15 @@ Configure the packages.
    ((t (:inherit ace-jump-face-foreground :height 2.0))))
   :config
   (ace-window-display-mode 1)
+  (add-to-list
+   'aw-dispatch-alist
+   '(?x
+     (lambda (window)
+       (aw-switch-to-window window)
+       (unwind-protect
+	   (call-interactively 'execute-extended-command)
+	 (aw-flip-window)))
+     "Execute Extended command"))
   :bind (("C-x x o" . ace-window)))
 
 (use-package auto-complete
