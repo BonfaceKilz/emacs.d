@@ -747,6 +747,7 @@ Configure the packages.
   (;; pick some comfortable binding
    ("C-;" . embark-dwim) ;; good alternative: M-.
    ("C-." . embark-act)
+   ("C-c b" . embark-become)
    ;; alternative for `describe-bindings'
    ("C-h B" . embark-bindings)
    :map minibuffer-local-completion-map
