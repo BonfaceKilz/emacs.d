@@ -385,6 +385,7 @@ Configure the packages.
 	   (call-interactively 'execute-extended-command)
 	 (aw-flip-window)))
      "Execute Extended command"))
+  :chords ((",." . ace-window))
   :bind (("C-x x o" . ace-window)))
 
 (use-package auto-complete
