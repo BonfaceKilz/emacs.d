@@ -96,9 +96,9 @@ Really quick way to insert evaluated functions in the buffer.
 ;; A very simple function to recreate the scratch buffer:
 ;; ( http://emacswiki.org/emacs/RecreateScratchBuffer )
 (defun munyoki/set-50-char ()
-    (set-fill-column 50)
-    (visual-line-mode)
-    (visual-fill-column-mode))
+  (set-fill-column 50)
+  (visual-line-mode)
+  (visual-fill-column-mode))
 
 (defun keyboard-quit-strong ()
     "Run `keyboard-quit' to return emacs to a more responsive state.
