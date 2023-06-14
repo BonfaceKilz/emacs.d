@@ -2500,7 +2500,6 @@ Configure the packages.
 
   :bind (("C-c C-x n" . clone-and-narrow-org-element)
 	 ("C-c l" . org-store-link)
-	 ("C-c b" . org-switchb)
 	 ("C-c c" . org-capture) ;; Tasks get a 25 minute count down timer
 	 :map org-mode-map
 	 ("s-p" . org-babel-previous-src-block)
