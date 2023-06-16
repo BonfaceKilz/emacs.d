@@ -2400,7 +2400,7 @@ Configure the packages.
   (org-catch-invisible-edits 'show)
   (org-clock-history-length 23)
   (org-clock-in-resume t)
-  (org-journal-dir "/home/bonface/Self/org/journal/")
+  (org-journal-dir "/home/munyoki/Self/org/journal/")
   (org-clock-in-switch-to-state 'clock-in-to-inprogress)
   (org-clock-out-remove-zero-time-clocks t)
   (org-clock-out-when-done t)
@@ -2466,10 +2466,10 @@ Configure the packages.
 	  ("n" "Note" entry (file (concat user-home-directory "Self/org/notes.org"))
 	   "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)))
   (add-to-list 'org-capture-templates
-	       '("f" "Elfeed" entry (file "/home/bonface/Self/org/elfeed.org")
+	       '("f" "Elfeed" entry (file "/home/munyoki/Self/org/elfeed.org")
 		 "* %a\n%U" :empty-lines 1))
   (add-to-list 'org-capture-templates
-	       '("K" "Book" entry (file "/home/bonface/Self/org/books.org")
+	       '("K" "Book" entry (file "/home/munyoki/Self/org/books.org")
 		 "* %^{TITLE}\n:PROPERTIES:\n:ADDED: %<[%Y-%02m-%02d]>\n:END:%^{AUTHOR}p\n%?" :empty-lines 1))
   (org-clock-persistence-insinuate)
   (org-babel-do-load-languages
@@ -2559,7 +2559,7 @@ Configure the packages.
   (easy-hugo-basedir (concat user-home-directory "Public/BonfaceKilz/"))
   (easy-hugo-url "https://bonfacemunyoki.com")
   (easy-hugo-sshdomain "myserver")
-  (easy-hugo-root "/home/bonface/bonfacemunyoki.com/")
+  (easy-hugo-root "/home/munyoki/bonfacemunyoki.com/")
   (easy-hugo-previewtime "300")
   :bind (("C-c C-e" . easy-hugo)))
 
@@ -2649,7 +2649,7 @@ Configure the packages.
 		     (org-agenda-start-on-weekday 0)
 		     (org-agenda-overriding-header "Week in Review"))
 		   ) ;; journal.org
-		 ("/home/bonface/Self/org/review/week.html")))
+		 ("/home/munyoki/Self/org/review/week.html")))
   (add-to-list 'org-agenda-custom-commands
 	       `("Rl" "Last Week in review"
 		 agenda ""
@@ -2660,7 +2660,7 @@ Configure the packages.
 		     (org-agenda-start-on-weekday 0)
 		     (org-agenda-start-day "-7d")
 		     (org-agenda-overriding-header "Last Week in Review")))
-		 ("/home/bonface/Self/org/review/lastweek.html")))
+		 ("/home/munyoki/Self/org/review/lastweek.html")))
   (add-to-list 'org-agenda-custom-commands
 	       `("Rd" "Day in review"
 		 agenda ""
@@ -2670,7 +2670,7 @@ Configure the packages.
 		   '((org-agenda-span 'day)
 		     (org-agenda-overriding-header "Day in Review"))
 		   )
-		 ("/home/bonface/Self/org/review/day.html")))
+		 ("/home/munyoki/Self/org/review/day.html")))
   (add-to-list 'org-agenda-custom-commands
 	       `("Ry" "Yesterday in review"
 		 agenda ""
@@ -2680,7 +2680,7 @@ Configure the packages.
 		   '((org-agenda-span 'day)
 		     (org-agenda-start-day "-1d")
 		     (org-agenda-overriding-header "Yesterday in Review")))
-		 ("/home/bonface/Self/org/review/yesterday.html")))
+		 ("/home/munyoki/Self/org/review/yesterday.html")))
   (add-to-list 'org-agenda-custom-commands
 	       `("Rm" "Month in review"
 		 agenda ""
@@ -2692,7 +2692,7 @@ Configure the packages.
 		     (org-read-date-prefer-future nil)
 		     (org-agenda-overriding-header "Month in Review"))
 		   )
-		 ("/home/bonface/Self/org/review/month.html")))
+		 ("/home/munyoki/Self/org/review/month.html")))
   :custom
   (org-agenda-files
    '("~/Self/org/journal.org"
@@ -2717,7 +2717,7 @@ Configure the packages.
   :init
   (setq org-roam-v2-ack t)
   :custom
-  (org-roam-directory "/home/bonface/Self/org-roam")
+  (org-roam-directory "/home/munyoki/Self/org-roam")
   (org-roam-completion-everywhere t)
   (org-roam-dailies-capture-templates
    '(("d" "default" entry "* %<%I:%M %p>: %?"
@@ -2911,7 +2911,7 @@ Configure the packages.
       '(nntp "localhost"
 	     (gnus-search-engine
 	      gnus-search-notmuch
-	      (remove-prefix "/home/bonface/.mail/"))))
+	      (remove-prefix "/home/munyoki/.mail/"))))
 
 
 (add-to-list 'mm-body-charset-encoding-alist '(utf-8 . base64))
@@ -3071,7 +3071,7 @@ Description=Mailbox synchronization service
 
 [Service]
 Type=oneshot
-ExecStart=/home/bonface/.guix-profile/bin/mbsync -Va
+ExecStart=/home/munyoki/.guix-profile/bin/mbsync -Va
 #+END_SRC
 
 #+BEGIN_SRC text :tangle ~/.config/systemd/user/mbsync.timer :noweb yes :mkdirp yes
@@ -3127,7 +3127,7 @@ xset r rate 200 60
 source "$HOME/.guix-profile/etc/profile"
 source "$HOME/.config/guix/current/etc/profile"
 
-GUIX_PROFILE="/home/bonface/.guix-profile"
+GUIX_PROFILE="/home/munyoki/.guix-profile"
 . "$GUIX_PROFILE/etc/profile"
 
 export SSL_CERT_DIR="$HOME/.guix-profile/etc/ssl/certs"
