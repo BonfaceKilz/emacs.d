@@ -1454,12 +1454,13 @@ Configure the packages.
 	 ("C-M-r" . isearch-backward-other-window)))
 
 
-(use-package munyoki/slime
-  :mode ("\\.hledger\\'")
+(use-package slime
+  :ensure t
+  :mode ("\\.lisp\\'")
   :custom
   (inferior-lisp-program "sbcl")
-  :config
-  (load (expand-file-name "~/.quicklisp/slime-helper.el"))
+  ;; :config
+  ;; (load (expand-file-name "~/.quicklisp/slime-helper.el"))
   :hook ((lisp-mode-hook . (lambda () (slime-mode t)))
 	 (inferior-lisp-mode-hook . (lambda () (inferior-slime-mode t)))))
 
