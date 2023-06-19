@@ -3201,7 +3201,7 @@ export GIT_SSL_CAINFO="$SSL_CERT_FILE"
 export VISUAL=emacsclient
 export EDITOR="$VISUAL"
 
-#setxkbmap -model asus_laptop -layout us -variant dvp -option caps:ctrl_modifier
+# setxkbmap -model asus_laptop -layout us -variant dvp -option caps:ctrl_modifier
 setxkbmap -layout us -variant dvp -option ctrl:nocaps
 
 
@@ -3210,10 +3210,10 @@ export GDK_BACKEND=x11
 nm-applet &
 volumeicon &
 
-xbindkeys
+# xbindkeys
 
 # Keyboard repeat rate
-xset r rate 200 60
+# xset r rate 200 60
 
 # Default backlight
 # xbacklight -set 50
