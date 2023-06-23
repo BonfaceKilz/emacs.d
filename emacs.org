@@ -1460,7 +1460,7 @@ Configure the packages.
   :custom
   (inferior-lisp-program "sbcl")
   ;; :config
-  ;; (load (expand-file-name "~/.quicklisp/slime-helper.el"))
+  (load (expand-file-name "~/.quicklisp/slime-helper.el"))
   :hook ((lisp-mode-hook . (lambda () (slime-mode t)))
 	 (inferior-lisp-mode-hook . (lambda () (inferior-slime-mode t)))))
 
