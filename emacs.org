@@ -223,9 +223,6 @@ when that buffer was created) URL
 
 (add-to-list 'find-file-not-found-functions 'munyoki/create-non-existent-directory)
 
-(defun geiser-racket--language ()
-  '())
-
 ;;; lisp-defuns.el ends here
 #+END_SRC
 ** setup-package.el
@@ -352,6 +349,9 @@ Configure the packages.
 (use-package page-break-lines :ensure t
   :config
   (global-page-break-lines-mode))
+
+(defun geiser-racket--language ()
+  '())
 
 (use-package geiser
   :ensure t
