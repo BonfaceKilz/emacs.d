@@ -659,6 +659,9 @@ Configure the packages.
 (use-package dictionary
   :ensure t)
 
+(use-package ag
+  :ensure t)
+
 (use-package diminish
   :ensure t
   :after use-package
