@@ -914,7 +914,7 @@ Configure the packages.
   :mode ("\\.journal\\'" "\\.hledger\\'")
   :custom
   (hledger-jfile (concat user-home-directory
-			 "Self/finances/hledger.journal")))
+			 "finance/2023.journal")))
 
 (use-package hl-todo
   :ensure t
