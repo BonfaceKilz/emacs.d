@@ -323,6 +323,7 @@ Configure the packages.
   (super-save-mode +1)
   (setq super-save-auto-save-when-idle t))
 
+(use-package desktop-environment :ensure t)
 ;; Open files and goto lines like we see from g++ etc. i.e. file:line#
 ;; (to-do "make `find-file-line-number' work for emacsclient as well")
 ;; (to-do "make `find-file-line-number' check if the file exists")
