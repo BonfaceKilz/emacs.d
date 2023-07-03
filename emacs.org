@@ -349,6 +349,10 @@ Configure the packages.
 
 (global-set-key (kbd "C-c D")  #'munyoki/delete-file-and-buffer)
 
+(use-package page-break-lines :ensure t
+  :config
+  (global-page-break-lines-mode))
+
 (use-package geiser
   :ensure t
   :custom
