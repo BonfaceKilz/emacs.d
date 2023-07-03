@@ -1271,7 +1271,7 @@ Configure the packages.
   (mm-discouraged-alternatives '("text/html" "text/richtext"))
   (mm-automatic-display (remove "text/html" mm-automatic-display))
   (send-mail-function 'message-send-mail-with-sendmail)
-  (sendmail-program "/usr/bin/msmtp")
+  (sendmail-program (executable-find "msmtp"))
   (mail-specify-envelope-from t)
   (message-sendmail-envelope-from 'header)
   (mail-envelope-from 'header)
