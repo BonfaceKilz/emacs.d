@@ -340,6 +340,11 @@ Configure the packages.
 (defun munyoki/bluetooth-disconnect ()
   (interactive)
   (start-process-shell-command "bluetoothctl" nil "bluetoothctl -- disconnect"))
+
+(defun munyoki/ement-connect-secure ()
+  (interactive)
+  (ement-connect :uri-prefix "http://localhost:8009"))
+
 ;; Open files and goto lines like we see from g++ etc. i.e. file:line#
 ;; (to-do "make `find-file-line-number' work for emacsclient as well")
 ;; (to-do "make `find-file-line-number' check if the file exists")
