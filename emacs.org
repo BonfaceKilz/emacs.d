@@ -360,8 +360,6 @@ Configure the packages.
 
 (use-package geiser
   :ensure t
-  :custom
-  (geiser-guile-binary "guile"))
 
 (use-package pomm
   :ensure t
