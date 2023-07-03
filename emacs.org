@@ -392,6 +392,11 @@ Configure the packages.
 
 (use-package geiser
   :ensure t
+  :config
+  (setq geiser-default-implementation 'guile)
+  (setq geiser-active-implementations '(guile)))
+
+
 
 (use-package pomm
   :ensure t
