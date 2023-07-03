@@ -353,6 +353,11 @@ Configure the packages.
 (defun geiser-racket--language ()
   '())
 
+(use-package geiser-guile
+  :ensure t
+  :config
+  (require 'geiser-guile))
+
 (use-package geiser
   :ensure t
   :custom
