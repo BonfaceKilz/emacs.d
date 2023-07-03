@@ -1389,6 +1389,8 @@ Configure the packages.
 		 (add-to-list 'minor-mode-overriding-map-alist new-ro-bind))
     (goto-char (point-min))))
 
+(use-package ol-notmuch :ensure t)
+
 ;; Configure directory extension.
 (use-package vertico-directory
   :after vertico
