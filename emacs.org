@@ -1613,9 +1613,9 @@ Configure the packages.
     (tooltip-mode -1)
     (blink-cursor-mode -1))
   (setq munyoki/default-font
-   "-PfEd-DejaVu Sans Mono-medium-normal-normal-*-15-*-*-*-m-0-iso10646-1")
+   "-PfEd-DejaVu Sans Mono-medium-normal-normal-*-12-*-*-*-m-0-iso10646-1")
   (add-to-list 'default-frame-alist
-               '(font . "DejaVu Sans Mono-15"))
+               '(font . "DejaVu Sans Mono-12"))
 
 ;; Configure the Modus Themes' appearance
 (setq modus-themes-mode-line '(accented borderless)
