@@ -327,6 +327,12 @@ Configure the packages.
 
 (use-package daemons :ensure t :commands daemons)
 
+(use-package pulseaudio-control
+  :ensure t
+  :commands pulseaudio-control-select-sink-by-name
+  :config
+  (setq pulseaudio-control-pactl-path "/run/current-system/profile/bin/pactl"))
+
 ;; Open files and goto lines like we see from g++ etc. i.e. file:line#
 ;; (to-do "make `find-file-line-number' work for emacsclient as well")
 ;; (to-do "make `find-file-line-number' check if the file exists")
