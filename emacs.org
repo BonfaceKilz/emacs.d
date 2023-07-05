@@ -100,17 +100,27 @@ Really quick way to insert evaluated functions in the buffer.
   (visual-line-mode)
   (visual-fill-column-mode))
 
+(defun eval-and-replace ()
+  "Replace the preceding sexp with its value."
+  (interactive)
+  (backward-kill-sexp)
+  (condition-case nil
+      (prin1 (eval (read (current-kill 0)))
+             (current-buffer))
+    (error (message "Invalid expression")
+           (insert (current-kill 0)))))
+
 (defun keyboard-quit-strong ()
-    "Run `keyboard-quit' to return emacs to a more responsive state.
+  "Run `keyboard-quit' to return emacs to a more responsive state.
     If repeated twice in a row, run `top-level' instead, to also exit
     any recursive editing levels."
-    (interactive)
-    (when (eq last-command 'keyboard-quit-strong)
-      (setq this-command 'top-level) ;dis-arm a 3rd C-g
-      (ding)
-      (top-level))
-    ;; Not reached after `top-level'. (A rare behavior in lisp.)
-    (keyboard-quit))
+  (interactive)
+  (when (eq last-command 'keyboard-quit-strong)
+    (setq this-command 'top-level)	;dis-arm a 3rd C-g
+    (ding)
+    (top-level))
+  ;; Not reached after `top-level'. (A rare behavior in lisp.)
+  (keyboard-quit))
 
 (defun scratch ()
   "create a scratch buffer"
