@@ -323,6 +323,8 @@ Configure the packages.
 (setq rg-executable (executable-find "rg"))
 (setq ripgrep-executable (executable-find "rg"))
 
+(use-package eat :ensure t)
+
 (use-package ement :ensure t)
 
 (use-package super-save
