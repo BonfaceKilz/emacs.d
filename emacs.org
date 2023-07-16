@@ -1500,6 +1500,7 @@ Configure the packages.
   (eshell-prompt-regexp "^[^#$\n]+[#$] ")
   (eshell-cmpl-cycle-completions nil)
   :config
+  (add-hook 'eshell-load-hook #'eat-eshell-mode)
   (eval-after-load 'eshell
     '(require 'eshell-autojump nil t)))
 
