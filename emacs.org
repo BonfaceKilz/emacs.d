@@ -1604,7 +1604,7 @@ Configure the packages.
   (shell-file-name
    (concat user-home-directory
 	   ".guix-profile/bin/zsh"))
-  (show-trailing-whitespace 1)
+  (show-trailing-whitespace nil)
   (shr-width 50)
   (size-indication-mode t)
   (global-display-line-numbers-mode t)
@@ -1654,6 +1654,7 @@ Configure the packages.
   (winner-mode 1) ; Undo/redo window configuration with C-c <left>/<right>
   :hook ((minibuffer-setup-hook . cursor-intangible-mode)
 	 (after-save-hook . executable-make-buffer-file-executable-if-script-p)
+	 (prog-mode-hook . (lambda () (show-trailing-whitespace 1)))
 	 (find-file-hook . (lambda ()
 			     (add-hook 'hack-local-variables-hook 'munyoki/magit-check-file-and-popup)))
 	 (server-switch-hook . magit-commit-diff))
