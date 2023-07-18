@@ -442,7 +442,7 @@ Configure the packages.
 	 (aw-flip-window)))
      "Execute Extended command"))
   :chords ((",." . ace-window))
-  :bind (("C-x x o" . ace-window)))
+  :bind (("C-x n o" . ace-window)))
 
 (use-package auto-complete
   :ensure t
