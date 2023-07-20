@@ -1698,7 +1698,7 @@ Configure the packages.
     (tooltip-mode -1)
     (blink-cursor-mode -1))
   (setq munyoki/default-font
-   "-PfEd-DejaVu Sans Mono-medium-normal-normal-*-12-*-*-*-m-0-iso10646-1")
+	"-UKWN-Iosevka Comfy Wide-normal-normal-expanded-*-12-*-*-*-d-0-iso10646-1")
   (add-to-list 'default-frame-alist
                '(font . "DejaVu Sans Mono-12"))
 
