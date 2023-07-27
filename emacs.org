@@ -323,7 +323,11 @@ Configure the packages.
 (setq rg-executable (executable-find "rg"))
 (setq ripgrep-executable (executable-find "rg"))
 
-(use-package eat :ensure t)
+(use-package eat
+  :ensure t
+  :hook
+  (eat-mode-hook . (lambda ()
+		     (display-line-numbers-mode -1))))
 
 (use-package ement :ensure t)
 
