@@ -2776,7 +2776,22 @@ Configure the packages.
   :requires org
   :init
   (setq org-agenda-custom-commands
-	'(("b" "Agenda with Time Budgets"
+	'(("h" "Work todos" tags-todo
+	   "-personal-doat={.+}-dowith={.+}/!-TASK"
+	   ((org-agenda-todo-ignore-scheduled t)))
+	  ("H" "All work todos" tags-todo "-personal/!-TASK-MAYBE"
+	   ((org-agenda-todo-ignore-scheduled nil)))
+	  ("A" "Work todos with doat or dowith" tags-todo
+	   "-personal+doat={.+}|dowith={.+}/!-TASK"
+	   ((org-agenda-todo-ignore-scheduled nil)))
+	  ("j" "TODO dowith and TASK with"
+	   ((org-sec-with-view "TODO dowith")
+	    (org-sec-where-view "TODO doat")
+	    (org-sec-assigned-with-view "TASK with")
+	    (org-sec-stuck-with-view "STUCK with")))
+	  ("J" "Interactive TODO dowith and TASK with"
+	   ((org-sec-who-view "TODO dowith")))
+	  ("b" "Agenda with Time Budgets"
 	   ((agenda "" ((org-agenda-sorting-strategy '(habit-down time-up priority-down category-keep user-defined-up))))
 	    (org-time-budgets-in-agenda-maybe)))))
   (setq munyoki/org-agenda-review-settings
