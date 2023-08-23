@@ -2589,7 +2589,10 @@ Configure the packages.
   (org-src-preserve-indentation t)
   (org-src-tab-acts-natively t)
   (org-startup-indented t)
-  (org-tags-exclude-from-inheritance (quote ("blog")))
+  (org-tags-exclude-from-inheritance
+   (quote ("blog" "prj")))
+  (org-stuck-projects '("+prj/-MAYBE-DONE"
+			("TODO" "TASK") ()))
   (org-timer-default-timer 45)
   (org-use-fast-todo-selection t)
   (org-use-speed-commands t)
