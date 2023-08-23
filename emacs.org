@@ -2772,6 +2772,8 @@ Configure the packages.
   (org-crypt-use-before-save-magic)
   (setenv "GPG_AGENT_INFO" nil))
 
+(setq org-crypt-disable-auto-save 'encrypt)
+
 (use-package munyoki/org-agenda
   :requires org
   :init
