@@ -2313,10 +2313,17 @@ Configure the packages.
 ;; Org-mode
 
 ;; Org secretary stuff
-(defvar org-sec-with "nobody"
+(require 'org)
+
+(defvar org-sec-me nil
+  "Tag that defines TASK todo entries associated to me")
+
+(setq org-sec-me "munyoki")
+
+(defvar org-sec-with nil
   "Value of the :with: property when doing an
    org-sec-tag-entry. Change it with org-sec-set-with,
-   set to C-c w")
+   set to C-c w.  Defaults to org-sec-me")
 
 (defvar org-sec-where ""
   "Value of the :at: property when doing an
@@ -2330,11 +2337,15 @@ Configure the packages.
   "History list of :where: properties")
 
 (defun org-sec-set-with ()
-  "Changes the value of the org-sec-with variable for use
-   in the next call of org-sec-tag-entry."
+  "Changes the value of the org-sec-with variable for use in the
+   next call of org-sec-tag-entry.  Leave it empty to default to
+   org-sec-me (you)."
   (interactive)
-  (setq org-sec-with (read-string "With: " nil
-                                  'org-sec-with-history "")))
+  (setq org-sec-with (let ((w (read-string "With: " nil
+                                           'org-sec-with-history "")))
+                       (if (string= w "")
+                           nil
+                         w))))
 (global-set-key "\C-cw" 'org-sec-set-with)
 
 (defun org-sec-set-where ()
@@ -2376,21 +2387,24 @@ Configure the packages.
                              (current-time)))
     (unless (string= org-sec-where "")
       (org-entry-put nil "at" org-sec-where))
-    (unless (string= org-sec-with "nobody")
-      (org-entry-put nil "with" org-sec-with))))
+    (if org-sec-with
+        (org-entry-put nil "with" org-sec-with))))
 (global-set-key "\C-cj" 'org-sec-tag-entry)
 
 (defun join (lst sep &optional pre post)
-  (mapconcat (function (lambda (x)
-                         (concat pre x post)))
-             lst sep))
+  (mapconcat (function (lambda (x) (concat pre x post))) lst sep))
+
+(defun org-sec-get-with ()
+  (if org-sec-with
+      org-sec-with
+    org-sec-me))
 
 (defun org-sec-with-view (par &optional who)
   "Select tasks marked as dowith=who, where who
    defaults to the value of org-sec-with."
   (org-tags-view '(4) (join (split-string (if who
                                               who
-                                            org-sec-with))
+                                            (org-sec-get-with)))
                             "|" "dowith=\"" "\"")))
 
 (defun org-sec-where-view (par)
@@ -2402,7 +2416,7 @@ Configure the packages.
   (org-tags-view '(4)
                  (concat (join (split-string (if who
                                                  who
-                                               org-sec-with))
+                                               (org-sec-get-with)))
                                "|")
                          "/TASK")))
 
@@ -2413,7 +2427,7 @@ Configure the packages.
          `(,(concat "+prj+"
                     (join (split-string (if who
                                             who
-                                          org-sec-with)) "|")
+                                          (org-sec-get-with))) "|")
                     "/-MAYBE-DONE")
            ("TODO" "TASK") ())))
     (org-agenda-list-stuck-projects)))
