@@ -2479,14 +2479,15 @@ Configure the packages.
   (org-yank-adjusted-subtrees t)
   (org-todo-keywords
    (quote ((sequence "TODO(t)" "IN-PROGRESS(s@/!)" "|" "DONE(d/!)")
-	   (sequence "WIP(w@/!)" "ON_HOLD(h@/!)" "|" "CANCELLED(c@/!)")
-	   (sequence "MEETING(m)" "IN-PROGRESS(i@/!)" "FINISHED(f/!)" "|" "DROPPED(d@/!)"))))
   (org-todo-keyword-faces (quote (("TODO" :foreground "green" :weight bold)
 				  ("IN-PROGRESS" :foreground "yellow" :weight bold)
 				  ("DONE" :foreground "orange" :weight bold)
 				  ("WIP" :foreground "brown" :weight bold)
 				  ("ON_HOLD" :foreground "grey" :weight bold)
 				  ("CANCELLED" :foreground "red" :weight bold))))
+	   (sequence "TASK(f)" "|" "DONE(d)" )
+	   (sequence "MAYBE(m)" "|" "CANCELLED(c)")
+	   (sequence "WIP(w@/!)" "ON_HOLD(h@/!)" "|" "CANCELLED(c@/!)"))))
 
   (org-capture-templates-contexts
    '(("r" ((in-mode . "gnus-summary-mode")
