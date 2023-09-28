@@ -2137,6 +2137,13 @@ Configure the packages.
 	 :map exwm-mode-map
 	 ("C-c C-r" . exwm-input-send-next-key)))
 
+(defun munyoki/winner-clean-up-modified-list ()
+  "Remove dead frames from `winner-modified-list`"
+  (dolist (frame winner-modified-list)
+    (unless (frame-live-p frame)
+      (delete frame winner-modified-list))))
+(advice-add 'winner-save-old-configurations :before #'munyoki/winner-clean-up-modified-list)
+
 (provide 'setup-exwm)
 ;;; setup-exwm.el ends here
 #+END_SRC
