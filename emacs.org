@@ -1725,10 +1725,9 @@ Configure the packages.
 ;; Load the dark theme by default
 (load-theme 'modus-vivendi t)
 
-(use-package ef-themes :ensure )
+(use-package ef-themes :ensure)
 
 ;; (load-theme 'ef-tritanopia-dark t)
-
 (use-package all-the-icons
   :ensure t
   :delight)
