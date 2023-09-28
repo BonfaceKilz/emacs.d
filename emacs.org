@@ -1336,6 +1336,7 @@ Configure the packages.
      (:name "su-mscdsa2021:unread" :query "to:mscdsa2021@strathmore.edu tag:unread")
      (:name "Newsletters:unread" :query "from:james@jamesclear.com tag:unread from:julia@wizardzines.com from:eric@purelyFunctional.tv from:schneier@schneier.com from:*kra.go.ke from:*isoc.org from:*airbnb.com from:*wakingup.com from:*arifu.com from:*writethedocs.org from:*fermatslibrary.com")
      (:name "Matrix:unread" :query "from:*matrix.org tag:unread")
+     (:name "KLDP" :query "from:*redhat.com from:*kdlp.underground.software tag:unread")
      (:name "daziri:unread" :query "tag:unread to:munyoki@daziri.co.ke")))
   (mm-encrypt-option nil)
   (mm-sign-option nil)
