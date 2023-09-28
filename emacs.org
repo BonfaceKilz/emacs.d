@@ -74,8 +74,8 @@
 (unless (server-running-p)
   (server-start))
 
-(require 'sane-defaults)
 (require 'appearance)
+(require 'sane-defaults)
 (require 'setup-elfeed)
 (require 'setup-exwm)
 (require 'org-time-budgets)
