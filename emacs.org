@@ -3093,13 +3093,13 @@ Configure the packages.
 
 (setq gnus-summary-display-arrow t)
 
-(require 'nnir)
 
 (setq gnus-select-method
-      '(nntp "localhost"
-	     (gnus-search-engine
-	      gnus-search-notmuch
-	      (remove-prefix "/home/munyoki/.mail/"))))
+      '(nnmaildir "Fast Mail"
+		  (directory "/home/munyoki/.mail/fastmail")
+		  (gnus-search-engine
+		   gnus-search-notmuch
+		   (config-file "/home/munyoki/.notmuch-config"))))
 
 
 (add-to-list 'mm-body-charset-encoding-alist '(utf-8 . base64))
@@ -3109,6 +3109,7 @@ Configure the packages.
                                  (progn
                                    (setq-local writegood-mode 1)
                                    (setq-local fill-column 50))))
+(setq gnus-search-use-parsed-queries nil)
 (setq epa-file-cache-passphrase-for-symmetric-encryption nil)
 (setq mm-encrypt-option nil)
 (setq mm-sign-option nil)
@@ -3128,7 +3129,7 @@ Configure the packages.
 (setq mm-automatic-display (remove "text/html" mm-automatic-display))
 (setq smtpmail-queue-mail nil)
 (setq message-send-mail-function 'message-send-mail-with-sendmail)
-(setq sendmail-program "/usr/bin/msmtp")
+(setq sendmail-program (executable-find "msmtp"))
 (setq gnus-ignored-newsgroups "^to\\.\\|^[0-9. ]+\\( \\|$\\)\\|^[\"]\"[#'()]")
 
 (setq mail-specify-envelope-from t)
