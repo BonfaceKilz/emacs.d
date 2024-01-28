@@ -329,6 +329,16 @@ Configure the packages.
   (eat-mode-hook . (lambda ()
 		     (display-line-numbers-mode -1))))
 
+(use-package psc-ide
+  :ensure t
+  :config
+  (psc-ide-use-npm-bin t)
+  :hook ((purescript-mode-hook . (lambda ()
+				   (psc-ide-mode)
+				   (company-mode)
+				   (flycheck-mode)
+				   (turn-on-purescript-indentation)))))
+
 (use-package ement :ensure t)
 
 (use-package super-save
