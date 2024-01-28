@@ -2117,7 +2117,7 @@ Configure the packages.
   (exwm-randr-enable)
   :custom
   (exwm-randr-workspace-monitor-plist
-   '(0 "eDP-1" 1 "eDP-1" 2 "HDMI-2" 3 "HDMI-2"))
+   '(0 "eDP-1" 1 "HDMI-1" 2 "HDMI-2"))
   (exwm-layout-show-all-buffers t)
   (exwm-workspace-show-all-buffers t)
   (exwm-workspace-number 4)
