@@ -3038,7 +3038,7 @@ Configure the packages.
 			 :store #'org-elpher-store-link)
 
 (setq org-time-budgets
-      '((:title "Genenetwork" :tags "+genenetwork" :budget "35:00" :blocks (day week))
+      '((:title "Genenetwork" :tags "+genenetwork" :budget "32:30" :blocks (workday week))
 	(:title "Strathmore" :match "+strathmore+weekend" :budget "9:00" :blocks (day week))
 	(:title "Guix" :match "+guix" :budget "10:00" :blocks (day week))))
 
