@@ -2887,7 +2887,8 @@ Configure the packages.
 	 ("H" "All work todos" tags-todo "-personal/!-TASK-MAYBE"
 	  ((org-agenda-todo-ignore-scheduled nil)))
 	 ("G" "Genenetwork"
-	  ((agenda "" ((org-agenda-overriding-header "Genenetwork Tasks")
+	  ((agenda "" ((org-agenda-span 1)
+		       (org-agenda-overriding-header "Genenetwork Tasks")
 		       (org-super-agenda-groups
 			'((:name "Quick Picks"
 				 :and
