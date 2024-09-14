@@ -2411,6 +2411,13 @@ Configure the packages.
 ;; Org secretary stuff
 (require 'org)
 
+(setq org-time-budgets
+      '((:title "Genenetwork" :tags "+genenetwork" :budget "30:00" :blocks (workday week))
+	(:title "Strathmore" :match "+strathmore" :budget "9:00" :blocks (day week))
+	(:title "Functional Programming" :match "+FP" :budget "7:00" :blocks (day week))
+	(:title "Daily Reading" :match "+reading" :budget "7:00" :blocks (day week))
+	(:title "Guix" :match "+guix" :budget "10:00" :blocks (day week))))
+
 (defvar org-sec-me nil
   "Tag that defines TASK todo entries associated to me")
 
@@ -2886,7 +2893,7 @@ Configure the packages.
 	  ((org-agenda-todo-ignore-scheduled t)))
 	 ("H" "All work todos" tags-todo "-personal/!-TASK-MAYBE"
 	  ((org-agenda-todo-ignore-scheduled nil)))
-	 ("G" "Genenetwork"
+	 ("g" "Genenetwork"
 	  ((agenda "" ((org-agenda-span 1)
 		       (org-agenda-overriding-header "Genenetwork Tasks")
 		       (org-super-agenda-groups
@@ -2993,7 +3000,17 @@ Configure the packages.
 		   '((org-agenda-span 'week)
 		     (org-agenda-start-on-weekday 0)
 		     (org-agenda-start-day "-7d")
-		     (org-agenda-overriding-header "Last Week in Review")))
+		     (org-agenda-overriding-header "Last Week in Review:")
+		     (org-super-agenda-groups
+		      '((:name "In-Progress Tasks"
+			       :and (:tag "genenetwork" :todo ("IN-PROGRESS" "DONE" "WIP")))
+			(:name "Held Tasks"
+			       :and (:tag "genenetwork" :todo ("ON-HOLD" "MAYBE")))
+			(:name "Unscheduled Tasks"
+			       :and (:tag "genenetwork" :todo ("TODO" "TASK")))
+			(:name "Cancelled Tasks"
+			       :and (:tag "genenetwork" :todo ("CANCELLED")))
+			(:discard (:anything t))))))
 		 ("/home/munyoki/Self/org/review/lastweek.html")))
   (add-to-list 'org-agenda-custom-commands
 	       `("Rd" "Day in review"
@@ -3172,13 +3189,6 @@ Configure the packages.
 (org-link-set-parameters "gopher"
 			 :follow #'org-elpher-open
 			 :store #'org-elpher-store-link)
-
-(setq org-time-budgets
-      '((:title "Genenetwork" :tags "+genenetwork" :budget "32:30" :blocks (workday week))
-	(:title "Strathmore" :match "+strathmore" :budget "9:00" :blocks (day week))
-	(:title "Functional Programming" :match "+FP" :budget "7:00" :blocks (day week))
-	(:title "Daily Reading" :match "+reading" :budget "7:00" :blocks (day week))
-	(:title "Guix" :match "+guix" :budget "10:00" :blocks (day week))))
 
 (use-package org-contrib
   :ensure t
