@@ -1788,15 +1788,17 @@ Configure the packages.
 #+begin_src emacs-lisp :padding no :mkdirp yes :tangle ~/.emacs.d/settings/appearance.el
 ;;; appearance.el
 (create-directory-if-nonexistent
-   (expand-file-name "themes" user-emacs-directory))
-  (when (display-graphic-p)
-    (tooltip-mode -1)
-    (blink-cursor-mode -1))
-  (setq munyoki/default-font
-	"-UKWN-Iosevka Comfy Wide-normal-normal-expanded-*-12-*-*-*-d-0-iso10646-1")
-  (add-to-list 'default-frame-alist
-               '(font . "DejaVu Sans Mono-12"))
-
+ (expand-file-name "themes" user-emacs-directory))
+(when (display-graphic-p)
+  (tooltip-mode -1)
+  (blink-cursor-mode -1))
+(setq munyoki/default-font
+      "-UKWN-Atkinson Hyperlegible-normal-normal-expanded-*-13-*-*-*-d-0-iso10646-1")
+;; Some Cool fonts to consider in future:
+;; - Fira Code-13
+;; - DejaVu Sans Mono-12
+(add-to-list 'default-frame-alist
+	     '(font . "Iosevka Comfy Wide-13"))
 ;; Configure the Modus Themes' appearance
 (setq modus-themes-mode-line '(accented borderless)
       modus-themes-bold-constructs t
