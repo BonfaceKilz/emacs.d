@@ -1798,7 +1798,7 @@ Configure the packages.
 ;; - Fira Code-13
 ;; - DejaVu Sans Mono-12
 (add-to-list 'default-frame-alist
-	     '(font . "Iosevka Comfy Wide-13"))
+	     '(font . "Iosevka Comfy Wide-12"))
 ;; Configure the Modus Themes' appearance
 (setq modus-themes-mode-line '(accented borderless)
       modus-themes-bold-constructs t
